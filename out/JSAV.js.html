@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: JSAV.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: JSAV.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @preserve 
+    @file
+    JSAV V1.0 06.06.14
+    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
+    This program is distributed under the Gnu Public Licence (GPLv2)
+*/
+/** ***********************************************************************
+   Program:    JSAV  
+   File:       JSAV.js
+   
+   Version:    V1.0
+   Date:       06.06.14
+   Function:   JavaScript Sequence Alignment Viewier
+   
+   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
+   Author:     Dr. Andrew C. R. Martin
+   Address:    Institute of Structural and Molecular Biology
+               Division of Biosciences
+               University College
+               Gower Street
+               London
+               WC1E 6BT
+   EMail:      andrew@bioinf.org.uk
+               
+**************************************************************************
+   This program is distributed under the GPL licence
+   Alternative licences are available on request.
+**************************************************************************
+   Description:
+   ============
+   JSAV is a simple JavaScript protein sequence alignment viewer. It
+   allows you to select a region of the alignment and sort on that
+   region.
+**************************************************************************
+   Revision History:
+   =================
+   V1.0   06.06.14   Original  By: ACRM
+*************************************************************************/
+/**
+This is the only routine called by a user. It takes an array of
+sequence objects and displays them as a coloured sortable table
+optionally with a slider and sort button
+
+@example printJSAV('mySeqDisplay', sequenceArray, true, '400px');
+Where 'mySeqDisplay' is the name of a div that will be created
+      sequenceArray  is an array of sequence objects
+      true           indicates that the display should be sortable
+      '400px'        indicates the width of the slider for specifying
+                     a sort range
+
+@param {object[]}  sequences -  Array of sequence objects
+@param {string}    divId     - ID of div to print in
+@param {bool}      sortable  - Should the sorting options be displayed
+@param {string}    width     - The width of the selection slider with
+                              units (e.g. '400px')
+
+- 29.05.14 Original  By: ACRM
+- 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
+- 05.06.14 Added divId parameter and sortable
+- 06.06.14 Added width
+*/
+function printJSAV(divId, sequences, sortable, width)
+{
+   document.writeln("&lt;div id='" + divId + "'>");
+
+   document.writeln("&lt;div id='" + divId + "_sortable'>");
+   var html = JSAV_buildSequencesHTML(divId, sequences);
+   document.write(html);
+   document.writeln("&lt;/div>");
+
+   if(sortable)
+   {
+      var start = 1;
+      var stop  = sequences[0].sequence.length;
+
+      document.writeln("&lt;p>&lt;/p>");
+
+      JSAV_buildSlider(divId, stop, width);
+
+      document.writeln("&lt;form>");
+      var html = "&lt;button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", sequences)'>Sort&lt;/button>";
+      document.writeln(html);
+      document.writeln("&lt;/form>");
+   }
+   document.writeln("&lt;/div>");
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Prints a sequence as a table row. The row starts with the identifier
+and is followed by each amino acid in a separate &lt;td> tag with a 
+class to indicate the amino acid type (e.g. aaW for a tryptophan). 
+
+@param {string} id         The identifier
+@param {string} sequence   A string containing the sequence
+
+- 29.05.14 Original  By: ACRM
+- 30.05.14 Now just calls JSAV_buildASequenceHTML() and prints result
+*/
+function JSAV_printASequence(id, sequence)
+{
+   var html  = JSAV_buildASequenceHTML(id, sequence);
+   document.write(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Builds the HTML for printing a sequence as a table row. The row 
+starts with the identifier and is followed by each amino acid in a 
+separate &lt;td> tag with a class to indicate the amino acid type 
+(e.g. aaW for a tryptophan). 
+
+@param {string}   id         The identifier
+@param {string}   sequence   A string containing the sequence
+@returns {string} text       HTML snippet
+
+- 30.05.14 Original  By: ACRM
+*/
+function JSAV_buildASequenceHTML(id, sequence)
+{
+   var tableLineArray = sequence.split("");
+
+   var tableLine = "&lt;tr id='" + id + "'>";
+   tableLine += "&lt;td class='titleCell'>" + id + "&lt;/td>";
+
+   var nResidues = tableLineArray.length;
+   for(var i=0; i&lt;nResidues; i++)
+   {
+      var aa = tableLineArray[i];
+      tableLine += "&lt;td class='aa" + aa + "'>" + aa + "&lt;/td>"
+   }
+   tableLine += "&lt;/td>&lt;/tr>";
+
+   return(tableLine);
+}
+
+// ---------------------------------------------------------------------
+/**
+Builds the slider for selecting a maximum and minimum position for
+sorting. Also calls routine to display the currently selected range -
+i.e. the whole sequence length
+
+@param {string}   divId   The name of the div used for the display
+@param {int}      seqLen  The length of the sequence alignment
+@param {string}   width   The width of the slider
+
+- 06.06.14  Original   By: ACRM
+*/
+function JSAV_buildSlider(divId, seqLen, width)
+{
+   var html = "&lt;div id='" + divId + "_slider'>&lt;/div>";
+   document.writeln(html);
+   document.writeln("&lt;span id='" + divId + "_showrange'>&lt;/span>");
+
+   var id = divId + "_slider";
+   var tag = "#" + id;
+
+   $(tag).css('width',   width);
+   $(tag).css('margin',  '10px');
+   $(tag).css('display', 'block');
+
+   $(tag).slider({
+         range: true,
+         min: 1,
+         max: seqLen,
+         values: [1, seqLen],
+         slide: JSAV_showRange
+   });
+
+   gStartPos = Array();
+   gStopPos  = Array();
+
+   JSAV_showRange(divId);
+}
+
+// ---------------------------------------------------------------------
+/**
+Displays the currently selected range as text and calls the routine
+to higlight that range in the alignment view.
+
+Called as JSAV_showRange(divID), or as a callback from a slider event
+
+@param {JQEvent}   eventOrId    JQuery Event
+@param {JQ-UI}     ui           JQuery UI object
+--OR--
+@param {text}      ebentOrId    Identifier of the display div
+@param {null}      ui           Must be set to null
+
+- 06.06.14  Original   By: ACRM
+*/
+function JSAV_showRange(eventOrId, ui)
+{
+   // Here the eventOrId is the id of the div where we are working
+   if(ui == null)
+   {
+      // Get the values out of the slider
+      var tag = "#" + eventOrId + "_slider";
+      gStartPos[eventOrId] = $(tag).slider("values", 0);
+      gStopPos[eventOrId]  = $(tag).slider("values", 1);
+
+      // Display the range currently selected
+      tag = "#" + eventOrId + "_showrange";
+      var html = "Sort from: " + gStartPos[eventOrId] + " to: " + gStopPos[eventOrId];
+      $(tag).text(html);
+      JSAV_highlightRange(eventOrId, sequences[0].sequence.length, gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
+   }
+   else
+   {
+      var id = $(this).closest('div').parent().attr("id");
+      var tag = "#" + id + "_showrange";
+
+      // Get the values out of the slider
+      gStartPos[id] = ui.values[0];
+      gStopPos[id]  = ui.values[1];
+
+      // Display the range currently selected
+      var html = "Sort from: " + gStartPos[id] + " to: " + gStopPos[id];
+      $(tag).text(html);
+      JSAV_highlightRange(id, sequences[0].sequence.length, gStartPos[id]-1, gStopPos[id]-1);
+   }
+}
+
+// ---------------------------------------------------------------------
+/**
+Simple wrapper function to obtain the currently selected range
+
+@param   {string}   divId    Identifier for display div
+@returns {int[]}             Start and stop of range
+
+- 06.06.14  Original   By: ACRM
+*/
+function JSAV_getRange(divId)
+{
+   var start = gStartPos[divId]-1;
+   var stop  = gStopPos[divId]-1;
+   return([start, stop]);
+}
+
+// ---------------------------------------------------------------------
+/**
+Takes an array of sequence objects and builds the HTML to display
+them as a coloured table
+
+@param   {object[]}   sequences   Array of sequence objects
+@returns {string}                 HTML
+
+- 30.05.14 Original  By: ACRM
+- 06.06.14 Added call to build the marker row of selected residues
+*/
+function JSAV_buildSequencesHTML(divId, sequences)
+{
+   var html = "";
+   html += "&lt;div class='JSAV'>\n";
+   html += "&lt;table border='0'>\n";
+
+   for(var i=0; i&lt;sequences.length; i++)
+   {
+      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence) + "\n";
+   }
+
+   html += JSAV_buildMarkerHTML(divId, sequences[0].sequence.length);
+
+   html += "&lt;/table>\n";
+   html += "&lt;/div>\n";
+   return(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Creates the HTML to display the marker row that indicates the selected
+residues to be used for sorting
+
+@param {string}   divId    Identifier of display div
+@param {int}      seqLen   Length of sequences alignement
+
+- 06.06.14  Original   By: ACRM
+*/
+function JSAV_buildMarkerHTML(divId, seqLen)
+{
+    var html = "";
+    html += "&lt;tr class='bottomrow'>&lt;td class='titleCell'>Sort Region:&lt;/td>";
+    for(var i=0; i&lt;seqLen; i++)
+    {
+        var id = divId + "_JSAVMarker" + i;
+        html += "&lt;td id='" + id + "' class='unhighlighted' />&amp;nbsp;&lt;/td>";
+    }
+    html += "&lt;/tr>\n";
+    return(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Finds the real ends of a sequence stored in an array by skipping over
+'-' characters. Returns the offsets of the actual ends. 
+NOTE: Consequently to loop over the sequence you now need to do 
+   for(var i=seqEnds[0]; i&lt;=seqEnds[1]; i++)
+i.e. &lt;= rather than &lt; the last position
+
+@param   {char[]}   seqArray   Sequence stored in an array
+@returns {int[]}               Offsets of first and last real
+                               amino acid
+
+- 04.06.14 Original   By: ACRM
+*/
+function JSAV_FindRealSequenceEnds(seqArray)
+{
+   var seqEnds = [];
+
+   // Find the real start - just increment the counter while there is a - in the sequence
+   seqEnds[0] = 0;
+   while((seqArray[seqEnds[0]] == '-') || (seqArray[seqEnds[0]] == ' '))
+   {
+      seqEnds[0]++;
+   }
+
+   // Find the real end - just decrement the counter while there is a - in the sequence
+   seqEnds[1] = seqArray.length - 1;
+   while((seqArray[seqEnds[1]] == '-') || (seqArray[seqEnds[1]] == ' '))
+   {
+      seqEnds[1]--;
+   }
+
+   return(seqEnds);
+}
+
+// ---------------------------------------------------------------------
+/**
+General purpose function to create a multi-dimensional array
+
+@param   {int/int[]}  length   Size of each dimension
+@returns {array}                  (multi-dimensional) Array
+
+Usage:
+createArray();     // [] or new Array()
+createArray(2);    // new Array(2)
+createArray(3, 2); // [new Array(2),
+                   //  new Array(2),
+                   //  new Array(2)]
+
+- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+*/
+function createArray(length) 
+{
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) 
+    {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Choose a representative from a difference matrix. The difference
+matrix contains the number of differences between each pair of 
+sequences. This routine simply totals up the number of differences
+for each sequence compared with all the other sequences and then
+chooses the one with fewest differences
+
+@param {int-2DArray}  differenceMatrix  Differences between each pair
+                                    of sequences
+@eturns {int}                        Index of the representative
+                                    sequence
+
+- 29.05.14 Original   By: ACRM
+*/
+function JSAV_chooseRepresentative(differenceMatrix)
+{
+   var totalDiffs = [];
+   var nSeqs = differenceMatrix.length;
+
+   // For each sequence, find its total differences from all other 
+   // sequences
+   for(var i=0; i&lt;nSeqs; i++)
+   {
+      totalDiffs[i] = 0;
+      for(var j=0; j&lt;differenceMatrix[i].length; j++)
+      {
+         totalDiffs[i] += differenceMatrix[i][j];
+      }
+   }
+
+   // Find which sequence is most similar to all the other sequences
+   var lowestDiff = 1000000;
+   var representative = -1;
+   for(var i=0; i&lt;nSeqs; i++)
+   {
+      if(totalDiffs[i] &lt; lowestDiff)
+      {
+         lowestDiff = totalDiffs[i];
+         representative = i;
+      }
+   }
+
+   return(representative);
+}
+
+// ---------------------------------------------------------------------
+/**
+Takes an array of sequence indexes, the index of a reference sequence
+and the difference matrix between all sequences. It then returns an
+array of sequence indexes for all the sequences most similar to the
+reference sequence
+
+@param  {int[]}    sequenceIndexes   Indexes of a set of sequences to search
+@param  {int}      refSeq            Index of the sequence to compare with
+@param  {int-2DArray}  differenceMatrix  differences between sequences
+@eturns {int[]}                      Indexes of the sequences closest to
+                                     the reference sequence
+
+- 04.06.14 Original    By: ACRM
+*/
+function JSAV_findClosestSequences(sequenceIndexes, refSeq, differenceMatrix)
+{
+   var closestSequences = [];
+   var smallestDifference = 1000000;
+
+   for(var i=0; i&lt;sequenceIndexes.length; i++)
+   {
+      // Find the difference between the specified reference sequence
+      var thisDifference =
+         differenceMatrix[sequenceIndexes[i]][refSeq]; 
+      if(thisDifference &lt; smallestDifference)
+      {
+         smallestDifference = thisDifference;
+         closestSequences = [];
+         closestSequences.push(sequenceIndexes[i]);
+      }
+      else if(thisDifference == smallestDifference)
+      {
+         closestSequences.push(sequenceIndexes[i]);
+      }
+   }
+   
+   return(closestSequences);
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Sorts an array of sequence objects to group similar sequences together.
+The sorting method chooses a representative sequence (one
+which is most similar to all the other sequences) placing that first
+in the list. To add to the sorted list, it iteratively chooses the
+sequences that are most similar to the last one in the list and, of
+those chooses the sequence most similar to the representative
+sequence
+
+@param   {object[]}   sequences   Array of sequence objects
+@param   {int}        start       Offset of start of region to sort
+@param   {int}        stop        Offset of end of region to sort
+@returns {object[]}               Sorted array of sequence objects
+
+- 29.05.14 Original   By: ACRM
+- 04.06.14 Added ignoreEnds (true) to JSAV_calcDifferenceMatrix() call
+         Range version
+*/
+function JSAV_sortSequences(sequences, start, stop)
+{
+   var sortedSequences = [];
+   var sortedIndexes   = [];
+   var nSeqs           = sequences.length;
+   var ignoreEnds      = false;
+
+   // If the start or stop is specified as -1, or we are looking at the
+   // whole sequence, then ignore missing residues at the ends during 
+   // the sort
+
+   if((start &lt; 0) || (stop &lt; 0) ||
+      ((start == 0) &amp;&amp; (stop == (sequences[0].sequence.length - 1))))
+   {
+      ignoreEnds = true;
+   }
+
+   // Initialize array of sequences that have been used in the sorted 
+   // output
+   var used = [];
+   for(var i=0; i&lt;nSeqs; i++)
+   {
+      used[i] = 0;
+   }
+
+   // Choose a representative sequence for the top of the list
+   var differenceMatrix = JSAV_calcDifferenceMatrix(sequences, start, stop, ignoreEnds);
+   var representative   = JSAV_chooseRepresentative(differenceMatrix);
+   sortedIndexes[0]     = representative;
+   used[representative] = 1;
+   var nSortedSeqs      = 1;
+
+   while(nSortedSeqs &lt; nSeqs)
+   {
+      // Initialize array of sequence IDs to contain all unused sequences
+      var unusedSequences = [];
+      for(var i=0; i&lt;nSeqs; i++)
+      {
+         if(!used[i])
+         {
+            unusedSequences.push(i);
+         }
+      }
+      
+      // Find the sequnces which are closest to the last sequence in the
+      // sorted list
+      var closestSequencesToLast = 
+         JSAV_findClosestSequences(unusedSequences, sortedIndexes[nSortedSeqs-1], differenceMatrix);
+
+      // Of the sequences most similar to the last one in the sorted
+      // list, find the ones most similar to the representative sequence
+      var closestSequencesToReference = 
+         JSAV_findClosestSequences(closestSequencesToLast, sortedIndexes[0], differenceMatrix);
+
+      // Take the first of these as the next sequence in the sorted list
+      var mostSimilar = closestSequencesToReference[0];
+      sortedIndexes[nSortedSeqs++] = mostSimilar;
+      used[mostSimilar] = 1;
+   }
+
+   // Finally copy across the sequences in sorted order
+   for(var i=0; i&lt;nSeqs; i++)
+   {
+      sortedSequences[i] = sequences[sortedIndexes[i]];
+   }
+
+   return(sortedSequences);
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Takes an array of sequence objects and generates a 2D difference
+matrix. This contains the number of differences between each pair
+of sequences
+
+@param  {object[]}  sequences    Array of sequence objects
+@param  {BOOL}      ignoreEnds   Ignore insert characters at
+                                 ends of sequences
+@param  {int}       start        Offset of start of region to sort
+@param  {int}       stop         Offset of end of region to sort
+@eturns {int-2DArray}                Differences between each pair
+                                 of sequences
+
+- 29.05.14 Original   By: ACRM
+- 04.06.14 Added ignoreEnds handling
+         Range version
+*/
+function JSAV_calcDifferenceMatrix(sequences, start, stop, ignoreEnds)
+{
+   var nSeq = sequences.length;
+
+   var differenceMatrix = createArray(nSeq, nSeq);
+   for(var i=0; i&lt;nSeq; i++)
+   {
+      for(var j=0; j&lt;nSeq; j++)
+      {
+         differenceMatrix[i][j] =
+         JSAV_calcDifference(sequences[i].sequence, sequences[j].sequence, start, stop, ignoreEnds);
+      }
+   }
+   return(differenceMatrix);
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Takes two sequences as strings and calculates the number of 
+differences between them (effectively the Hamming distance).
+If ignoreEnds is specified then don't include gap characters at 
+the ends of the sequences
+
+@param   {string} seq1        Sequence string
+@param   {string} seq2        Sequence string
+@param   {int}    regionStart Offset of start of region to sort
+@param   {int}    regionStop  Offset of end of region to sort
+@param   {BOOL}   ignoreEnds  Ignore gaps at the end of the sequences
+                              in calculating differences
+@returns {int}                Number of differences between the sequences
+
+- 29.05.14 Original  By: ACRM
+- 04.06.14 Added ignoreEnds handling
+         Created this Range version
+*/
+function JSAV_calcDifference(seq1, seq2, regionStart, regionStop, ignoreEnds)
+{
+   var seqArray1   = [];seq1.substring(regionStart, regionStop+1).split("");
+   var seqArray2   = [];
+
+   if((regionStart &lt; 0) || (regionStop &lt; 0))
+   {
+      seqArray1 = seq1.split("");
+      seqArray2 = seq2.split("");
+   }
+   else
+   {
+      seqArray1 = seq1.substring(regionStart, regionStop+1).split("");
+      seqArray2 = seq2.substring(regionStart, regionStop+1).split("");
+   }
+
+   var differences = 0;
+
+   var seqLen = Math.max(seqArray1.length, seqArray2.length);
+
+   var start = 0;
+   var stop  = seqLen - 1;
+   
+   if(ignoreEnds)
+   {
+      // Find the offsets of the first and last real residue in the sequences
+      var seq1Ends = JSAV_FindRealSequenceEnds(seqArray1);
+      var seq2Ends = JSAV_FindRealSequenceEnds(seqArray2);
+
+      start = Math.max(seq1Ends[0], seq2Ends[0]);
+      stop  = Math.min(seq1Ends[1], seq2Ends[1]);
+   }
+
+   for(var i=start; i&lt;=stop; i++)
+   {
+      if(seqArray1[i] != seqArray2[i])
+      {
+         differences++;
+      }
+   }
+   return(differences);
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Sorts a set of sequences and refreshes the display in a div with
+the specified ID - the idea is that the unsorted sequences would
+be displayed here and then this is tied to the action on a button
+that sorts and refreshes the display
+
+@param {char}     divId      ID of an HTML &lt;div>
+@param {object[]} sequences  Array of sequence objects
+
+- 29.05.14 Original   By: ACRM
+*/
+function JSAV_sortAndRefreshSequences(divId, sequences)
+{
+   var id = divId + "_JSAVStart";
+
+   var range=JSAV_getRange(divId);
+   var sortedSequences = JSAV_sortSequences(sequences, range[0], range[1]);
+
+   var html = JSAV_buildSequencesHTML(divId, sortedSequences);
+   var element = document.getElementById(divId + "_sortable");
+   element.innerHTML = html;
+   JSAV_highlightRange(divId, sequences[0].sequence.length, range[0], range[1]);
+
+   return(false);
+}
+
+// ---------------------------------------------------------------------
+/**
+Highlights a range of residues in the main sequence display table.
+The special marker row is used for this and we simply alter the
+class to pick up the appropriate colour for the cells from CSS
+
+@param {string}    divId   Identifier for the display div
+@param {int}       seqLen  Length of the alignment
+@param {int}       start   Offset of first residue to be
+                           highlighted (0-based)
+@param {int}       stop    Offset of last residue to be
+                           highlighted (0-based)
+
+- 06.06.14  Original   By: ACRM
+*/
+function JSAV_highlightRange(divId, seqLen, start, stop)
+{
+   for(var i=0; i&lt;seqLen; i++)
+   {
+       var id = divId + "_JSAVMarker" + i;
+       document.getElementById(id).className = 'unhighlighted';
+   }
+   if((start >= 0) &amp;&amp; (stop >= 0))
+   {
+      for(var i=start; i&lt;=stop; i++)
+      {
+          var id = divId + "_JSAVMarker" + i;
+          document.getElementById(id).className = 'highlighted';
+      }
+   }
+}
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#createArray">createArray</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildSlider">JSAV_buildSlider</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_highlightRange">JSAV_highlightRange</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Fri Jun 06 2014 16:54:35 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+/* .JSAV {padding: 2ex 1in;
+         border: 2px solid green;}
+*/
+.JSAV table {border-collapse: collapse;
+                border-top: 3px solid black;}
+.JSAV tr    {padding: 0;
+                border-left: 3px solid black;
+                border-right: 3px solid black;
+                margin: 0}
+.JSAV td    {padding: 1px;
+                margin: 0;
+                font: 10pt courier,monospaced;}
+.JSAV th    {padding: 1px;
+                margin: 0;
+                font: bold 10pt courier,monospaced;}
+.JSAV .toprow {border-bottom: 3px solid black;
+                 border-left: 0px solid white;
+                 border-right: 0px solid white;
+                 border-top: 0px solid white;
+                  margin: 0 0 1px 0;}
+.JSAV .bottomrow {border-top: 3px solid black;
+                 border-left: 3px solid #AAAAAA;
+                 border-right: 3px solid #AAAAAA;
+                 border-bottom: 3px solid #AAAAAA;
+                  margin: 0 0 1px 0;}
+.JSAV .titleCell {border-right: 3px solid #AAAAAA;}
+.JSAV .unhighlighted {background-color: #FFFFFF;}
+.JSAV .highlighted {background-color: #AAAAAA;}
+
+.JSAV a:link {color:#000000; text-decoration:none;}
+.JSAV a:visited {color:#000000; text-decoration:none;}
+.JSAV a:hover {color:#FF0000; text-decoration:none;}
+.JSAV a:active {color:#000000; text-decoration:none;}
+.JSAV input[type=checkbox]
+{
+  /* Mini Checkboxes */
+  -ms-transform: scale(0.6); /* IE */
+  -moz-transform: scale(0.6); /* FF */
+  -webkit-transform: scale(0.6); /* Safari and Chrome */
+  -o-transform: scale(0.6); /* Opera */
+  padding: 0px;
+  margin: -3px;
+}
+
+
+.JSAV .aaA {background-color: #CCFF00; color: #000000}
+.JSAV .aaG {background-color: #FF9900; color: #000000}
+.JSAV .aaP {background-color: #FFCC00; color: #000000}
+
+.JSAV .aaC {background-color: #FFFF00; color: #000000}
+.JSAV .aaM {background-color: #00FF00; color: #000000}
+
+.JSAV .aaD {background-color: #FF0000; color: #000000}
+.JSAV .aaE {background-color: #FF0066; color: #000000}
+
+.JSAV .aaF {background-color: #00FF66; color: #000000}
+.JSAV .aaW {background-color: #00CCFF; color: #000000}
+.JSAV .aaY {background-color: #00FFCC; color: #000000}
+
+.JSAV .aaH {background-color: #0066FF; color: #000000}
+.JSAV .aaK {background-color: #0000FF; color: #000000}
+.JSAV .aaR {background-color: #0000FF; color: #000000}
+
+.JSAV .aaI {background-color: #66FF00; color: #000000}
+.JSAV .aaL {background-color: #33FF00; color: #000000}
+.JSAV .aaV {background-color: #99FF00; color: #000000}
+
+.JSAV .aaN {background-color: #CC00FF; color: #000000}
+.JSAV .aaQ {background-color: #FF00CC; color: #000000}
+.JSAV .aaS {background-color: #FF3300; color: #000000}
+.JSAV .aaT {background-color: #FF6600; color: #000000}
+
