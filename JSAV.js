@@ -76,11 +76,13 @@ options are as follows:
 - 10.06.14 sortable and width parameters now replaced by 'options'
            Added 'selectable' option
            Stores sequence length in global array
+- 11.06.14 Added deletable
 */
 function printJSAV(divId, sequences, inOptions)
 {
    var options = Array();
 
+   // Deal with options
    if(inOptions == undefined)
    {
       options.width = "400px";
@@ -93,6 +95,9 @@ function printJSAV(divId, sequences, inOptions)
           options.width = "400px";
       }
    }
+
+   // Initialize globals if not yet done
+   JSAV_init();
 
    gSequences[divId] = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
@@ -119,11 +124,43 @@ function printJSAV(divId, sequences, inOptions)
 
       document.writeln("</form>");
    }
+
+   if(options.selectable && options.deletable)
+   {
+      JSAV_buildDelete(divId);
+   }
+
    document.writeln("</div>");
 
 
 //   JSAV_modifyCSS(divId);
 }
+
+function JSAV_buildDelete(divId)
+{
+   var html = "<button type='button' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
+   document.writeln(html);
+}
+
+function JSAV_deleteSelectedSequences(divId)
+{
+   alert("Delete!");
+}
+
+function JSAV_selectAllOrNone(divId)
+{
+   var tag = "#" + divId + "_AllNone";
+
+   if($(tag).prop('checked'))
+   {
+       JSAV_selectAll(divId);
+   }
+   else
+   {
+       JSAV_unselectAll(divId);
+   }
+}
+
 
 function JSAV_selectAll(divId)
 {
@@ -185,12 +222,12 @@ function JSAV_buildASequenceHTML(id, sequence, selectable)
    var tableLineArray = sequence.split("");
 
    var tableLine = "<tr id='" + id + "'>";
-   tableLine += "<td class='titleCell'>" + id + "</td>";
+   tableLine += "<th class='titleCell'>" + id + "</th>";
 
    if(selectable)
    {
       var name = "select_" + id;
-      tableLine += "<td class='selectCell'><input type='checkbox' name='" + name + "' /></td>";
+      tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
    }
 
    var nResidues = tableLineArray.length;
@@ -326,6 +363,11 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
    html += "<div class='JSAV'>\n";
    html += "<table border='0'>\n";
 
+   if(selectable)
+   {
+      html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
+   }
+
    for(var i=0; i<sequences.length; i++)
    {
       html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
@@ -338,6 +380,21 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
 
    html += "</table>\n";
    html += "</div>\n";
+   return(html);
+}
+
+// ---------------------------------------------------------------------
+function JSAV_buildSelectAllHTML(divId, seqLen)
+{
+   var html;
+   var id = divId + "_AllNone";
+
+   html = "<tr><th>All/None</th><th><input id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
+   for(var i=0; i<seqLen; i++)
+   {
+      html += "<td></td>";
+   }
+   html += "</tr>";
    return(html);
 }
 
@@ -358,8 +415,8 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 
     if(selectable)
     {
-        html += "<tr class='bottomrow'><td>Sort Region:</td>";
-        html += "<td class='selectCell'></td>";
+        html += "<tr class='bottomrow'><th>Sort Region:</th>";
+        html += "<th class='selectCell'></th>";
     }
     else
     {
@@ -776,11 +833,21 @@ function JSAV_highlightRange(divId, seqLen, start, stop)
    }
 }
 
-function initJSAV()
+function JSAV_init()
 {
    // Indexed by divId and used to store the values
-   gSequences = Array();
-   gSequenceLengths = Array();
-   gStartPos = Array();
-   gStopPos  = Array();
+   try
+   {
+       if(gSequences == undefined)
+       {
+           ;
+       }
+   }
+   catch(err)
+   {
+       gSequences = Array();
+       gSequenceLengths = Array();
+       gStartPos = Array();
+       gStopPos  = Array();
+   }
 }
