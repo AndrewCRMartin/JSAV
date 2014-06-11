@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.0 06.06.14
+    JSAV V1.1 06.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.0
-   Date:       06.06.14
+   Version:    V1.1
+   Date:       10.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
@@ -35,6 +35,7 @@
    Revision History:
    =================
    V1.0   06.06.14   Original  By: ACRM
+   V1.1   10.06.14   Code cleanup
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
@@ -188,6 +189,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 @param {null}      ui           Must be set to null
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant .closest() from finding parent
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -207,7 +209,7 @@ function JSAV_showRange(eventOrId, ui)
    }
    else
    {
-      var id = $(this).closest('div').parent().attr("id");
+      var id = $(this).parent().attr("id");
       var tag = "#" + id + "_showrange";
 
       // Get the values out of the slider
@@ -505,7 +507,7 @@ function JSAV_sortSequences(sequences, start, stop)
          }
       }
       
-      // Find the sequnces which are closest to the last sequence in the
+      // Find the sequences which are closest to the last sequence in the
       // sorted list
       var closestSequencesToLast = 
          JSAV_findClosestSequences(unusedSequences, sortedIndexes[nSortedSeqs-1], differenceMatrix);
