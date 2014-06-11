@@ -144,7 +144,23 @@ function JSAV_buildDelete(divId)
 
 function JSAV_deleteSelectedSequences(divId)
 {
-   alert("Delete!");
+    var count = 0;
+    // Find the selected sequences
+    var tag = "#" + divId + " .selectCell input";
+    $(tag).each(function(index) {
+        if($(this).prop('checked'))
+        {
+            count++;
+        }
+    });
+    var message = "Delete " + count + " selected sequences?";
+    if(confirm(message))
+    {
+        alert("Deleting!");
+    }
+
+    // Run through the global sequence array deleting the selected objects
+
 }
 
 function JSAV_selectAllOrNone(divId)
