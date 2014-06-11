@@ -36,6 +36,10 @@
    =================
    V1.0   06.06.14   Original  By: ACRM
    V1.1   10.06.14   Code cleanup
+                     Changed options to a hash
+                     Further code cleanup - some code was assuming
+                     sequences were stored in an array called 'sequences'
+                     Added 'selectable' option
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
@@ -51,41 +55,98 @@ Where 'mySeqDisplay' is the name of a div that will be created
 
 @param {object[]}  sequences -  Array of sequence objects
 @param {string}    divId     - ID of div to print in
+@param {object}    inOptions - options (see below)
+
 @param {bool}      sortable  - Should the sorting options be displayed
 @param {string}    width     - The width of the selection slider with
                               units (e.g. '400px')
+
+options are as follows:
+@param {bool}      sortable  -  Should the sorting options be displayed
+                                (default: false)
+@param {string}    width     -  The width of the selection slider with
+                                units (default: '400px')
+@param {bool}      selectable - Should selection checkboxes be displayed
+                                for each sequence
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
 - 05.06.14 Added divId parameter and sortable
 - 06.06.14 Added width
+- 10.06.14 sortable and width parameters now replaced by 'options'
+           Added 'selectable' option
+           Stores sequence length in global array
 */
-function printJSAV(divId, sequences, sortable, width)
+function printJSAV(divId, sequences, inOptions)
 {
+   var options = Array();
+
+   if(inOptions == undefined)
+   {
+      options.width = "400px";
+   }
+   else
+   {
+      options = inOptions;
+      if(options.width == undefined)
+      {
+          options.width = "400px";
+      }
+   }
+
+   gSequences[divId] = sequences;
+   gSequenceLengths[divId] = sequences[0].sequence.length;
+
    document.writeln("<div id='" + divId + "'>");
 
    document.writeln("<div id='" + divId + "_sortable'>");
-   var html = JSAV_buildSequencesHTML(divId, sequences);
+   var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, options.selectable);
    document.write(html);
    document.writeln("</div>");
 
-   if(sortable)
+   if(options.sortable)
    {
       var start = 1;
-      var stop  = sequences[0].sequence.length;
+      var stop  = gSequenceLengths[divId];
 
       document.writeln("<p></p>");
 
-      JSAV_buildSlider(divId, stop, width);
+      JSAV_buildSlider(divId, stop, options.width);
 
       document.writeln("<form>");
-      var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", sequences)'>Sort</button>";
+      var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ")'>Sort</button>";
       document.writeln(html);
+
       document.writeln("</form>");
    }
    document.writeln("</div>");
+
+
+//   JSAV_modifyCSS(divId);
 }
 
+function JSAV_selectAll(divId)
+{
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).prop('checked', true);
+}
+
+function JSAV_unselectAll(divId)
+{
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).prop('checked', false);
+}
+
+function JSAV_modifyCSS(divId)
+{
+    var selector = "#" + divId + " .JSAV table";
+    $(selector).css("border-collapse", "separate");
+    $(selector).css("border-spacing", "1px");
+
+//    var selector = "#" + divId + " .JSAV .titleCell";
+//    $(selector).css("border-right", "none");
+
+}
 
 // ---------------------------------------------------------------------
 /**
@@ -101,7 +162,7 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
 */
 function JSAV_printASequence(id, sequence)
 {
-   var html  = JSAV_buildASequenceHTML(id, sequence);
+   var html  = JSAV_buildASequenceHTML(id, sequence, false);
    document.write(html);
 }
 
@@ -114,16 +175,23 @@ separate <td> tag with a class to indicate the amino acid type
 
 @param {string}   id         The identifier
 @param {string}   sequence   A string containing the sequence
+@param {bool}     selectable Display a selection checkbox
 @returns {string} text       HTML snippet
 
 - 30.05.14 Original  By: ACRM
 */
-function JSAV_buildASequenceHTML(id, sequence)
+function JSAV_buildASequenceHTML(id, sequence, selectable)
 {
    var tableLineArray = sequence.split("");
 
    var tableLine = "<tr id='" + id + "'>";
    tableLine += "<td class='titleCell'>" + id + "</td>";
+
+   if(selectable)
+   {
+      var name = "select_" + id;
+      tableLine += "<td class='selectCell'><input type='checkbox' name='" + name + "' /></td>";
+   }
 
    var nResidues = tableLineArray.length;
    for(var i=0; i<nResidues; i++)
@@ -147,12 +215,12 @@ i.e. the whole sequence length
 @param {string}   width   The width of the slider
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant variable and changed divs to spans
 */
 function JSAV_buildSlider(divId, seqLen, width)
 {
-   var html = "<div id='" + divId + "_slider'></div>";
-   document.writeln(html);
    document.writeln("<span id='" + divId + "_showrange'></span>");
+   document.writeln("<span id='" + divId + "_slider'></span>");
 
    var id = divId + "_slider";
    var tag = "#" + id;
@@ -169,9 +237,7 @@ function JSAV_buildSlider(divId, seqLen, width)
          slide: JSAV_showRange
    });
 
-   gStartPos = Array();
-   gStopPos  = Array();
-
+   // Initial display of the range
    JSAV_showRange(divId);
 }
 
@@ -190,6 +256,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
+- BUG - this assumes the sequences are stored in an array called 'sequences'!
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -205,7 +272,7 @@ function JSAV_showRange(eventOrId, ui)
       tag = "#" + eventOrId + "_showrange";
       var html = "Sort from: " + gStartPos[eventOrId] + " to: " + gStopPos[eventOrId];
       $(tag).text(html);
-      JSAV_highlightRange(eventOrId, sequences[0].sequence.length, gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
+      JSAV_highlightRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
    }
    else
    {
@@ -219,7 +286,7 @@ function JSAV_showRange(eventOrId, ui)
       // Display the range currently selected
       var html = "Sort from: " + gStartPos[id] + " to: " + gStopPos[id];
       $(tag).text(html);
-      JSAV_highlightRange(id, sequences[0].sequence.length, gStartPos[id]-1, gStopPos[id]-1);
+      JSAV_highlightRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
    }
 }
 
@@ -245,12 +312,15 @@ Takes an array of sequence objects and builds the HTML to display
 them as a coloured table
 
 @param   {object[]}   sequences   Array of sequence objects
+@param   {bool}       sortable    Should the marker line be displayed
+                                  for sortable displays
 @returns {string}                 HTML
 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
+- 10.06.14 Added sortable and selectable parameters
 */
-function JSAV_buildSequencesHTML(divId, sequences)
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
 {
    var html = "";
    html += "<div class='JSAV'>\n";
@@ -258,10 +328,13 @@ function JSAV_buildSequencesHTML(divId, sequences)
 
    for(var i=0; i<sequences.length; i++)
    {
-      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence) + "\n";
+      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
    }
 
-   html += JSAV_buildMarkerHTML(divId, sequences[0].sequence.length);
+   if(sortable)
+   {
+      html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], selectable);
+   }
 
    html += "</table>\n";
    html += "</div>\n";
@@ -277,11 +350,22 @@ residues to be used for sorting
 @param {int}      seqLen   Length of sequences alignement
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Added 'selectable'
 */
-function JSAV_buildMarkerHTML(divId, seqLen)
+function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
     var html = "";
-    html += "<tr class='bottomrow'><td class='titleCell'>Sort Region:</td>";
+
+    if(selectable)
+    {
+        html += "<tr class='bottomrow'><td>Sort Region:</td>";
+        html += "<td class='selectCell'></td>";
+    }
+    else
+    {
+        html += "<tr class='bottomrow'><td class='titleCell'>Sort Region:</td>";
+    }
+
     for(var i=0; i<seqLen; i++)
     {
         var id = divId + "_JSAVMarker" + i;
@@ -636,24 +720,26 @@ function JSAV_calcDifference(seq1, seq2, regionStart, regionStop, ignoreEnds)
 Sorts a set of sequences and refreshes the display in a div with
 the specified ID - the idea is that the unsorted sequences would
 be displayed here and then this is tied to the action on a button
-that sorts and refreshes the display
+that sorts and refreshes the display.
 
-@param {char}     divId      ID of an HTML <div>
-@param {object[]} sequences  Array of sequence objects
+@param {char}  divId        ID of an HTML <div>
+@param {bool}  sortable     Is the display sortable
+@param {bool}  selectable   Are checkboxes shown next to sequences
 
 - 29.05.14 Original   By: ACRM
+- 11.06.14 sequences is now global
 */
-function JSAV_sortAndRefreshSequences(divId, sequences)
+function JSAV_sortAndRefreshSequences(divId, sortable, selectable)
 {
    var id = divId + "_JSAVStart";
 
    var range=JSAV_getRange(divId);
-   var sortedSequences = JSAV_sortSequences(sequences, range[0], range[1]);
+   var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
-   var html = JSAV_buildSequencesHTML(divId, sortedSequences);
+   var html = JSAV_buildSequencesHTML(divId, sortedSequences, sortable, selectable);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
-   JSAV_highlightRange(divId, sequences[0].sequence.length, range[0], range[1]);
+   JSAV_highlightRange(divId, gSequenceLengths[divId], range[0], range[1]);
 
    return(false);
 }
@@ -690,3 +776,11 @@ function JSAV_highlightRange(divId, seqLen, start, stop)
    }
 }
 
+function initJSAV()
+{
+   // Indexed by divId and used to store the values
+   gSequences = Array();
+   gSequenceLengths = Array();
+   gStartPos = Array();
+   gStopPos  = Array();
+}
