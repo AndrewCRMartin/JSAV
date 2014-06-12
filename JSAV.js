@@ -99,6 +99,7 @@ function printJSAV(divId, sequences, inOptions)
    // Initialize globals if not yet done
    JSAV_init();
 
+   gOptions[divId] = options;
    gSequences[divId] = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
 
@@ -147,22 +148,43 @@ function JSAV_buildDelete(divId)
 function JSAV_deleteSelectedSequences(divId)
 {
     var count = 0;
+    var toDelete = Array();
     // Find the selected sequences
     var tag = "#" + divId + " .selectCell input";
     $(tag).each(function(index) {
         if($(this).prop('checked'))
         {
+            var id = $(this).parent().parent().attr('id');
+            toDelete.push(id);
             count++;
         }
     });
     var message = "Delete " + count + " selected sequences?";
     if(confirm(message))
     {
-        alert("Deleting!");
+        for(var i=0; i<toDelete.length; i++)
+        {
+            ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+        }
     }
+
+    var options = gOptions[divId];
+    JSAV_Refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId], gStopPos[divId]);
 
     // Run through the global sequence array deleting the selected objects
 
+}
+
+function ACRM_deleteItemByLabel(label, id, array)
+{
+    for(var i=0; i<array.length; i++)
+    {
+       if(array[i][label] == id)
+       {
+           array.splice(i,1);
+           break;
+       }
+    }
 }
 
 function JSAV_selectAllOrNone(divId)
@@ -491,15 +513,15 @@ General purpose function to create a multi-dimensional array
 @returns {array}                  (multi-dimensional) Array
 
 Usage:
-createArray();     // [] or new Array()
-createArray(2);    // new Array(2)
-createArray(3, 2); // [new Array(2),
+ACRM_createArray();     // [] or new Array()
+ACRM_createArray(2);    // new Array(2)
+ACRM_createArray(3, 2); // [new Array(2),
                    //  new Array(2),
                    //  new Array(2)]
 
 - 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
 */
-function createArray(length) 
+function ACRM_createArray(length) 
 {
     var arr = new Array(length || 0),
         i = length;
@@ -507,7 +529,7 @@ function createArray(length)
     if (arguments.length > 1) 
     {
         var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+        while(i--) arr[length-1 - i] = ACRM_createArray.apply(this, args);
     }
 
     return arr;
@@ -712,7 +734,7 @@ function JSAV_calcDifferenceMatrix(sequences, start, stop, ignoreEnds)
 {
    var nSeq = sequences.length;
 
-   var differenceMatrix = createArray(nSeq, nSeq);
+   var differenceMatrix = ACRM_createArray(nSeq, nSeq);
    for(var i=0; i<nSeq; i++)
    {
       for(var j=0; j<nSeq; j++)
@@ -809,7 +831,15 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
    var range=JSAV_getRange(divId);
    var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
-   var html = JSAV_buildSequencesHTML(divId, sortedSequences, sortable, selectable);
+   JSAV_Refresh(divId, sortedSequences, sortable, selectable, border, range);
+
+   return(false);
+}
+
+
+function JSAV_Refresh(divId, sequences, sortable, selectable, border, range)
+{
+   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    if(border)
@@ -817,8 +847,6 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
        JSAV_modifyCSS(divId);
    }
    JSAV_highlightRange(divId, gSequenceLengths[divId], range[0], range[1]);
-
-   return(false);
 }
 
 // ---------------------------------------------------------------------
@@ -866,6 +894,7 @@ function JSAV_init()
    catch(err)
    {
        gSequences = Array();
+       gOptions   = Array();
        gSequenceLengths = Array();
        gStartPos = Array();
        gStopPos  = Array();
