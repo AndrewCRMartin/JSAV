@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.1 06.06.14
+    JSAV V1.1 12.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -9,7 +9,7 @@
    File:       JSAV.js
    
    Version:    V1.1
-   Date:       10.06.14
+   Date:       12.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
@@ -40,6 +40,8 @@
                      Further code cleanup - some code was assuming
                      sequences were stored in an array called 'sequences'
                      Added 'selectable' option
+          12.06.14   Added 'deletable' and 'border' options
+                     Implemented sequence deletion
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
@@ -109,6 +111,7 @@ function printJSAV(divId, sequences, inOptions)
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, options.selectable);
    document.write(html);
    document.writeln("</div>");
+   document.writeln("<form>");
 
    if(options.sortable)
    {
@@ -119,11 +122,9 @@ function printJSAV(divId, sequences, inOptions)
 
       JSAV_buildSlider(divId, stop, options.width);
 
-      document.writeln("<form>");
       var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       document.writeln(html);
 
-      document.writeln("</form>");
    }
 
    if(options.selectable && options.deletable)
@@ -131,6 +132,7 @@ function printJSAV(divId, sequences, inOptions)
       JSAV_buildDelete(divId);
    }
 
+   document.writeln("</form>");
    document.writeln("</div>");
 
    if(options.border)
@@ -139,12 +141,14 @@ function printJSAV(divId, sequences, inOptions)
    }
 }
 
+// ---------------------------------------------------------------------
 function JSAV_buildDelete(divId)
 {
    var html = "<button type='button' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
    document.writeln(html);
 }
 
+// ---------------------------------------------------------------------
 function JSAV_deleteSelectedSequences(divId)
 {
     var count = 0;
@@ -159,22 +163,29 @@ function JSAV_deleteSelectedSequences(divId)
             count++;
         }
     });
-    var message = "Delete " + count + " selected sequences?";
-    if(confirm(message))
+
+    if(count == gSequences[divId].length)
     {
-        for(var i=0; i<toDelete.length; i++)
-        {
-            ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
-        }
+        alert("You can't delete all the sequences!");
     }
+    else
+    {
+        var message = "Delete " + count + " selected sequences?";
+        if(confirm(message))
+        {
+            // Run through the global sequence array deleting the selected objects
+            for(var i=0; i<toDelete.length; i++)
+            {
+                ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+            }
+        }
 
-    var options = gOptions[divId];
-    JSAV_Refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId], gStopPos[divId]);
-
-    // Run through the global sequence array deleting the selected objects
-
+        var options = gOptions[divId];
+        JSAV_Refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1);
+    }
 }
 
+// ---------------------------------------------------------------------
 function ACRM_deleteItemByLabel(label, id, array)
 {
     for(var i=0; i<array.length; i++)
@@ -187,6 +198,7 @@ function ACRM_deleteItemByLabel(label, id, array)
     }
 }
 
+// ---------------------------------------------------------------------
 function JSAV_selectAllOrNone(divId)
 {
    var tag = "#" + divId + "_AllNone";
@@ -202,25 +214,25 @@ function JSAV_selectAllOrNone(divId)
 }
 
 
+// ---------------------------------------------------------------------
 function JSAV_selectAll(divId)
 {
    var tag = "#" + divId + " .selectCell input";
    $(tag).prop('checked', true);
 }
 
+// ---------------------------------------------------------------------
 function JSAV_unselectAll(divId)
 {
    var tag = "#" + divId + " .selectCell input";
    $(tag).prop('checked', false);
 }
 
+// ---------------------------------------------------------------------
 function JSAV_modifyCSS(divId)
 {
     var selector = "#" + divId + " .JSAV td";
     $(selector).css("border", "1px solid white");
-
-//    selector = "#" + divId + " .JSAV .bottomrow tr";
-//    $(selector).css("border-right", "1px solid black");
 }
 
 // ---------------------------------------------------------------------
@@ -351,7 +363,7 @@ function JSAV_showRange(eventOrId, ui)
    }
    else
    {
-      var id = $(this).parent().attr("id");
+      var id = $(this).parent().parent().attr("id");
       var tag = "#" + id + "_showrange";
 
       // Get the values out of the slider
@@ -831,13 +843,14 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
    var range=JSAV_getRange(divId);
    var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
-   JSAV_Refresh(divId, sortedSequences, sortable, selectable, border, range);
+   JSAV_Refresh(divId, sortedSequences, sortable, selectable, border, range[0], range[1]);
 
    return(false);
 }
 
 
-function JSAV_Refresh(divId, sequences, sortable, selectable, border, range)
+// ---------------------------------------------------------------------
+function JSAV_Refresh(divId, sequences, sortable, selectable, border, start, stop)
 {
    var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable);
    var element = document.getElementById(divId + "_sortable");
@@ -846,7 +859,7 @@ function JSAV_Refresh(divId, sequences, sortable, selectable, border, range)
    {
        JSAV_modifyCSS(divId);
    }
-   JSAV_highlightRange(divId, gSequenceLengths[divId], range[0], range[1]);
+   JSAV_highlightRange(divId, gSequenceLengths[divId], start, stop);
 }
 
 // ---------------------------------------------------------------------
@@ -881,6 +894,7 @@ function JSAV_highlightRange(divId, seqLen, start, stop)
    }
 }
 
+// ---------------------------------------------------------------------
 function JSAV_init()
 {
    // Indexed by divId and used to store the values
