@@ -1,29 +1,25 @@
 /* .JSAV {padding: 2ex 1in;
          border: 2px solid green;}
 */
-.JSAV table {border-collapse: collapse;
-                border-top: 3px solid black;}
+.JSAV table {border-collapse: collapse;}
 .JSAV tr    {padding: 0;
-                border-left: 3px solid black;
-                border-right: 3px solid black;
                 margin: 0}
 .JSAV td    {padding: 1px;
                 margin: 0;
                 font: 10pt courier,monospaced;}
 .JSAV th    {padding: 1px;
                 margin: 0;
+                text-align: left;
                 font: bold 10pt courier,monospaced;}
-.JSAV .toprow {border-bottom: 3px solid black;
-                 border-left: 0px solid white;
-                 border-right: 0px solid white;
-                 border-top: 0px solid white;
+.JSAV .toprow td {border-bottom: 1px solid #AAAAAA;
                   margin: 0 0 1px 0;}
-.JSAV .bottomrow {border-top: 3px solid black;
-                 border-left: 3px solid #AAAAAA;
-                 border-right: 3px solid #AAAAAA;
-                 border-bottom: 3px solid #AAAAAA;
-                  margin: 0 0 1px 0;}
-.JSAV .titleCell {border-right: 3px solid #AAAAAA;}
+.JSAV .bottomrow td {border-top: 1px solid black;
+                     border-bottom: 1px solid black;
+                     margin: 0 0 1px 0;}
+.JSAV .bottomrow {border-right: 1px solid black;}
+.JSAV .titleCell {}
+.JSAV .selectCell {border-right: 1px solid black;}
+
 .JSAV .unhighlighted {background-color: #FFFFFF;}
 .JSAV .highlighted {background-color: #AAAAAA;}
 
