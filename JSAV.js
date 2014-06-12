@@ -119,7 +119,7 @@ function printJSAV(divId, sequences, inOptions)
       JSAV_buildSlider(divId, stop, options.width);
 
       document.writeln("<form>");
-      var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ")'>Sort</button>";
+      var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       document.writeln(html);
 
       document.writeln("</form>");
@@ -132,8 +132,10 @@ function printJSAV(divId, sequences, inOptions)
 
    document.writeln("</div>");
 
-
-//   JSAV_modifyCSS(divId);
+   if(options.border)
+   {
+       JSAV_modifyCSS(divId);
+   }
 }
 
 function JSAV_buildDelete(divId)
@@ -192,13 +194,11 @@ function JSAV_unselectAll(divId)
 
 function JSAV_modifyCSS(divId)
 {
-    var selector = "#" + divId + " .JSAV table";
-    $(selector).css("border-collapse", "separate");
-    $(selector).css("border-spacing", "1px");
+    var selector = "#" + divId + " .JSAV td";
+    $(selector).css("border", "1px solid white");
 
-//    var selector = "#" + divId + " .JSAV .titleCell";
-//    $(selector).css("border-right", "none");
-
+//    selector = "#" + divId + " .JSAV .bottomrow tr";
+//    $(selector).css("border-right", "1px solid black");
 }
 
 // ---------------------------------------------------------------------
@@ -802,7 +802,7 @@ that sorts and refreshes the display.
 - 29.05.14 Original   By: ACRM
 - 11.06.14 sequences is now global
 */
-function JSAV_sortAndRefreshSequences(divId, sortable, selectable)
+function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
    var id = divId + "_JSAVStart";
 
@@ -812,6 +812,10 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable)
    var html = JSAV_buildSequencesHTML(divId, sortedSequences, sortable, selectable);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
+   if(border)
+   {
+       JSAV_modifyCSS(divId);
+   }
    JSAV_highlightRange(divId, gSequenceLengths[divId], range[0], range[1]);
 
    return(false);

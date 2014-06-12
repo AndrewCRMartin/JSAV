@@ -8,24 +8,24 @@
 <script type='text/javascript' src='jquery-ui-1.10.4.custom.min.js'></script>
 
 <link href="JSAV.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV.min.js'></script>
+<script type='text/javascript' src='JSAV.js'></script>
 
 </head>
 
 <body>
 <script type='text/javascript'>
-var sequences = [];
+var MySeqs = [];
 
-sequences.push({ id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
-sequences.push({ id :"id1a.L",   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
-sequences.push({ id :"id2b1.L",  sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
-sequences.push({ id :"id2a.L",   sequence :"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY"});
-sequences.push({ id :"id2a1.L",  sequence :"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY"});
-sequences.push({ id :"id1.L",    sequence :"SASSSVNYMYACDEFGHIKLMNPQRSTVWY"});
-sequences.push({ id :"id1b.L",   sequence :"SASSSVNYMYACREFGHIKLMNPQRSTVWY"});
-sequences.push({ id :"id1a1.L",  sequence :"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY"});
-sequences.push({ id :"id2.L",    sequence :"SASSSCNYMTACDEHGHIKLMNP-RSTCWY"});
-sequences.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+MySeqs.push({ id :"id1a.L",   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2b1.L",  sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2a.L",   sequence :"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2a1.L",  sequence :"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY"});
+MySeqs.push({ id :"id1.L",    sequence :"SASSSVNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id1b.L",   sequence :"SASSSVNYMYACREFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id1a1.L",  sequence :"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2.L",    sequence :"SASSSCNYMTACDEHGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
 </script>
 
 <h1>JavaScript Sequence Alignment Viewer (JSAV)</h1>
@@ -39,7 +39,12 @@ sequences.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
 
 <p>Sequences are:</p>
 <script type='text/javascript'>
-printJSAV('sequenceDisplay', sequences, true, '400px');
+var MyOptions = Array();
+MyOptions.sortable = true;
+MyOptions.selectable = true;
+MyOptions.deletable = true;
+MyOptions.border = false;
+printJSAV('sequenceDisplay', MySeqs, MyOptions);
 </script>
 
 <p>Input to the JavaScript is simply an array of sequences in
@@ -49,11 +54,10 @@ sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"};
 </pre>
 <p>and the display and sorter is created with</p>
 <pre>
-printJSAV('sequenceDisplay', sequences, true, '400px');
+printJSAV('sequenceDisplay', sequences, options);
 sequenceDisplay - div in which to display the viewer
 sequences       - array of sequence objects
-true            - make it sortable
-400px           - size of the slider
+options         - an object describing options
 </pre>
 
 
