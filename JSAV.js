@@ -48,6 +48,7 @@
                      Cleaned up defaults in printJSAV
                      Changed some routine names
    V1.3   13.06.14   Added highlight option
+                     Added submit option
                      
 *************************************************************************/
 /**
@@ -60,6 +61,8 @@ var options = Array();
 options.width = '400px';
 options.sortable = true;
 options.highlight = [3,5,10,14];
+options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+options.submitLabel = "Submit sequences";
 printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
@@ -70,14 +73,16 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @param {object}    options   - options (see below)
 
 options are as follows:
-@param {bool}      sortable  -  Should the sorting options be displayed
-                                (default: false)
-@param {string}    width     -  The width of the selection slider with
-                                units (default: '400px')
-@param {bool}      selectable - Should selection checkboxes be displayed
-                                for each sequence
-@param {bool}      detetable  - Makes it possible to delete sequences
-@param {int[]}     highlight  - Array of ranges to highlight
+@param {bool}      sortable    - Should the sorting options be displayed
+                                 (default: false)
+@param {string}    width       - The width of the selection slider with
+                                 units (default: '400px')
+@param {bool}      selectable  - Should selection checkboxes be displayed
+                                 for each sequence
+@param {bool}      deletable   - Makes it possible to delete sequences
+@param {int[]}     highlight   - Array of ranges to highlight
+@param {string}    submit      - URL for submitting selected sequences
+@param {string}    submitLabel - Label for submit button
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -89,20 +94,14 @@ options are as follows:
 - 11.06.14 Added deletable
 - 13.06.14 Cleaned up use of defaults
 - 13.06.14 Added highlight
+- 13.04.14 Added submit
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
-   if(options == undefined)
-   {
-      options = Array();
-   }
-
-   // Set defaults
-   if(options.width == undefined)
-   {
-       options.width = "400px";
-   }
+   if(options == undefined)             { options = Array();                        }
+   if(options.width == undefined)       { options.width       = "400px";            }
+   if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences"; }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -118,7 +117,7 @@ function printJSAV(divId, sequences, options)
                                       options.selectable, options.highlight);
    document.write(html);
    document.writeln("</div>");
-   document.writeln("<form>");
+   document.writeln("<div>");
 
    if(options.sortable)
    {
@@ -139,7 +138,12 @@ function printJSAV(divId, sequences, options)
       JSAV_printDelete(divId);
    }
 
-   document.writeln("</form>");
+   if(options.submit != undefined)
+   {
+      JSAV_printSubmit(divId, options.submit, options.submitLabel);
+   }
+
+   document.writeln("</div>");
    document.writeln("</div>");
 
    if(options.border)
@@ -211,6 +215,50 @@ function JSAV_printDelete(divId)
 
 // ---------------------------------------------------------------------
 /**
+Prints the submit button
+
+@param {string}  divId   - The ID of the div to print in
+@param {string}  url     - URL to which we are submitting
+@param {string}  label   - Label for submit button
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_printSubmit(divId, url, label)
+{
+   var html = "<button type='button' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
+   document.writeln(html);
+
+   // Build a hidden sequences text box in the form to contain
+   var formId = divId + "_form"; 
+   var html = "<div style='display:none'><form id='" + formId + "' action='" + url + "' method='post'>";
+   var textId = divId + "_submit";
+   html += "<textarea id='" + textId + "' name='sequences'></textarea>";
+   html += "<input type='submit' />";
+   html += "</form></div>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+function JSAV_submitSequences(divId)
+{
+   var textTag = "textarea#" + divId + "_submit";
+   var sequenceText = "";
+   var sequences = gSequences[divId];
+   for(var i=0; i<sequences.length; i++)
+   {
+      sequenceText += ">" + sequences[i].id + "\n";
+      sequenceText += sequences[i].sequence + "\n";
+   }
+   $(textTag).text(sequenceText);
+
+   var formTag = "#" + divId + "_form";
+   $(formTag).submit();
+}
+
+// ---------------------------------------------------------------------
+/**
+
+
 Deletes a set of sequences that have been clicked
 
 @param {string}  divId   - The ID of the div to work in
