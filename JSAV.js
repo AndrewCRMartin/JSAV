@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.1 13.06.14
+    JSAV V1.2 13.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.1
-   Date:       12.06.14
+   Version:    V1.2
+   Date:       13.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
@@ -23,7 +23,7 @@
    EMail:      andrew@bioinf.org.uk
                
 **************************************************************************
-   This program is distributed under the GPL licence
+   This program is distributed under the Gnu Public licence (GPLv2)
    Alternative licences are available on request.
 **************************************************************************
    Description:
@@ -47,6 +47,7 @@
                      Cleaned up comments/documentation
                      Cleaned up defaults in printJSAV
                      Changed some routine names
+   V1.3   13.06.14   Added highlight option
                      
 *************************************************************************/
 /**
@@ -58,6 +59,7 @@ optionally with a slider and sort button, delete button, etc
 var options = Array();
 options.width = '400px';
 options.sortable = true;
+options.highlight = [3,5,10,14];
 printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
@@ -75,6 +77,7 @@ options are as follows:
 @param {bool}      selectable - Should selection checkboxes be displayed
                                 for each sequence
 @param {bool}      detetable  - Makes it possible to delete sequences
+@param {int[]}     highlight  - Array of ranges to highlight
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -85,6 +88,7 @@ options are as follows:
            Stores sequence length in global array
 - 11.06.14 Added deletable
 - 13.06.14 Cleaned up use of defaults
+- 13.06.14 Added highlight
 */
 function printJSAV(divId, sequences, options)
 {
@@ -110,7 +114,8 @@ function printJSAV(divId, sequences, options)
    document.writeln("<div id='" + divId + "'>");
 
    document.writeln("<div id='" + divId + "_sortable'>");
-   var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, options.selectable);
+   var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
+                                      options.selectable, options.highlight);
    document.write(html);
    document.writeln("</div>");
    document.writeln("<form>");
@@ -141,6 +146,53 @@ function printJSAV(divId, sequences, options)
    {
        JSAV_modifyCSS(divId);
    }
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Builds HTML for table rows that highlight a region in the alignment as
+being important (e.g. CDRs of antibodies). Note that ranges for highlighting
+count from zero.
+
+@param {string}  divId      - The div we are working in
+@param {int}     seqLen     - The length of the alignment
+@param {bool}    selectable - Are there sequences selection boxes
+@param {int[]}   highlight  - Array of residue ranges to highlight
+
+- 13.06.14   Original   By: ACRM
+*/
+function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
+{
+    var html = "";
+
+    if(selectable)
+    {
+        html += "<tr class='highlightrow'><th></th>";
+        html += "<td></td>";
+    }
+    else
+    {
+        html += "<tr class='highlightrow'><td></td>";
+    }
+
+    for(var i=0; i<seqLen; i++)
+    {
+        var displayClass = 'unhighlighted';
+        for(var j=0; j<highlight.length; j+=2)
+        {
+            var start = highlight[j];
+            var stop  = highlight[j+1];
+            if((i >= start) && (i <= stop))
+            {
+                displayClass = 'highlighted';
+                break;
+            }
+        }
+        html += "<td class='" + displayClass + "' /></td>";
+    }
+    html += "</tr>\n";
+    return(html);
 }
 
 // ---------------------------------------------------------------------
@@ -201,7 +253,7 @@ function JSAV_deleteSelectedSequences(divId)
         }
 
         var options = gOptions[divId];
-        JSAV_Refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1);
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
     }
 }
 
@@ -418,7 +470,7 @@ function JSAV_showRange(eventOrId, ui)
       tag = "#" + eventOrId + "_showrange";
       var html = "Sort from: " + gStartPos[eventOrId] + " to: " + gStopPos[eventOrId];
       $(tag).text(html);
-      JSAV_highlightRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
+      JSAV_markRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
    }
    else
    {
@@ -432,7 +484,7 @@ function JSAV_showRange(eventOrId, ui)
       // Display the range currently selected
       var html = "Sort from: " + gStartPos[id] + " to: " + gStopPos[id];
       $(tag).text(html);
-      JSAV_highlightRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
+      JSAV_markRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
    }
 }
 
@@ -462,13 +514,15 @@ them as a coloured table
 @param   {bool}       sortable    Should the marker line be displayed
                                   for sortable displays
 @param   {bool}       selectable  Should check marks be displayed
+@param   {int[]}      highlight   Ranges to be highlighted
 @returns {string}                 HTML
 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
 - 10.06.14 Added sortable and selectable parameters
+- 13.06.14 Added highlight
 */
-function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight)
 {
    var html = "";
    html += "<div class='JSAV'>\n";
@@ -479,9 +533,19 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
       html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
    }
 
+   if(highlight != undefined)
+   {
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
+   }
+
    for(var i=0; i<sequences.length; i++)
    {
       html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
+   }
+
+   if(highlight != undefined)
+   {
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
    }
 
    if(sortable)
@@ -536,18 +600,18 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 
     if(selectable)
     {
-        html += "<tr class='bottomrow'><th>Sort Region:</th>";
+        html += "<tr class='markerrow'><th>Sort Region:</th>";
         html += "<th class='selectCell'></th>";
     }
     else
     {
-        html += "<tr class='bottomrow'><td class='titleCell'>Sort Region:</td>";
+        html += "<tr class='markerrow'><td class='titleCell'>Sort Region:</td>";
     }
 
     for(var i=0; i<seqLen; i++)
     {
         var id = divId + "_JSAVMarker" + i;
-        html += "<td id='" + id + "' class='unhighlighted' />&nbsp;</td>";
+        html += "<td id='" + id + "' class='unmarked' />&nbsp;</td>";
     }
     html += "</tr>\n";
     return(html);
@@ -907,7 +971,7 @@ that sorts and refreshes the display.
 
 - 29.05.14 Original   By: ACRM
 - 11.06.14 sequences is now global
-- 12.06.14 split out the JSAV_Refresh() part
+- 12.06.14 split out the JSAV_refresh() part
 */
 function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
@@ -916,7 +980,8 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
    var range=JSAV_getRange(divId);
    var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
-   JSAV_Refresh(divId, sortedSequences, sortable, selectable, border, range[0], range[1]);
+   JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
+                range[0], range[1], gOptions[divId].highlight);
 
    return(false);
 }
@@ -925,7 +990,7 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 // ---------------------------------------------------------------------
 /**
 Refreshes the content of the divId_sortable div with the new sequence table
-Also updates the highlighted range and the CSS if the border option is set
+Also updates the marked range and the CSS if the border option is set
 
 @param {char}     divId        ID of an HTML <div>
 @param {object[]} sequences    Array of sequence objects
@@ -934,49 +999,51 @@ Also updates the highlighted range and the CSS if the border option is set
 @param {bool}     border       Should CSS be updated to show a border
 @param {int}      start        start of selected region
 @param {int}      stop         end of selected region
+@param {int[]}    highlight    regions to be highlighted
 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
 */
-function JSAV_Refresh(divId, sequences, sortable, selectable, border, start, stop)
+function JSAV_refresh(divId, sequences, sortable, selectable, border, start, stop, highlight)
 {
-   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable);
+   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    if(border)
    {
        JSAV_modifyCSS(divId);
    }
-   JSAV_highlightRange(divId, gSequenceLengths[divId], start, stop);
+   JSAV_markRange(divId, gSequenceLengths[divId], start, stop);
 }
 
 // ---------------------------------------------------------------------
 /**
-Highlights a range of residues in the main sequence display table.
+Marks a range of residues in the main sequence display table.
 The special marker row is used for this and we simply alter the
 class to pick up the appropriate colour for the cells from CSS
 
 @param {string}    divId   Identifier for the display div
 @param {int}       seqLen  Length of the alignment
 @param {int}       start   Offset of first residue to be
-                           highlighted (0-based)
+                           marked (0-based)
 @param {int}       stop    Offset of last residue to be
-                           highlighted (0-based)
+                           marked (0-based)
 
 - 06.06.14  Original   By: ACRM
+- 13.06.14  Changed from highlighted to marked
 */
-function JSAV_highlightRange(divId, seqLen, start, stop)
+function JSAV_markRange(divId, seqLen, start, stop)
 {
    for(var i=0; i<seqLen; i++)
    {
        var id = divId + "_JSAVMarker" + i;
-       document.getElementById(id).className = 'unhighlighted';
+       document.getElementById(id).className = 'unmarked';
    }
    if((start >= 0) && (stop >= 0))
    {
       for(var i=start; i<=stop; i++)
       {
           var id = divId + "_JSAVMarker" + i;
-          document.getElementById(id).className = 'highlighted';
+          document.getElementById(id).className = 'marked';
       }
    }
 }

@@ -16,12 +16,17 @@
 .JSAV .bottomrow td {border-top: 1px solid black;
                      border-bottom: 1px solid black;
                      margin: 0 0 1px 0;}
-.JSAV .bottomrow {border-right: 1px solid black;}
+.JSAV .markerrow {border-right: 1px solid black; height:10px}
 .JSAV .titleCell {}
 .JSAV .selectCell {border-right: 1px solid black;}
 
+.JSAV .unmarked {background-color: #FFFFFF;}
+.JSAV .marked {background-color: #AAAAAA;}
+
 .JSAV .unhighlighted {background-color: #FFFFFF;}
-.JSAV .highlighted {background-color: #AAAAAA;}
+.JSAV .highlighted {background-color: #00FF00;}
+
+.JSAV .highlightrow {height: 10px;}
 
 .JSAV a:link {color:#000000; text-decoration:none;}
 .JSAV a:visited {color:#000000; text-decoration:none;}
