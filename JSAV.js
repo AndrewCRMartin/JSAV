@@ -46,22 +46,20 @@
 /**
 This is the only routine called by a user. It takes an array of
 sequence objects and displays them as a coloured sortable table
-optionally with a slider and sort button
+optionally with a slider and sort button, delete button, etc
 
-@example printJSAV('mySeqDisplay', sequenceArray, true, '400px');
+@example 
+var options = Array();
+options.width = '400px';
+options.sortable = true;
+printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
-      true           indicates that the display should be sortable
-      '400px'        indicates the width of the slider for specifying
-                     a sort range
+      options        is an object describing options - see below
 
 @param {object[]}  sequences -  Array of sequence objects
 @param {string}    divId     - ID of div to print in
-@param {object}    inOptions - options (see below)
-
-@param {bool}      sortable  - Should the sorting options be displayed
-@param {string}    width     - The width of the selection slider with
-                              units (e.g. '400px')
+@param {object}    options   - options (see below)
 
 options are as follows:
 @param {bool}      sortable  -  Should the sorting options be displayed
@@ -70,6 +68,7 @@ options are as follows:
                                 units (default: '400px')
 @param {bool}      selectable - Should selection checkboxes be displayed
                                 for each sequence
+@param {bool}      detetable  - Makes it possible to delete sequences
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -120,7 +119,7 @@ function printJSAV(divId, sequences, inOptions)
 
       document.writeln("<p></p>");
 
-      JSAV_buildSlider(divId, stop, options.width);
+      JSAV_printSlider(divId, stop, options.width);
 
       var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       document.writeln(html);
@@ -129,7 +128,7 @@ function printJSAV(divId, sequences, inOptions)
 
    if(options.selectable && options.deletable)
    {
-      JSAV_buildDelete(divId);
+      JSAV_printDelete(divId);
    }
 
    document.writeln("</form>");
@@ -142,13 +141,27 @@ function printJSAV(divId, sequences, inOptions)
 }
 
 // ---------------------------------------------------------------------
-function JSAV_buildDelete(divId)
+/**
+Prints the delete button
+
+@param {string}  divId   - The ID of the div to print in
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_printDelete(divId)
 {
    var html = "<button type='button' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
    document.writeln(html);
 }
 
 // ---------------------------------------------------------------------
+/**
+Deletes a set of sequences that have been clicked
+
+@param {string}  divId   - The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM
+*/
 function JSAV_deleteSelectedSequences(divId)
 {
     var count = 0;
@@ -164,7 +177,11 @@ function JSAV_deleteSelectedSequences(divId)
         }
     });
 
-    if(count == gSequences[divId].length)
+    if(count == 0)
+    {
+        alert("You must select some sequences!");
+    }
+    else if(count == gSequences[divId].length)
     {
         alert("You can't delete all the sequences!");
     }
@@ -186,11 +203,23 @@ function JSAV_deleteSelectedSequences(divId)
 }
 
 // ---------------------------------------------------------------------
-function ACRM_deleteItemByLabel(label, id, array)
+/** 
+General purpose routine to delete an object from an array of objects
+where the object contains the specified key:value pair.
+
+@param {string}   key   - The key (item in an object or hash key) 
+                          to check
+@param {string}   value - The value to check
+@param {object[]} array - The array of objects to manipulate
+
+- 12.06.14 Original   By: ACRM
+*/
+
+function ACRM_deleteItemByLabel(key, value, array)
 {
     for(var i=0; i<array.length; i++)
     {
-       if(array[i][label] == id)
+       if(array[i][key] == value)
        {
            array.splice(i,1);
            break;
@@ -199,6 +228,13 @@ function ACRM_deleteItemByLabel(label, id, array)
 }
 
 // ---------------------------------------------------------------------
+/**
+Toggle selection of all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
 function JSAV_selectAllOrNone(divId)
 {
    var tag = "#" + divId + "_AllNone";
@@ -215,6 +251,13 @@ function JSAV_selectAllOrNone(divId)
 
 
 // ---------------------------------------------------------------------
+/**
+Select all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
 function JSAV_selectAll(divId)
 {
    var tag = "#" + divId + " .selectCell input";
@@ -222,6 +265,13 @@ function JSAV_selectAll(divId)
 }
 
 // ---------------------------------------------------------------------
+/**
+Unselect all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
 function JSAV_unselectAll(divId)
 {
    var tag = "#" + divId + " .selectCell input";
@@ -229,6 +279,13 @@ function JSAV_unselectAll(divId)
 }
 
 // ---------------------------------------------------------------------
+/**
+Change the <td> elements to have a white border
+
+@param {string}  divId   - The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM
+*/
 function JSAV_modifyCSS(divId)
 {
     var selector = "#" + divId + " .JSAV td";
@@ -293,7 +350,7 @@ function JSAV_buildASequenceHTML(id, sequence, selectable)
 
 // ---------------------------------------------------------------------
 /**
-Builds the slider for selecting a maximum and minimum position for
+Builds and prints the slider for selecting a maximum and minimum position for
 sorting. Also calls routine to display the currently selected range -
 i.e. the whole sequence length
 
@@ -304,7 +361,7 @@ i.e. the whole sequence length
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant variable and changed divs to spans
 */
-function JSAV_buildSlider(divId, seqLen, width)
+function JSAV_printSlider(divId, seqLen, width)
 {
    document.writeln("<span id='" + divId + "_showrange'></span>");
    document.writeln("<span id='" + divId + "_slider'></span>");
@@ -343,7 +400,6 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
-- BUG - this assumes the sequences are stored in an array called 'sequences'!
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -398,9 +454,11 @@ function JSAV_getRange(divId)
 Takes an array of sequence objects and builds the HTML to display
 them as a coloured table
 
+@param   {string}     divId       ID of div in which to print
 @param   {object[]}   sequences   Array of sequence objects
 @param   {bool}       sortable    Should the marker line be displayed
                                   for sortable displays
+@param   {bool}       selectable  Should check marks be displayed
 @returns {string}                 HTML
 
 - 30.05.14 Original  By: ACRM
@@ -434,6 +492,15 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable)
 }
 
 // ---------------------------------------------------------------------
+/**
+Build the HTML for creating a row in the table that contains a checkbox
+for selecting/deselecting all sequences
+
+@param {string}  divId  - ID of the div we are working in
+@param {int}     seqLen - sequence length
+
+- 09.06.14 Original   By: ACRM
+*/
 function JSAV_buildSelectAllHTML(divId, seqLen)
 {
    var html;
@@ -453,8 +520,9 @@ function JSAV_buildSelectAllHTML(divId, seqLen)
 Creates the HTML to display the marker row that indicates the selected
 residues to be used for sorting
 
-@param {string}   divId    Identifier of display div
-@param {int}      seqLen   Length of sequences alignement
+@param {string}   divId      - Identifier of display div
+@param {int}      seqLen     - Length of sequences alignement
+@param {int}      selectable - Do we have select boxes?
 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Added 'selectable'
@@ -601,11 +669,11 @@ and the difference matrix between all sequences. It then returns an
 array of sequence indexes for all the sequences most similar to the
 reference sequence
 
-@param  {int[]}    sequenceIndexes   Indexes of a set of sequences to search
-@param  {int}      refSeq            Index of the sequence to compare with
-@param  {int-2DArray}  differenceMatrix  differences between sequences
-@eturns {int[]}                      Indexes of the sequences closest to
-                                     the reference sequence
+@param  {int[]}       sequenceIndexes   Indexes of a set of sequences to search
+@param  {int}         refSeq            Index of the sequence to compare with
+@param  {int-2DArray} differenceMatrix  differences between sequences
+@eturns {int[]}                         Indexes of the sequences closest to
+                                        the reference sequence
 
 - 04.06.14 Original    By: ACRM
 */
@@ -731,10 +799,10 @@ matrix. This contains the number of differences between each pair
 of sequences
 
 @param  {object[]}  sequences    Array of sequence objects
-@param  {BOOL}      ignoreEnds   Ignore insert characters at
-                                 ends of sequences
 @param  {int}       start        Offset of start of region to sort
 @param  {int}       stop         Offset of end of region to sort
+@param  {BOOL}      ignoreEnds   Ignore insert characters at
+                                 ends of sequences
 @eturns {int-2DArray}                Differences between each pair
                                  of sequences
 
@@ -832,9 +900,11 @@ that sorts and refreshes the display.
 @param {char}  divId        ID of an HTML <div>
 @param {bool}  sortable     Is the display sortable
 @param {bool}  selectable   Are checkboxes shown next to sequences
+@param {bool}  border       Should CSS be updated to show a border
 
 - 29.05.14 Original   By: ACRM
 - 11.06.14 sequences is now global
+- 12.06.14 split out the JSAV_Refresh() part
 */
 function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
@@ -850,6 +920,20 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 
 
 // ---------------------------------------------------------------------
+/**
+Refreshes the content of the divId_sortable div with the new sequence table
+Also updates the highlighted range and the CSS if the border option is set
+
+@param {char}     divId        ID of an HTML <div>
+@param {object[]} sequences    Array of sequence objects
+@param {bool}     sortable     Is the display sortable
+@param {bool}     selectable   Are checkboxes shown next to sequences
+@param {bool}     border       Should CSS be updated to show a border
+@param {int}      start        start of selected region
+@param {int}      stop         end of selected region
+
+- 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
+*/
 function JSAV_Refresh(divId, sequences, sortable, selectable, border, start, stop)
 {
    var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable);
@@ -895,6 +979,12 @@ function JSAV_highlightRange(divId, seqLen, start, stop)
 }
 
 // ---------------------------------------------------------------------
+/**
+Initializes global array
+
+- 09.06.14 Original   By: ACRM
+- 12.06.14 Added more arrays
+*/
 function JSAV_init()
 {
    // Indexed by divId and used to store the values
