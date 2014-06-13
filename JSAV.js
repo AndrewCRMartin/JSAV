@@ -233,7 +233,6 @@ function JSAV_printSubmit(divId, url, label)
    var html = "<div style='display:none'><form id='" + formId + "' action='" + url + "' method='post'>";
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
-   html += "<input type='submit' />";
    html += "</form></div>";
    document.writeln(html);
 }
@@ -241,13 +240,30 @@ function JSAV_printSubmit(divId, url, label)
 // ---------------------------------------------------------------------
 function JSAV_submitSequences(divId)
 {
+   // See if any checkboxes are set
+   var count = 0;
+   var toSubmit = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).each(function(index) {
+       if($(this).prop('checked'))
+       {
+           var id = $(this).parent().parent().attr('id');
+           toSubmit[id] = 1;
+           count++;
+       }
+   });
+
    var textTag = "textarea#" + divId + "_submit";
    var sequenceText = "";
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
-      sequenceText += ">" + sequences[i].id + "\n";
-      sequenceText += sequences[i].sequence + "\n";
+       if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
+       {
+           sequenceText += ">" + sequences[i].id + "\n";
+           sequenceText += sequences[i].sequence + "\n";
+       }
    }
    $(textTag).text(sequenceText);
 
