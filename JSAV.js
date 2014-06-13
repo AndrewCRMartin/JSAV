@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.2 13.06.14
+    JSAV V1.3 13.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.2
+   Version:    V1.3
    Date:       13.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -48,8 +48,11 @@
                      Cleaned up defaults in printJSAV
                      Changed some routine names
    V1.3   13.06.14   Added highlight option
-                     Added submit option
-                     
+                     Added submit/submitLabel options
+                     Added action/actionLabel options
+
+TODO: dot diaplay where amino acid matches that above 
+
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
@@ -63,6 +66,8 @@ options.sortable = true;
 options.highlight = [3,5,10,14];
 options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
 options.submitLabel = "Submit sequences";
+options.action = "myAction";
+options.actionLabel = "My Action";
 printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
@@ -83,6 +88,8 @@ options are as follows:
 @param {int[]}     highlight   - Array of ranges to highlight
 @param {string}    submit      - URL for submitting selected sequences
 @param {string}    submitLabel - Label for submit button
+@param {string}    action      - Function to call using selected sequences
+@param {string}    actionLabel - Label for action button
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -94,14 +101,15 @@ options are as follows:
 - 11.06.14 Added deletable
 - 13.06.14 Cleaned up use of defaults
 - 13.06.14 Added highlight
-- 13.04.14 Added submit
+- 13.06.14 Added submit and action, submitLabel and actionLabel
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
-   if(options == undefined)             { options = Array();                        }
-   if(options.width == undefined)       { options.width       = "400px";            }
-   if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences"; }
+   if(options             == undefined) { options = Array();                         }
+   if(options.width       == undefined) { options.width       = "400px";             }
+   if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences";  }
+   if(options.actionLabel == undefined) { options.actionLabel = "Process Sequences"; }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -141,6 +149,11 @@ function printJSAV(divId, sequences, options)
    if(options.submit != undefined)
    {
       JSAV_printSubmit(divId, options.submit, options.submitLabel);
+   }
+
+   if(options.action != undefined)
+   {
+      JSAV_printAction(divId, options.action, options.actionLabel);
    }
 
    document.writeln("</div>");
@@ -238,6 +251,74 @@ function JSAV_printSubmit(divId, url, label)
 }
 
 // ---------------------------------------------------------------------
+/**
+Prints the action button
+
+@param {string}  divId   - The ID of the div to print in
+@param {string}  action  - Function to call
+@param {string}  label   - Label for action button
+
+- 13.06.14 Original   By: ACRM
+*/
+function JSAV_printAction(divId, action, label)
+{
+   var html = "<button type='button' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Wrap the action function. When the action button is clicked, this function
+is called so extract the relevant sequence data and call the user specified
+function, passing the divId and and array of sequence objects
+
+@param {string}  divId   - The ID of the div to work in
+@param {string}  action  - The name of the user function
+
+- 13.06.14  Original   By: ACRM
+*/
+function JSAV_wrapAction(divId, action)
+{
+   var selectedSequences = Array();
+
+   // See if any checkboxes are set
+   var count = 0;
+   var toSubmit = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).each(function(index) {
+       if($(this).prop('checked'))
+       {
+           var id = $(this).parent().parent().attr('id');
+           toSubmit[id] = 1;
+           count++;
+       }
+   });
+
+   var textTag = "textarea#" + divId + "_submit";
+   var sequenceText = "";
+   var sequences = gSequences[divId];
+   for(var i=0; i<sequences.length; i++)
+   {
+      if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
+      {
+         selectedSequences.push({ id: sequences[i].id, sequence: sequences[i].sequence});
+      }
+   }
+
+   window[action](divId, selectedSequences);
+}
+
+// ---------------------------------------------------------------------
+/**
+Handles the user clicking the submit button. Build a FASTA version of the
+sequences that have been selected, fills them into a <textarea> in a form
+and then submits the form.
+
+@param {string} divId  - The ID of the div we are working in
+
+- 13.06.14  Original   By: ACRM
+*/
 function JSAV_submitSequences(divId)
 {
    // See if any checkboxes are set
@@ -273,8 +354,6 @@ function JSAV_submitSequences(divId)
 
 // ---------------------------------------------------------------------
 /**
-
-
 Deletes a set of sequences that have been clicked
 
 @param {string}  divId   - The ID of the div to work in
@@ -318,31 +397,6 @@ function JSAV_deleteSelectedSequences(divId)
 
         var options = gOptions[divId];
         JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
-    }
-}
-
-// ---------------------------------------------------------------------
-/** 
-General purpose routine to delete an object from an array of objects
-where the object contains the specified key:value pair.
-
-@param {string}   key   - The key (item in an object or hash key) 
-                          to check
-@param {string}   value - The value to check
-@param {object[]} array - The array of objects to manipulate
-
-- 12.06.14 Original   By: ACRM
-*/
-
-function ACRM_deleteItemByLabel(key, value, array)
-{
-    for(var i=0; i<array.length; i++)
-    {
-       if(array[i][key] == value)
-       {
-           array.splice(i,1);
-           break;
-       }
     }
 }
 
@@ -715,37 +769,6 @@ function JSAV_FindRealSequenceEnds(seqArray)
 
    return(seqEnds);
 }
-
-// ---------------------------------------------------------------------
-/**
-General purpose function to create a multi-dimensional array
-
-@param   {int/int[]}  length   Size of each dimension
-@returns {array}                  (multi-dimensional) Array
-
-Usage:
-ACRM_createArray();     // [] or new Array()
-ACRM_createArray(2);    // new Array(2)
-ACRM_createArray(3, 2); // [new Array(2),
-                   //  new Array(2),
-                   //  new Array(2)]
-
-- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
-*/
-function ACRM_createArray(length) 
-{
-    var arr = new Array(length || 0),
-        i = length;
-
-    if (arguments.length > 1) 
-    {
-        var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = ACRM_createArray.apply(this, args);
-    }
-
-    return arr;
-}
-
 
 // ---------------------------------------------------------------------
 /**
@@ -1138,3 +1161,60 @@ function JSAV_init()
        gStopPos  = Array();
    }
 }
+
+
+// ---------------------------------------------------------------------
+/** 
+General purpose routine to delete an object from an array of objects
+where the object contains the specified key:value pair.
+
+@param {string}   key   - The key (item in an object or hash key) 
+                          to check
+@param {string}   value - The value to check
+@param {object[]} array - The array of objects to manipulate
+
+- 12.06.14 Original   By: ACRM
+*/
+function ACRM_deleteItemByLabel(key, value, array)
+{
+    for(var i=0; i<array.length; i++)
+    {
+       if(array[i][key] == value)
+       {
+           array.splice(i,1);
+           break;
+       }
+    }
+}
+
+// ---------------------------------------------------------------------
+/**
+General purpose function to create a multi-dimensional array
+
+@param   {int/int[]}  length   Size of each dimension
+@returns {array}                  (multi-dimensional) Array
+
+Usage:
+ACRM_createArray();     // [] or new Array()
+ACRM_createArray(2);    // new Array(2)
+ACRM_createArray(3, 2); // [new Array(2),
+                   //  new Array(2),
+                   //  new Array(2)]
+
+- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+*/
+function ACRM_createArray(length) 
+{
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) 
+    {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = ACRM_createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
+
