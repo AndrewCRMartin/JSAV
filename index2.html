@@ -87,11 +87,10 @@ sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"};
 </pre>
 <p>and the display and sorter is created with</p>
 <pre>
-printJSAV('sequenceDisplay', sequences, true, '400px');
+printJSAV('sequenceDisplay', sequences, options);
 sequenceDisplay - div in which to display the viewer
 sequences       - array of sequence objects
-true            - make it sortable
-400px           - size of the slider
+options         - an object describing options
 </pre>
 
 
