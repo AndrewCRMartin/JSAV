@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.1 12.06.14
+    JSAV V1.1 13.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -42,6 +42,12 @@
                      Added 'selectable' option
           12.06.14   Added 'deletable' and 'border' options
                      Implemented sequence deletion
+          13.06.14   Checks that some sequences are selected before 
+                     deletion
+                     Cleaned up comments/documentation
+                     Cleaned up defaults in printJSAV
+                     Changed some routine names
+                     
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
@@ -78,23 +84,20 @@ options are as follows:
            Added 'selectable' option
            Stores sequence length in global array
 - 11.06.14 Added deletable
+- 13.06.14 Cleaned up use of defaults
 */
-function printJSAV(divId, sequences, inOptions)
+function printJSAV(divId, sequences, options)
 {
-   var options = Array();
-
    // Deal with options
-   if(inOptions == undefined)
+   if(options == undefined)
    {
-      options.width = "400px";
+      options = Array();
    }
-   else
+
+   // Set defaults
+   if(options.width == undefined)
    {
-      options = inOptions;
-      if(options.width == undefined)
-      {
-          options.width = "400px";
-      }
+       options.width = "400px";
    }
 
    // Initialize globals if not yet done
