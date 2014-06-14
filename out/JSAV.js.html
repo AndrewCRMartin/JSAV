@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Source: JSAV.js</title>
-
+    
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,18 +16,18 @@
 <body>
 
 <div id="main">
-
+    
     <h1 class="page-title">Source: JSAV.js</h1>
-
+    
     
 
 
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/** @preserve 
+            <pre class="prettyprint source"><code>/** @preserve 
     @file
-    JSAV V1.0 06.06.14
+    JSAV V1.2 13.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -35,8 +35,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.0
-   Date:       06.06.14
+   Version:    V1.2
+   Date:       13.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
@@ -50,7 +50,7 @@
    EMail:      andrew@bioinf.org.uk
                
 **************************************************************************
-   This program is distributed under the GPL licence
+   This program is distributed under the Gnu Public licence (GPLv2)
    Alternative licences are available on request.
 **************************************************************************
    Description:
@@ -62,56 +62,435 @@
    Revision History:
    =================
    V1.0   06.06.14   Original  By: ACRM
+   V1.1   10.06.14   Code cleanup
+                     Changed options to a hash
+                     Further code cleanup - some code was assuming
+                     sequences were stored in an array called 'sequences'
+                     Added 'selectable' option
+          12.06.14   Added 'deletable' and 'border' options
+                     Implemented sequence deletion
+          13.06.14   Checks that some sequences are selected before 
+                     deletion
+                     Cleaned up comments/documentation
+                     Cleaned up defaults in printJSAV
+                     Changed some routine names
+   V1.2   13.06.14   Added highlight option
+                     Added submit/submitLabel options
+                     Added action/actionLabel options
+
+TODO: dot diaplay where amino acid matches that above 
+
 *************************************************************************/
 /**
 This is the only routine called by a user. It takes an array of
 sequence objects and displays them as a coloured sortable table
-optionally with a slider and sort button
+optionally with a slider and sort button, delete button, etc
 
-@example printJSAV('mySeqDisplay', sequenceArray, true, '400px');
+@example 
+var options = Array();
+options.width = '400px';
+options.sortable = true;
+options.highlight = [3,5,10,14];
+options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+options.submitLabel = "Submit sequences";
+options.action = "myAction";
+options.actionLabel = "My Action";
+printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
-      true           indicates that the display should be sortable
-      '400px'        indicates the width of the slider for specifying
-                     a sort range
+      options        is an object describing options - see below
 
 @param {object[]}  sequences -  Array of sequence objects
 @param {string}    divId     - ID of div to print in
-@param {bool}      sortable  - Should the sorting options be displayed
-@param {string}    width     - The width of the selection slider with
-                              units (e.g. '400px')
+@param {object}    options   - options (see below)
+
+options are as follows:
+@param {bool}      sortable    - Should the sorting options be displayed
+                                 (default: false)
+@param {string}    width       - The width of the selection slider with
+                                 units (default: '400px')
+@param {bool}      selectable  - Should selection checkboxes be displayed
+                                 for each sequence
+@param {bool}      deletable   - Makes it possible to delete sequences
+@param {int[]}     highlight   - Array of ranges to highlight
+@param {string}    submit      - URL for submitting selected sequences
+@param {string}    submitLabel - Label for submit button
+@param {string}    action      - Function to call using selected sequences
+@param {string}    actionLabel - Label for action button
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
 - 05.06.14 Added divId parameter and sortable
 - 06.06.14 Added width
+- 10.06.14 sortable and width parameters now replaced by 'options'
+           Added 'selectable' option
+           Stores sequence length in global array
+- 11.06.14 Added deletable
+- 13.06.14 Cleaned up use of defaults
+- 13.06.14 Added highlight
+- 13.06.14 Added submit and action, submitLabel and actionLabel
 */
-function printJSAV(divId, sequences, sortable, width)
+function printJSAV(divId, sequences, options)
 {
+   // Deal with options
+   if(options             == undefined) { options = Array();                         }
+   if(options.width       == undefined) { options.width       = "400px";             }
+   if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences";  }
+   if(options.actionLabel == undefined) { options.actionLabel = "Process Sequences"; }
+
+   // Initialize globals if not yet done
+   JSAV_init();
+
+   gOptions[divId] = options;
+   gSequences[divId] = sequences;
+   gSequenceLengths[divId] = sequences[0].sequence.length;
+
    document.writeln("&lt;div id='" + divId + "'>");
 
    document.writeln("&lt;div id='" + divId + "_sortable'>");
-   var html = JSAV_buildSequencesHTML(divId, sequences);
+   var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
+                                      options.selectable, options.highlight);
    document.write(html);
    document.writeln("&lt;/div>");
+   document.writeln("&lt;div>");
 
-   if(sortable)
+   if(options.sortable)
    {
       var start = 1;
-      var stop  = sequences[0].sequence.length;
+      var stop  = gSequenceLengths[divId];
 
       document.writeln("&lt;p>&lt;/p>");
 
-      JSAV_buildSlider(divId, stop, width);
+      JSAV_printSlider(divId, stop, options.width);
 
-      document.writeln("&lt;form>");
-      var html = "&lt;button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", sequences)'>Sort&lt;/button>";
+      var html = "&lt;button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort&lt;/button>";
       document.writeln(html);
-      document.writeln("&lt;/form>");
+
    }
+
+   if(options.selectable && options.deletable)
+   {
+      JSAV_printDelete(divId);
+   }
+
+   if(options.submit != undefined)
+   {
+      JSAV_printSubmit(divId, options.submit, options.submitLabel);
+   }
+
+   if(options.action != undefined)
+   {
+      JSAV_printAction(divId, options.action, options.actionLabel);
+   }
+
    document.writeln("&lt;/div>");
+   document.writeln("&lt;/div>");
+
+   if(options.border)
+   {
+       JSAV_modifyCSS(divId);
+   }
 }
 
+
+// ---------------------------------------------------------------------
+/**
+Builds HTML for table rows that highlight a region in the alignment as
+being important (e.g. CDRs of antibodies). Note that ranges for highlighting
+count from zero.
+
+@param {string}  divId      - The div we are working in
+@param {int}     seqLen     - The length of the alignment
+@param {bool}    selectable - Are there sequences selection boxes
+@param {int[]}   highlight  - Array of residue ranges to highlight
+
+- 13.06.14   Original   By: ACRM
+*/
+function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
+{
+    var html = "";
+
+    if(selectable)
+    {
+        html += "&lt;tr class='highlightrow'>&lt;th>&lt;/th>";
+        html += "&lt;td>&lt;/td>";
+    }
+    else
+    {
+        html += "&lt;tr class='highlightrow'>&lt;td>&lt;/td>";
+    }
+
+    for(var i=0; i&lt;seqLen; i++)
+    {
+        var displayClass = 'unhighlighted';
+        for(var j=0; j&lt;highlight.length; j+=2)
+        {
+            var start = highlight[j];
+            var stop  = highlight[j+1];
+            if((i >= start) && (i &lt;= stop))
+            {
+                displayClass = 'highlighted';
+                break;
+            }
+        }
+        html += "&lt;td class='" + displayClass + "' />&lt;/td>";
+    }
+    html += "&lt;/tr>\n";
+    return(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints the delete button
+
+@param {string}  divId   - The ID of the div to print in
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_printDelete(divId)
+{
+   var html = "&lt;button type='button' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected&lt;/button>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints the submit button
+
+@param {string}  divId   - The ID of the div to print in
+@param {string}  url     - URL to which we are submitting
+@param {string}  label   - Label for submit button
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_printSubmit(divId, url, label)
+{
+   var html = "&lt;button type='button' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "&lt;/button>";
+   document.writeln(html);
+
+   // Build a hidden sequences text box in the form to contain
+   var formId = divId + "_form"; 
+   var html = "&lt;div style='display:none'>&lt;form id='" + formId + "' action='" + url + "' method='post'>";
+   var textId = divId + "_submit";
+   html += "&lt;textarea id='" + textId + "' name='sequences'>&lt;/textarea>";
+   html += "&lt;/form>&lt;/div>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints the action button
+
+@param {string}  divId   - The ID of the div to print in
+@param {string}  action  - Function to call
+@param {string}  label   - Label for action button
+
+- 13.06.14 Original   By: ACRM
+*/
+function JSAV_printAction(divId, action, label)
+{
+   var html = "&lt;button type='button' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "&lt;/button>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Wrap the action function. When the action button is clicked, this function
+is called so extract the relevant sequence data and call the user specified
+function, passing the divId and and array of sequence objects
+
+@param {string}  divId   - The ID of the div to work in
+@param {string}  action  - The name of the user function
+
+- 13.06.14  Original   By: ACRM
+*/
+function JSAV_wrapAction(divId, action)
+{
+   var selectedSequences = Array();
+
+   // See if any checkboxes are set
+   var count = 0;
+   var toSubmit = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).each(function(index) {
+       if($(this).prop('checked'))
+       {
+           var id = $(this).parent().parent().attr('id');
+           toSubmit[id] = 1;
+           count++;
+       }
+   });
+
+   var textTag = "textarea#" + divId + "_submit";
+   var sequenceText = "";
+   var sequences = gSequences[divId];
+   for(var i=0; i&lt;sequences.length; i++)
+   {
+      if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
+      {
+         selectedSequences.push({ id: sequences[i].id, sequence: sequences[i].sequence});
+      }
+   }
+
+   window[action](divId, selectedSequences);
+}
+
+// ---------------------------------------------------------------------
+/**
+Handles the user clicking the submit button. Build a FASTA version of the
+sequences that have been selected, fills them into a &lt;textarea> in a form
+and then submits the form.
+
+@param {string} divId  - The ID of the div we are working in
+
+- 13.06.14  Original   By: ACRM
+*/
+function JSAV_submitSequences(divId)
+{
+   // See if any checkboxes are set
+   var count = 0;
+   var toSubmit = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).each(function(index) {
+       if($(this).prop('checked'))
+       {
+           var id = $(this).parent().parent().attr('id');
+           toSubmit[id] = 1;
+           count++;
+       }
+   });
+
+   var textTag = "textarea#" + divId + "_submit";
+   var sequenceText = "";
+   var sequences = gSequences[divId];
+   for(var i=0; i&lt;sequences.length; i++)
+   {
+       if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
+       {
+           sequenceText += ">" + sequences[i].id + "\n";
+           sequenceText += sequences[i].sequence + "\n";
+       }
+   }
+   $(textTag).text(sequenceText);
+
+   var formTag = "#" + divId + "_form";
+   $(formTag).submit();
+}
+
+// ---------------------------------------------------------------------
+/**
+Deletes a set of sequences that have been clicked
+
+@param {string}  divId   - The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_deleteSelectedSequences(divId)
+{
+    var count = 0;
+    var toDelete = Array();
+    // Find the selected sequences
+    var tag = "#" + divId + " .selectCell input";
+    $(tag).each(function(index) {
+        if($(this).prop('checked'))
+        {
+            var id = $(this).parent().parent().attr('id');
+            toDelete.push(id);
+            count++;
+        }
+    });
+
+    if(count == 0)
+    {
+        alert("You must select some sequences!");
+    }
+    else if(count == gSequences[divId].length)
+    {
+        alert("You can't delete all the sequences!");
+    }
+    else
+    {
+        var message = "Delete " + count + " selected sequences?";
+        if(confirm(message))
+        {
+            // Run through the global sequence array deleting the selected objects
+            for(var i=0; i&lt;toDelete.length; i++)
+            {
+                ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+            }
+        }
+
+        var options = gOptions[divId];
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
+    }
+}
+
+// ---------------------------------------------------------------------
+/**
+Toggle selection of all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
+function JSAV_selectAllOrNone(divId)
+{
+   var tag = "#" + divId + "_AllNone";
+
+   if($(tag).prop('checked'))
+   {
+       JSAV_selectAll(divId);
+   }
+   else
+   {
+       JSAV_unselectAll(divId);
+   }
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Select all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
+function JSAV_selectAll(divId)
+{
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).prop('checked', true);
+}
+
+// ---------------------------------------------------------------------
+/**
+Unselect all sequence selection buttons
+
+@param {string}  divId   - The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM
+*/
+function JSAV_unselectAll(divId)
+{
+   var tag = "#" + divId + " .selectCell input";
+   $(tag).prop('checked', false);
+}
+
+// ---------------------------------------------------------------------
+/**
+Change the &lt;td> elements to have a white border
+
+@param {string}  divId   - The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM
+*/
+function JSAV_modifyCSS(divId)
+{
+    var selector = "#" + divId + " .JSAV td";
+    $(selector).css("border", "1px solid white");
+}
 
 // ---------------------------------------------------------------------
 /**
@@ -127,7 +506,7 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
 */
 function JSAV_printASequence(id, sequence)
 {
-   var html  = JSAV_buildASequenceHTML(id, sequence);
+   var html  = JSAV_buildASequenceHTML(id, sequence, false);
    document.write(html);
 }
 
@@ -140,16 +519,23 @@ separate &lt;td> tag with a class to indicate the amino acid type
 
 @param {string}   id         The identifier
 @param {string}   sequence   A string containing the sequence
+@param {bool}     selectable Display a selection checkbox
 @returns {string} text       HTML snippet
 
 - 30.05.14 Original  By: ACRM
 */
-function JSAV_buildASequenceHTML(id, sequence)
+function JSAV_buildASequenceHTML(id, sequence, selectable)
 {
    var tableLineArray = sequence.split("");
 
    var tableLine = "&lt;tr id='" + id + "'>";
-   tableLine += "&lt;td class='titleCell'>" + id + "&lt;/td>";
+   tableLine += "&lt;th class='titleCell'>" + id + "&lt;/th>";
+
+   if(selectable)
+   {
+      var name = "select_" + id;
+      tableLine += "&lt;th class='selectCell'>&lt;input type='checkbox' name='" + name + "' />&lt;/th>";
+   }
 
    var nResidues = tableLineArray.length;
    for(var i=0; i&lt;nResidues; i++)
@@ -164,7 +550,7 @@ function JSAV_buildASequenceHTML(id, sequence)
 
 // ---------------------------------------------------------------------
 /**
-Builds the slider for selecting a maximum and minimum position for
+Builds and prints the slider for selecting a maximum and minimum position for
 sorting. Also calls routine to display the currently selected range -
 i.e. the whole sequence length
 
@@ -173,12 +559,12 @@ i.e. the whole sequence length
 @param {string}   width   The width of the slider
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant variable and changed divs to spans
 */
-function JSAV_buildSlider(divId, seqLen, width)
+function JSAV_printSlider(divId, seqLen, width)
 {
-   var html = "&lt;div id='" + divId + "_slider'>&lt;/div>";
-   document.writeln(html);
    document.writeln("&lt;span id='" + divId + "_showrange'>&lt;/span>");
+   document.writeln("&lt;span id='" + divId + "_slider'>&lt;/span>");
 
    var id = divId + "_slider";
    var tag = "#" + id;
@@ -195,9 +581,7 @@ function JSAV_buildSlider(divId, seqLen, width)
          slide: JSAV_showRange
    });
 
-   gStartPos = Array();
-   gStopPos  = Array();
-
+   // Initial display of the range
    JSAV_showRange(divId);
 }
 
@@ -215,6 +599,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 @param {null}      ui           Must be set to null
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant .closest() from finding parent
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -230,11 +615,11 @@ function JSAV_showRange(eventOrId, ui)
       tag = "#" + eventOrId + "_showrange";
       var html = "Sort from: " + gStartPos[eventOrId] + " to: " + gStopPos[eventOrId];
       $(tag).text(html);
-      JSAV_highlightRange(eventOrId, sequences[0].sequence.length, gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
+      JSAV_markRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
    }
    else
    {
-      var id = $(this).closest('div').parent().attr("id");
+      var id = $(this).parent().parent().attr("id");
       var tag = "#" + id + "_showrange";
 
       // Get the values out of the slider
@@ -244,7 +629,7 @@ function JSAV_showRange(eventOrId, ui)
       // Display the range currently selected
       var html = "Sort from: " + gStartPos[id] + " to: " + gStopPos[id];
       $(tag).text(html);
-      JSAV_highlightRange(id, sequences[0].sequence.length, gStartPos[id]-1, gStopPos[id]-1);
+      JSAV_markRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
    }
 }
 
@@ -269,24 +654,49 @@ function JSAV_getRange(divId)
 Takes an array of sequence objects and builds the HTML to display
 them as a coloured table
 
+@param   {string}     divId       ID of div in which to print
 @param   {object[]}   sequences   Array of sequence objects
+@param   {bool}       sortable    Should the marker line be displayed
+                                  for sortable displays
+@param   {bool}       selectable  Should check marks be displayed
+@param   {int[]}      highlight   Ranges to be highlighted
 @returns {string}                 HTML
 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
+- 10.06.14 Added sortable and selectable parameters
+- 13.06.14 Added highlight
 */
-function JSAV_buildSequencesHTML(divId, sequences)
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight)
 {
    var html = "";
    html += "&lt;div class='JSAV'>\n";
    html += "&lt;table border='0'>\n";
 
-   for(var i=0; i&lt;sequences.length; i++)
+   if(selectable)
    {
-      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence) + "\n";
+      html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
    }
 
-   html += JSAV_buildMarkerHTML(divId, sequences[0].sequence.length);
+   if(highlight != undefined)
+   {
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
+   }
+
+   for(var i=0; i&lt;sequences.length; i++)
+   {
+      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
+   }
+
+   if(highlight != undefined)
+   {
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
+   }
+
+   if(sortable)
+   {
+      html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], selectable);
+   }
 
    html += "&lt;/table>\n";
    html += "&lt;/div>\n";
@@ -295,22 +705,58 @@ function JSAV_buildSequencesHTML(divId, sequences)
 
 // ---------------------------------------------------------------------
 /**
+Build the HTML for creating a row in the table that contains a checkbox
+for selecting/deselecting all sequences
+
+@param {string}  divId  - ID of the div we are working in
+@param {int}     seqLen - sequence length
+
+- 09.06.14 Original   By: ACRM
+*/
+function JSAV_buildSelectAllHTML(divId, seqLen)
+{
+   var html;
+   var id = divId + "_AllNone";
+
+   html = "&lt;tr>&lt;th>All/None&lt;/th>&lt;th>&lt;input id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' />&lt;/th>";
+   for(var i=0; i&lt;seqLen; i++)
+   {
+      html += "&lt;td>&lt;/td>";
+   }
+   html += "&lt;/tr>";
+   return(html);
+}
+
+// ---------------------------------------------------------------------
+/**
 Creates the HTML to display the marker row that indicates the selected
 residues to be used for sorting
 
-@param {string}   divId    Identifier of display div
-@param {int}      seqLen   Length of sequences alignement
+@param {string}   divId      - Identifier of display div
+@param {int}      seqLen     - Length of sequences alignement
+@param {int}      selectable - Do we have select boxes?
 
 - 06.06.14  Original   By: ACRM
+- 10.06.14  Added 'selectable'
 */
-function JSAV_buildMarkerHTML(divId, seqLen)
+function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
     var html = "";
-    html += "&lt;tr class='bottomrow'>&lt;td class='titleCell'>Sort Region:&lt;/td>";
+
+    if(selectable)
+    {
+        html += "&lt;tr class='markerrow'>&lt;th>Sort Region:&lt;/th>";
+        html += "&lt;th class='selectCell'>&lt;/th>";
+    }
+    else
+    {
+        html += "&lt;tr class='markerrow'>&lt;td class='titleCell'>Sort Region:&lt;/td>";
+    }
+
     for(var i=0; i&lt;seqLen; i++)
     {
         var id = divId + "_JSAVMarker" + i;
-        html += "&lt;td id='" + id + "' class='unhighlighted' />&amp;nbsp;&lt;/td>";
+        html += "&lt;td id='" + id + "' class='unmarked' />&nbsp;&lt;/td>";
     }
     html += "&lt;/tr>\n";
     return(html);
@@ -350,37 +796,6 @@ function JSAV_FindRealSequenceEnds(seqArray)
 
    return(seqEnds);
 }
-
-// ---------------------------------------------------------------------
-/**
-General purpose function to create a multi-dimensional array
-
-@param   {int/int[]}  length   Size of each dimension
-@returns {array}                  (multi-dimensional) Array
-
-Usage:
-createArray();     // [] or new Array()
-createArray(2);    // new Array(2)
-createArray(3, 2); // [new Array(2),
-                   //  new Array(2),
-                   //  new Array(2)]
-
-- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
-*/
-function createArray(length) 
-{
-    var arr = new Array(length || 0),
-        i = length;
-
-    if (arguments.length > 1) 
-    {
-        var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
-    }
-
-    return arr;
-}
-
 
 // ---------------------------------------------------------------------
 /**
@@ -435,11 +850,11 @@ and the difference matrix between all sequences. It then returns an
 array of sequence indexes for all the sequences most similar to the
 reference sequence
 
-@param  {int[]}    sequenceIndexes   Indexes of a set of sequences to search
-@param  {int}      refSeq            Index of the sequence to compare with
-@param  {int-2DArray}  differenceMatrix  differences between sequences
-@eturns {int[]}                      Indexes of the sequences closest to
-                                     the reference sequence
+@param  {int[]}       sequenceIndexes   Indexes of a set of sequences to search
+@param  {int}         refSeq            Index of the sequence to compare with
+@param  {int-2DArray} differenceMatrix  differences between sequences
+@eturns {int[]}                         Indexes of the sequences closest to
+                                        the reference sequence
 
 - 04.06.14 Original    By: ACRM
 */
@@ -500,7 +915,7 @@ function JSAV_sortSequences(sequences, start, stop)
    // the sort
 
    if((start &lt; 0) || (stop &lt; 0) ||
-      ((start == 0) &amp;&amp; (stop == (sequences[0].sequence.length - 1))))
+      ((start == 0) && (stop == (sequences[0].sequence.length - 1))))
    {
       ignoreEnds = true;
    }
@@ -532,7 +947,7 @@ function JSAV_sortSequences(sequences, start, stop)
          }
       }
       
-      // Find the sequnces which are closest to the last sequence in the
+      // Find the sequences which are closest to the last sequence in the
       // sorted list
       var closestSequencesToLast = 
          JSAV_findClosestSequences(unusedSequences, sortedIndexes[nSortedSeqs-1], differenceMatrix);
@@ -565,10 +980,10 @@ matrix. This contains the number of differences between each pair
 of sequences
 
 @param  {object[]}  sequences    Array of sequence objects
-@param  {BOOL}      ignoreEnds   Ignore insert characters at
-                                 ends of sequences
 @param  {int}       start        Offset of start of region to sort
 @param  {int}       stop         Offset of end of region to sort
+@param  {BOOL}      ignoreEnds   Ignore insert characters at
+                                 ends of sequences
 @eturns {int-2DArray}                Differences between each pair
                                  of sequences
 
@@ -580,7 +995,7 @@ function JSAV_calcDifferenceMatrix(sequences, start, stop, ignoreEnds)
 {
    var nSeq = sequences.length;
 
-   var differenceMatrix = createArray(nSeq, nSeq);
+   var differenceMatrix = ACRM_createArray(nSeq, nSeq);
    for(var i=0; i&lt;nSeq; i++)
    {
       for(var j=0; j&lt;nSeq; j++)
@@ -661,59 +1076,174 @@ function JSAV_calcDifference(seq1, seq2, regionStart, regionStop, ignoreEnds)
 Sorts a set of sequences and refreshes the display in a div with
 the specified ID - the idea is that the unsorted sequences would
 be displayed here and then this is tied to the action on a button
-that sorts and refreshes the display
+that sorts and refreshes the display.
 
-@param {char}     divId      ID of an HTML &lt;div>
-@param {object[]} sequences  Array of sequence objects
+@param {char}  divId        ID of an HTML &lt;div>
+@param {bool}  sortable     Is the display sortable
+@param {bool}  selectable   Are checkboxes shown next to sequences
+@param {bool}  border       Should CSS be updated to show a border
 
 - 29.05.14 Original   By: ACRM
+- 11.06.14 sequences is now global
+- 12.06.14 split out the JSAV_refresh() part
 */
-function JSAV_sortAndRefreshSequences(divId, sequences)
+function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
    var id = divId + "_JSAVStart";
 
    var range=JSAV_getRange(divId);
-   var sortedSequences = JSAV_sortSequences(sequences, range[0], range[1]);
+   var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
-   var html = JSAV_buildSequencesHTML(divId, sortedSequences);
-   var element = document.getElementById(divId + "_sortable");
-   element.innerHTML = html;
-   JSAV_highlightRange(divId, sequences[0].sequence.length, range[0], range[1]);
+   JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
+                range[0], range[1], gOptions[divId].highlight);
 
    return(false);
 }
 
+
 // ---------------------------------------------------------------------
 /**
-Highlights a range of residues in the main sequence display table.
+Refreshes the content of the divId_sortable div with the new sequence table
+Also updates the marked range and the CSS if the border option is set
+
+@param {char}     divId        ID of an HTML &lt;div>
+@param {object[]} sequences    Array of sequence objects
+@param {bool}     sortable     Is the display sortable
+@param {bool}     selectable   Are checkboxes shown next to sequences
+@param {bool}     border       Should CSS be updated to show a border
+@param {int}      start        start of selected region
+@param {int}      stop         end of selected region
+@param {int[]}    highlight    regions to be highlighted
+
+- 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
+*/
+function JSAV_refresh(divId, sequences, sortable, selectable, border, start, stop, highlight)
+{
+   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight);
+   var element = document.getElementById(divId + "_sortable");
+   element.innerHTML = html;
+   if(border)
+   {
+       JSAV_modifyCSS(divId);
+   }
+   JSAV_markRange(divId, gSequenceLengths[divId], start, stop);
+}
+
+// ---------------------------------------------------------------------
+/**
+Marks a range of residues in the main sequence display table.
 The special marker row is used for this and we simply alter the
 class to pick up the appropriate colour for the cells from CSS
 
 @param {string}    divId   Identifier for the display div
 @param {int}       seqLen  Length of the alignment
 @param {int}       start   Offset of first residue to be
-                           highlighted (0-based)
+                           marked (0-based)
 @param {int}       stop    Offset of last residue to be
-                           highlighted (0-based)
+                           marked (0-based)
 
 - 06.06.14  Original   By: ACRM
+- 13.06.14  Changed from highlighted to marked
 */
-function JSAV_highlightRange(divId, seqLen, start, stop)
+function JSAV_markRange(divId, seqLen, start, stop)
 {
    for(var i=0; i&lt;seqLen; i++)
    {
        var id = divId + "_JSAVMarker" + i;
-       document.getElementById(id).className = 'unhighlighted';
+       document.getElementById(id).className = 'unmarked';
    }
-   if((start >= 0) &amp;&amp; (stop >= 0))
+   if((start >= 0) && (stop >= 0))
    {
       for(var i=start; i&lt;=stop; i++)
       {
           var id = divId + "_JSAVMarker" + i;
-          document.getElementById(id).className = 'highlighted';
+          document.getElementById(id).className = 'marked';
       }
    }
 }
+
+// ---------------------------------------------------------------------
+/**
+Initializes global array
+
+- 09.06.14 Original   By: ACRM
+- 12.06.14 Added more arrays
+*/
+function JSAV_init()
+{
+   // Indexed by divId and used to store the values
+   try
+   {
+       if(gSequences == undefined)
+       {
+           ;
+       }
+   }
+   catch(err)
+   {
+       gSequences = Array();
+       gOptions   = Array();
+       gSequenceLengths = Array();
+       gStartPos = Array();
+       gStopPos  = Array();
+   }
+}
+
+
+// ---------------------------------------------------------------------
+/** 
+General purpose routine to delete an object from an array of objects
+where the object contains the specified key:value pair.
+
+@param {string}   key   - The key (item in an object or hash key) 
+                          to check
+@param {string}   value - The value to check
+@param {object[]} array - The array of objects to manipulate
+
+- 12.06.14 Original   By: ACRM
+*/
+function ACRM_deleteItemByLabel(key, value, array)
+{
+    for(var i=0; i&lt;array.length; i++)
+    {
+       if(array[i][key] == value)
+       {
+           array.splice(i,1);
+           break;
+       }
+    }
+}
+
+// ---------------------------------------------------------------------
+/**
+General purpose function to create a multi-dimensional array
+
+@param   {int/int[]}  length   Size of each dimension
+@returns {array}                  (multi-dimensional) Array
+
+Usage:
+ACRM_createArray();     // [] or new Array()
+ACRM_createArray(2);    // new Array(2)
+ACRM_createArray(3, 2); // [new Array(2),
+                   //  new Array(2),
+                   //  new Array(2)]
+
+- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+*/
+function ACRM_createArray(length) 
+{
+    var arr = new Array(length || 0),
+        i = length;
+
+    if (arguments.length > 1) 
+    {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = ACRM_createArray.apply(this, args);
+    }
+
+    return arr;
+}
+
 
 </code></pre>
         </article>
@@ -725,13 +1255,13 @@ function JSAV_highlightRange(divId, seqLen, start, stop)
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#createArray">createArray</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildSlider">JSAV_buildSlider</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_highlightRange">JSAV_highlightRange</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_createArray">ACRM_createArray</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printAction">JSAV_printAction</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_printDelete">JSAV_printDelete</a></li><li><a href="global.html#JSAV_printSlider">JSAV_printSlider</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Fri Jun 06 2014 16:54:35 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Jun 14 2014 09:58:05 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

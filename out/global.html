@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>JSDoc: Global</title>
-
+    
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
@@ -16,89 +16,87 @@
 <body>
 
 <div id="main">
-
+    
     <h1 class="page-title">Global</h1>
-
+    
     
 
 
 
 <section>
-
+    
 <header>
     <h2>
     
     </h2>
     
-</header>
+</header>  
 
 <article>
     <div class="container-overview">
     
-
+    
     
         
-
+        
         
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
+    
+    
+    
     
 </dl>
 
-
+        
         
     
     </div>
-
     
-
     
-
     
-
     
-
-     
-
     
-
     
-
+    
+    
+    
+    
+    
+    
+    
     
         <h3 class="subsection-title">Methods</h3>
-
+        
         <dl>
             
 <dt>
-    <h4 class="name" id="createArray"><span class="type-signature"></span>createArray<span class="signature">(length)</span><span class="type-signature"> &rarr; {array}</span></h4>
-
+    <h4 class="name" id="ACRM_createArray"><span class="type-signature"></span>ACRM_createArray<span class="signature">(length)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         General purpose function to create a multi-dimensional array
@@ -106,104 +104,102 @@
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>length</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;int/int></span>
+<span class="param-type">int/int[]</span>
 
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Size of each dimension</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line343">line 343</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1206">line 1206</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -212,9 +208,9 @@
     (multi-dimensional) Array
 
 Usage:
-createArray();     // [] or new Array()
-createArray(2);    // new Array(2)
-createArray(3, 2); // [new Array(2),
+ACRM_createArray();     // [] or new Array()
+ACRM_createArray(2);    // new Array(2)
+ACRM_createArray(3, 2); // [new Array(2),
                    //  new Array(2),
                    //  new Array(2)]
 
@@ -224,31 +220,198 @@ createArray(3, 2); // [new Array(2),
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
 <span class="param-type">array</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(id, sequence)</span><span class="type-signature"> &rarr; {string}</span></h4>
-
+    <h4 class="name" id="ACRM_deleteItemByLabel"><span class="type-signature"></span>ACRM_deleteItemByLabel<span class="signature">(key, value, array)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
+    
+    
+    <div class="description">
+        General purpose routine to delete an object from an array of objects
+where the object contains the specified key:value pair.
+    </div>
+    
 
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The key (item in an object or hash key) 
+                          to check</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The value to check</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>array</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The array of objects to manipulate
+
+- 12.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1178">line 1178</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(id, sequence, selectable)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
     
     <div class="description">
         Builds the HTML for printing a sequence as a table row. The row 
@@ -259,38 +422,38 @@ separate <td> tag with a class to indicate the amino acid type
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>id</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -299,21 +462,21 @@ separate <td> tag with a class to indicate the amino acid type
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">The identifier</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>sequence</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -322,64 +485,85 @@ separate <td> tag with a class to indicate the amino acid type
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">A string containing the sequence</td>
         </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
 
-    
-    </tbody>
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Display a selection checkbox</td>
+        </tr>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line120">line 120</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line500">line 500</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -393,71 +577,72 @@ separate <td> tag with a class to indicate the amino acid type
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
 <span class="param-type">string</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildMarkerHTML"><span class="type-signature"></span>JSAV_buildMarkerHTML<span class="signature">(divId, seqLen)</span><span class="type-signature"></span></h4>
-
+    <h4 class="name" id="JSAV_buildHighlightHTML"><span class="type-signature"></span>JSAV_buildHighlightHTML<span class="signature">(divId, seqLen, selectable, highlight)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
-        Creates the HTML to display the marker row that indicates the selected
-residues to be used for sorting
+        Builds HTML for table rows that highlight a region in the alignment as
+being important (e.g. CDRs of antibodies). Note that ranges for highlighting
+count from zero.
     </div>
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -466,21 +651,21 @@ residues to be used for sorting
 
             
             </td>
-
             
-
             
-
-            <td class="description last">Identifier of display div</td>
+            
+            
+            
+            <td class="description last">The div we are working in</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>seqLen</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -489,80 +674,434 @@ residues to be used for sorting
 
             
             </td>
-
             
-
             
-
-            <td class="description last">Length of sequences alignement
-
-- 06.06.14  Original   By: ACRM</td>
+            
+            
+            
+            <td class="description last">The length of the alignment</td>
         </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
 
-    
-    </tbody>
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Are there sequences selection boxes</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>highlight</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of residue ranges to highlight
+
+- 13.06.14   Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line279">line 279</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line182">line 182</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildSequencesHTML"><span class="type-signature"></span>JSAV_buildSequencesHTML<span class="signature">(sequences)</span><span class="type-signature"> &rarr; {string}</span></h4>
-
+    <h4 class="name" id="JSAV_buildMarkerHTML"><span class="type-signature"></span>JSAV_buildMarkerHTML<span class="signature">(divId, seqLen, selectable)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
+    
+    
+    <div class="description">
+        Creates the HTML to display the marker row that indicates the selected
+residues to be used for sorting
+    </div>
+    
 
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Identifier of display div</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>seqLen</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Length of sequences alignement</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Do we have select boxes?
+
+- 06.06.14  Original   By: ACRM
+- 10.06.14  Added 'selectable'</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line715">line 715</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_buildSelectAllHTML"><span class="type-signature"></span>JSAV_buildSelectAllHTML<span class="signature">(divId, seqLen)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Build the HTML for creating a row in the table that contains a checkbox
+for selecting/deselecting all sequences
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of the div we are working in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>seqLen</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">sequence length
+
+- 09.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line689">line 689</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_buildSequencesHTML"><span class="type-signature"></span>JSAV_buildSequencesHTML<span class="signature">(divId, sequences, sortable, selectable, highlight)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
     
     <div class="description">
         Takes an array of sequence objects and builds the HTML to display
@@ -571,104 +1110,195 @@ them as a coloured table
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
-                <td class="name"><code>sequences</code></td>
+                <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type">string</span>
 
 
             
             </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of div in which to print</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
 
             
-
+            </td>
             
-
+            
+            
+            
+            
             <td class="description last">Array of sequence objects</td>
         </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sortable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
 
-    
-    </tbody>
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Should the marker line be displayed
+                                  for sortable displays</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Should check marks be displayed</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>highlight</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Ranges to be highlighted</td>
+        </tr>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line251">line 251</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line643">line 643</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -678,193 +1308,26 @@ them as a coloured table
 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
+- 10.06.14 Added sortable and selectable parameters
+- 13.06.14 Added highlight
 </div>
 
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
 <span class="param-type">string</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="JSAV_buildSlider"><span class="type-signature"></span>JSAV_buildSlider<span class="signature">(divId, seqLen, width)</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Builds the slider for selecting a maximum and minimum position for
-sorting. Also calls routine to display the currently selected range -
-i.e. the whole sequence length
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>divId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the div used for the display</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>seqLen</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The length of the sequence alignment</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>width</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The width of the slider
-
-- 06.06.14  Original   By: ACRM</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line150">line 150</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
     
 </dd>
 
@@ -872,11 +1335,11 @@ i.e. the whole sequence length
             
 <dt>
     <h4 class="name" id="JSAV_calcDifference"><span class="type-signature"></span>JSAV_calcDifference<span class="signature">(seq1, seq2, regionStart, regionStop, ignoreEnds)</span><span class="type-signature"> &rarr; {int}</span></h4>
-
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Takes two sequences as strings and calculates the number of 
@@ -887,38 +1350,38 @@ the ends of the sequences
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>seq1</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -927,21 +1390,21 @@ the ends of the sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Sequence string</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>seq2</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -950,21 +1413,21 @@ the ends of the sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Sequence string</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>regionStart</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -973,21 +1436,21 @@ the ends of the sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of start of region to sort</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>regionStop</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -996,21 +1459,21 @@ the ends of the sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of end of region to sort</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>ignoreEnds</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1019,65 +1482,63 @@ the ends of the sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Ignore gaps at the end of the sequences
                               in calculating differences</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line588">line 588</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1003">line 1003</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -1093,31 +1554,31 @@ the ends of the sequences
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
 <span class="param-type">int</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_calcDifferenceMatrix"><span class="type-signature"></span>JSAV_calcDifferenceMatrix<span class="signature">(sequences, ignoreEnds, start, stop)</span><span class="type-signature"></span></h4>
-
+    <h4 class="name" id="JSAV_calcDifferenceMatrix"><span class="type-signature"></span>JSAV_calcDifferenceMatrix<span class="signature">(sequences, start, stop, ignoreEnds)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Takes an array of sequence objects and generates a 2D difference
@@ -1127,61 +1588,107 @@ of sequences
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>sequences</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type">object[]</span>
 
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Array of sequence objects</td>
         </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
 
-    
 
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Offset of start of region to sort</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>stop</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Offset of end of region to sort</td>
+        </tr>
+	
+	
+	
         <tr>
             
                 <td class="name"><code>ignoreEnds</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1190,113 +1697,65 @@ of sequences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Ignore insert characters at
                                  ends of sequences</td>
         </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>start</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Offset of start of region to sort</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>stop</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Offset of end of region to sort</td>
-        </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line552">line 552</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line967">line 967</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
 </dd>
 
@@ -1304,11 +1763,11 @@ of sequences
             
 <dt>
     <h4 class="name" id="JSAV_chooseRepresentative"><span class="type-signature"></span>JSAV_chooseRepresentative<span class="signature">(differenceMatrix)</span><span class="type-signature"></span></h4>
-
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Choose a representative from a difference matrix. The difference
@@ -1320,38 +1779,38 @@ chooses the one with fewest differences
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>differenceMatrix</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1360,67 +1819,184 @@ chooses the one with fewest differences
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Differences between each pair
                                     of sequences</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line373">line 373</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line788">line 788</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
+    
+    
+    
+    
+    
+    
+</dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_deleteSelectedSequences"><span class="type-signature"></span>JSAV_deleteSelectedSequences<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Deletes a set of sequences that have been clicked
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line363">line 363</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
     
 
     
 
     
-
+    
+    
+    
+    
+    
     
 </dd>
 
@@ -1428,11 +2004,11 @@ chooses the one with fewest differences
             
 <dt>
     <h4 class="name" id="JSAV_findClosestSequences"><span class="type-signature"></span>JSAV_findClosestSequences<span class="signature">(sequenceIndexes, refSeq, differenceMatrix)</span><span class="type-signature"></span></h4>
-
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Takes an array of sequence indexes, the index of a reference sequence
@@ -1443,61 +2019,61 @@ reference sequence
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>sequenceIndexes</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;int></span>
+<span class="param-type">int[]</span>
 
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Indexes of a set of sequences to search</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>refSeq</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1506,21 +2082,21 @@ reference sequence
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Index of the sequence to compare with</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>differenceMatrix</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1529,78 +2105,76 @@ reference sequence
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">differences between sequences</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line419">line 419</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line834">line 834</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_FindRealSequenceEnds"><span class="type-signature"></span>JSAV_FindRealSequenceEnds<span class="signature">(seqArray)</span><span class="type-signature"> &rarr; {Array.&lt;int>}</span></h4>
-
+    <h4 class="name" id="JSAV_FindRealSequenceEnds"><span class="type-signature"></span>JSAV_FindRealSequenceEnds<span class="signature">(seqArray)</span><span class="type-signature"> &rarr; {int[]}</span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Finds the real ends of a sequence stored in an array by skipping over
@@ -1612,104 +2186,102 @@ i.e. <= rather than < the last position
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>seqArray</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;char></span>
+<span class="param-type">char[]</span>
 
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Sequence stored in an array</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line306">line 306</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line752">line 752</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -1724,31 +2296,31 @@ i.e. <= rather than < the last position
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;int></span>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int[]</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_getRange"><span class="type-signature"></span>JSAV_getRange<span class="signature">(divId)</span><span class="type-signature"> &rarr; {Array.&lt;int>}</span></h4>
-
+    <h4 class="name" id="JSAV_getRange"><span class="type-signature"></span>JSAV_getRange<span class="signature">(divId)</span><span class="type-signature"> &rarr; {int[]}</span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Simple wrapper function to obtain the currently selected range
@@ -1756,38 +2328,38 @@ i.e. <= rather than < the last position
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1796,64 +2368,62 @@ i.e. <= rather than < the last position
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Identifier for display div</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line233">line 233</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line618">line 618</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -1867,72 +2437,144 @@ i.e. <= rather than < the last position
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;int></span>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int[]</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_highlightRange"><span class="type-signature"></span>JSAV_highlightRange<span class="signature">(divId, seqLen, start, stop)</span><span class="type-signature"></span></h4>
-
+    <h4 class="name" id="JSAV_init"><span class="type-signature"></span>JSAV_init<span class="signature">()</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
-        Highlights a range of residues in the main sequence display table.
+        Initializes global array
+
+- 09.06.14 Original   By: ACRM
+- 12.06.14 Added more arrays
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1145">line 1145</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_markRange"><span class="type-signature"></span>JSAV_markRange<span class="signature">(divId, seqLen, start, stop)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Marks a range of residues in the main sequence display table.
 The special marker row is used for this and we simply alter the
 class to pick up the appropriate colour for the cells from CSS
     </div>
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1941,21 +2583,21 @@ class to pick up the appropriate colour for the cells from CSS
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Identifier for the display div</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>seqLen</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1964,21 +2606,21 @@ class to pick up the appropriate colour for the cells from CSS
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Length of the alignment</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>start</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -1987,22 +2629,22 @@ class to pick up the appropriate colour for the cells from CSS
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of first residue to be
-                           highlighted (0-based)</td>
+                           marked (0-based)</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>stop</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2011,69 +2653,352 @@ class to pick up the appropriate colour for the cells from CSS
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of last residue to be
-                           highlighted (0-based)
+                           marked (0-based)
 
-- 06.06.14  Original   By: ACRM</td>
+- 06.06.14  Original   By: ACRM
+- 13.06.14  Changed from highlighted to marked</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line674">line 674</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1121">line 1121</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
+    
+    
+    
+    
+    
+    
+</dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_modifyCSS"><span class="type-signature"></span>JSAV_modifyCSS<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Change the <td> elements to have a white border
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in
+
+- 12.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line462">line 462</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
     
 
     
 
     
+    
+    
+    
+    
+    
+    
+</dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_printAction"><span class="type-signature"></span>JSAV_printAction<span class="signature">(divId, action, label)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints the action button
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to print in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Function to call</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>label</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for action button
+
+- 13.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line263">line 263</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
     
 </dd>
 
@@ -2081,11 +3006,11 @@ class to pick up the appropriate colour for the cells from CSS
             
 <dt>
     <h4 class="name" id="JSAV_printASequence"><span class="type-signature"></span>JSAV_printASequence<span class="signature">(id, sequence)</span><span class="type-signature"></span></h4>
-
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Prints a sequence as a table row. The row starts with the identifier
@@ -2095,38 +3020,38 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>id</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2135,21 +3060,21 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">The identifier</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>sequence</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2158,69 +3083,1038 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">A string containing the sequence
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildASequenceHTML() and prints result</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line101">line 101</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line480">line 480</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
+    
+    
+    
+    
+    
+    
+</dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_printDelete"><span class="type-signature"></span>JSAV_printDelete<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints the delete button
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to print in
+
+- 12.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line223">line 223</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
     
 
     
 
     
+    
+    
+    
+    
+    
+    
+</dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_printSlider"><span class="type-signature"></span>JSAV_printSlider<span class="signature">(divId, seqLen, width)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Builds and prints the slider for selecting a maximum and minimum position for
+sorting. Also calls routine to display the currently selected range -
+i.e. the whole sequence length
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The name of the div used for the display</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>seqLen</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The length of the sequence alignment</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The width of the slider
+
+- 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant variable and changed divs to spans</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line537">line 537</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_printSubmit"><span class="type-signature"></span>JSAV_printSubmit<span class="signature">(divId, url, label)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints the submit button
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to print in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">URL to which we are submitting</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>label</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for submit button
+
+- 12.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line239">line 239</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_refresh"><span class="type-signature"></span>JSAV_refresh<span class="signature">(divId, sequences, sortable, selectable, border, start, stop, highlight)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Refreshes the content of the divId_sortable div with the new sequence table
+Also updates the marked range and the CSS if the border option is set
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">char</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of an HTML <div></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of sequence objects</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sortable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Is the display sortable</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Are checkboxes shown next to sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>border</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Should CSS be updated to show a border</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">start of selected region</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>stop</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">end of selected region</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>highlight</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">regions to be highlighted
+
+- 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1093">line 1093</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_selectAll"><span class="type-signature"></span>JSAV_selectAll<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Select all sequence selection buttons
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line434">line 434</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_selectAllOrNone"><span class="type-signature"></span>JSAV_selectAllOrNone<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Toggle selection of all sequence selection buttons
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line411">line 411</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
     
 </dd>
 
@@ -2228,11 +4122,11 @@ class to indicate the amino acid type (e.g. aaW for a tryptophan).
             
 <dt>
     <h4 class="name" id="JSAV_showRange"><span class="type-signature"></span>JSAV_showRange<span class="signature">(eventOrId, ui, ebentOrId, ui)</span><span class="type-signature"></span></h4>
-
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Displays the currently selected range as text and calls the routine
@@ -2243,38 +4137,38 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>eventOrId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2283,21 +4177,21 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">JQuery Event</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>ui</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2306,22 +4200,22 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">JQuery UI object
 --OR--</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>ebentOrId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2330,21 +4224,21 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Identifier of the display div</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>ui</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2353,122 +4247,121 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Must be set to null
 
-- 06.06.14  Original   By: ACRM</td>
+- 06.06.14  Original   By: ACRM
+- 10.06.14  Removed redundant .closest() from finding parent</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line192">line 192</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line577">line 577</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_sortAndRefreshSequences"><span class="type-signature"></span>JSAV_sortAndRefreshSequences<span class="signature">(divId, sequences)</span><span class="type-signature"></span></h4>
-
+    <h4 class="name" id="JSAV_sortAndRefreshSequences"><span class="type-signature"></span>JSAV_sortAndRefreshSequences<span class="signature">(divId, sortable, selectable, border)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Sorts a set of sequences and refreshes the display in a div with
 the specified ID - the idea is that the unsorted sequences would
 be displayed here and then this is tied to the action on a button
-that sorts and refreshes the display
+that sorts and refreshes the display.
     </div>
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2477,103 +4370,149 @@ that sorts and refreshes the display
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">ID of an HTML <div></td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
-                <td class="name"><code>sequences</code></td>
+                <td class="name"><code>sortable</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type">bool</span>
 
 
             
             </td>
-
             
-
             
-
-            <td class="description last">Array of sequence objects
-
-- 29.05.14 Original   By: ACRM</td>
+            
+            
+            
+            <td class="description last">Is the display sortable</td>
         </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
 
-    
-    </tbody>
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Are checkboxes shown next to sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>border</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Should CSS be updated to show a border
+
+- 29.05.14 Original   By: ACRM
+- 11.06.14 sequences is now global
+- 12.06.14 split out the JSAV_refresh() part</td>
+        </tr>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line644">line 644</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1063">line 1063</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="JSAV_sortSequences"><span class="type-signature"></span>JSAV_sortSequences<span class="signature">(sequences, start, stop)</span><span class="type-signature"> &rarr; {Array.&lt;object>}</span></h4>
-
+    <h4 class="name" id="JSAV_sortSequences"><span class="type-signature"></span>JSAV_sortSequences<span class="signature">(sequences, start, stop)</span><span class="type-signature"> &rarr; {object[]}</span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
         Sorts an array of sequence objects to group similar sequences together.
@@ -2587,61 +4526,61 @@ sequence
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>sequences</code></td>
             
-
+            
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type">object[]</span>
 
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Array of sequence objects</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>start</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2650,21 +4589,21 @@ sequence
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of start of region to sort</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>stop</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2673,64 +4612,62 @@ sequence
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">Offset of end of region to sort</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line464">line 464</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line879">line 879</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
+    
     
     <h5>Returns:</h5>
     
@@ -2746,95 +4683,72 @@ sequence
 
 
 <dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;object></span>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">object[]</span>
 
 
-    </dd>
+	</dd>
 </dl>
 
         
-
+    
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="printJSAV"><span class="type-signature"></span>printJSAV<span class="signature">(sequences, divId, sortable, width)</span><span class="type-signature"></span></h4>
-
+    <h4 class="name" id="JSAV_submitSequences"><span class="type-signature"></span>JSAV_submitSequences<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
     
 </dt>
 <dd>
-
+    
     
     <div class="description">
-        This is the only routine called by a user. It takes an array of
-sequence objects and displays them as a coloured sortable table
-optionally with a slider and sort button
+        Handles the user clicking the submit button. Build a FASTA version of the
+sequences that have been selected, fills them into a <textarea> in a form
+and then submits the form.
     </div>
     
 
     
-
     
-
+    
+    
     
         <h5>Parameters:</h5>
         
 
 <table class="params">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>sequences</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;object></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Array of sequence objects</td>
-        </tr>
-
-    
-
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
         <tr>
             
                 <td class="name"><code>divId</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2843,21 +4757,453 @@ optionally with a slider and sort button
 
             
             </td>
-
             
-
             
+            
+            
+            
+            <td class="description last">The ID of the div we are working in
 
-            <td class="description last">ID of div to print in</td>
+- 13.06.14  Original   By: ACRM</td>
         </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line322">line 322</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
 
     
 
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_unselectAll"><span class="type-signature"></span>JSAV_unselectAll<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Unselect all sequence selection buttons
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in
+
+- 09.06.14 Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line448">line 448</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_wrapAction"><span class="type-signature"></span>JSAV_wrapAction<span class="signature">(divId, action)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Wrap the action function. When the action button is clicked, this function
+is called so extract the relevant sequence data and call the user specified
+function, passing the divId and and array of sequence objects
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The name of the user function
+
+- 13.06.14  Original   By: ACRM</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line280">line 280</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="printJSAV"><span class="type-signature"></span>printJSAV<span class="signature">(sequences, divId, options, sortable, width, selectable, deletable, highlight, submit, submitLabel, action, actionLabel)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This is the only routine called by a user. It takes an array of
+sequence objects and displays them as a coloured sortable table
+optionally with a slider and sort button, delete button, etc
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of sequence objects</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of div to print in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">options (see below)
+
+options are as follows:</td>
+        </tr>
+	
+	
+	
         <tr>
             
                 <td class="name"><code>sortable</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2866,21 +5212,22 @@ optionally with a slider and sort button
 
             
             </td>
-
             
-
             
-
-            <td class="description last">Should the sorting options be displayed</td>
+            
+            
+            
+            <td class="description last">Should the sorting options be displayed
+                                 (default: false)</td>
         </tr>
-
-    
-
+	
+	
+	
         <tr>
             
                 <td class="name"><code>width</code></td>
             
-
+            
             <td class="type">
             
                 
@@ -2889,94 +5236,268 @@ optionally with a slider and sort button
 
             
             </td>
-
             
-
             
-
+            
+            
+            
             <td class="description last">The width of the selection slider with
-                              units (e.g. '400px')
+                                 units (default: '400px')</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>selectable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Should selection checkboxes be displayed
+                                 for each sequence</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>deletable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Makes it possible to delete sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>highlight</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of ranges to highlight</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>submit</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">URL for submitting selected sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>submitLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for submit button</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Function to call using selected sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>actionLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for action button
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
 - 05.06.14 Added divId parameter and sortable
-- 06.06.14 Added width</td>
+- 06.06.14 Added width
+- 10.06.14 sortable and width parameters now replaced by 'options'
+           Added 'selectable' option
+           Stores sequence length in global array
+- 11.06.14 Added deletable
+- 13.06.14 Cleaned up use of defaults
+- 13.06.14 Added highlight
+- 13.06.14 Added submit and action, submitLabel and actionLabel</td>
         </tr>
-
-    
-    </tbody>
+	
+	
+	</tbody>
 </table>
     
-
+    
     
 <dl class="details">
     
-
+        
+    
+    
     
 
     
-
     
-
     
-
     
-
     
-
     
-
     
-
+    
+    
+    
+    
+    
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line62">line 62</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line106">line 106</a>
     </li></ul></dd>
     
-
     
-
     
-
+    
+    
+    
     
 </dl>
 
-
+    
     
 
     
 
     
-
     
-
     
-
     
-
+    
+    
     
         <h5>Example</h5>
         
-    <pre class="prettyprint"><code>printJSAV('mySeqDisplay', sequenceArray, true, '400px');
+    <pre class="prettyprint"><code> 
+var options = Array();
+options.width = '400px';
+options.sortable = true;
+options.highlight = [3,5,10,14];
+options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+options.submitLabel = "Submit sequences";
+options.action = "myAction";
+options.actionLabel = "My Action";
+printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
-     sequenceArray  is an array of sequence objects
-     true           indicates that the display should be sortable
-     '400px'        indicates the width of the slider for specifying
-                    a sort range</code></pre>
+      sequenceArray  is an array of sequence objects
+      options        is an object describing options - see below</code></pre>
 
     
 </dd>
 
         </dl>
     
-
     
-
+    
+    
     
 </article>
 
-</section>
+</section>  
 
 
 
@@ -2984,13 +5505,13 @@ Where 'mySeqDisplay' is the name of a div that will be created
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#createArray">createArray</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildSlider">JSAV_buildSlider</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_highlightRange">JSAV_highlightRange</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_createArray">ACRM_createArray</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printAction">JSAV_printAction</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_printDelete">JSAV_printDelete</a></li><li><a href="global.html#JSAV_printSlider">JSAV_printSlider</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Fri Jun 06 2014 16:54:35 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Jun 14 2014 09:58:05 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
