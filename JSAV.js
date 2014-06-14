@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.3 13.06.14
+    JSAV V1.2 13.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.3
+   Version:    V1.2
    Date:       13.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -47,7 +47,7 @@
                      Cleaned up comments/documentation
                      Cleaned up defaults in printJSAV
                      Changed some routine names
-   V1.3   13.06.14   Added highlight option
+   V1.2   13.06.14   Added highlight option
                      Added submit/submitLabel options
                      Added action/actionLabel options
 
