@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.2 13.06.14
+    JSAV V1.2.1 15.06.14
     Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.2
-   Date:       13.06.14
+   Version:    V1.2.1
+   Date:       15.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
@@ -23,8 +23,10 @@
    EMail:      andrew@bioinf.org.uk
                
 **************************************************************************
-   This program is distributed under the Gnu Public licence (GPLv2)
-   Alternative licences are available on request.
+   This program is distributed under the Gnu Public licence (GPLv2 or 
+   above)
+
+   Alternative licences for commercial use are available on request.
 **************************************************************************
    Description:
    ============
@@ -50,8 +52,11 @@
    V1.2   13.06.14   Added highlight option
                      Added submit/submitLabel options
                      Added action/actionLabel options
+   V1.2.1 15.06.14   Added height option
+                     Changed to use ACRM_alert()
 
-TODO: dot diaplay where amino acid matches that above 
+TODO: 1. dot diaplay where amino acid matches that above 
+      2. FASTA export
 
 *************************************************************************/
 /**
@@ -82,6 +87,8 @@ options are as follows:
                                  (default: false)
 @param {string}    width       - The width of the selection slider with
                                  units (default: '400px')
+@param {string}    height      - The height of the selection slider with
+                                 units (default: '6pt')
 @param {bool}      selectable  - Should selection checkboxes be displayed
                                  for each sequence
 @param {bool}      deletable   - Makes it possible to delete sequences
@@ -102,12 +109,14 @@ options are as follows:
 - 13.06.14 Cleaned up use of defaults
 - 13.06.14 Added highlight
 - 13.06.14 Added submit and action, submitLabel and actionLabel
+- 15.06.14 Added height
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
    if(options             == undefined) { options = Array();                         }
    if(options.width       == undefined) { options.width       = "400px";             }
+   if(options.height      == undefined) { options.height      = "6pt";               }
    if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences";  }
    if(options.actionLabel == undefined) { options.actionLabel = "Process Sequences"; }
 
@@ -134,7 +143,7 @@ function printJSAV(divId, sequences, options)
 
       document.writeln("<p></p>");
 
-      JSAV_printSlider(divId, stop, options.width);
+      JSAV_printSlider(divId, stop, options.width, options.height);
 
       var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       document.writeln(html);
@@ -377,11 +386,11 @@ function JSAV_deleteSelectedSequences(divId)
 
     if(count == 0)
     {
-        alert("You must select some sequences!");
+        ACRM_alert("Error!","You must select some sequences!");
     }
     else if(count == gSequences[divId].length)
     {
-        alert("You can't delete all the sequences!");
+        ACRM_alert("Error!","You can't delete all the sequences!");
     }
     else
     {
@@ -530,14 +539,16 @@ i.e. the whole sequence length
 @param {string}   divId   The name of the div used for the display
 @param {int}      seqLen  The length of the sequence alignment
 @param {string}   width   The width of the slider
+@param {string}   height  The height of the slider (text size)
 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant variable and changed divs to spans
+- 15.06.14 Added height
 */
-function JSAV_printSlider(divId, seqLen, width)
+function JSAV_printSlider(divId, seqLen, width, height)
 {
    document.writeln("<span id='" + divId + "_showrange'></span>");
-   document.writeln("<span id='" + divId + "_slider'></span>");
+   document.writeln("<span id='" + divId + "_slider' style='font-size: " + height + ";'></span>");
 
    var id = divId + "_slider";
    var tag = "#" + id;
@@ -1201,7 +1212,8 @@ ACRM_createArray(3, 2); // [new Array(2),
                    //  new Array(2),
                    //  new Array(2)]
 
-- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+- 29.05.14 Taken from http://stackoverflow.com/questions/966225/
+           how-can-i-create-a-two-dimensional-array-in-javascript
 */
 function ACRM_createArray(length) 
 {
@@ -1218,3 +1230,40 @@ function ACRM_createArray(length)
 }
 
 
+function ACRM_confirm(title, msg, callback) 
+{
+    var dialogObj = $("<div style='display:none' title='" + title + "'>"+msg+"</div>");
+    $('body').append(dialogObj);
+    $(dialogObj).dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            Cancel: function() {
+                callback(false);
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            },
+            "OK": function() {
+                callback(true);
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            }
+        }
+    });
+};
+
+function ACRM_alert(title, msg) 
+{
+    var dialogObj = $("<div style='display:none' title='" + title + "'>"+msg+"</div>");
+    $('body').append(dialogObj);
+    $(dialogObj).dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            "OK": function() {
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            }
+        }
+    });
+};
