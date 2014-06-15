@@ -55,8 +55,10 @@
    V1.2.1 15.06.14   Added height option
                      Changed to use ACRM_alert()
 
-TODO: 1. dot diaplay where amino acid matches that above 
+TODO: 1. dot display where amino acid matches that above 
       2. FASTA export
+      3. Consensus residue display
+      4. Bar display of conservation from entropy
 
 *************************************************************************/
 /**
