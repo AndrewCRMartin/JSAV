@@ -370,6 +370,8 @@ Deletes a set of sequences that have been clicked
 @param {string}  divId   - The ID of the div to work in
 
 - 12.06.14 Original   By: ACRM
+- 15.06.14 Changed from alert() to ACRM_alert()
+- 16.06.14 Changed from confirm() to ACRM_confirm()
 */
 function JSAV_deleteSelectedSequences(divId)
 {
@@ -397,17 +399,16 @@ function JSAV_deleteSelectedSequences(divId)
     else
     {
         var message = "Delete " + count + " selected sequences?";
-        if(confirm(message))
-        {
+        ACRM_confirm("Confirm", message, function(){
             // Run through the global sequence array deleting the selected objects
             for(var i=0; i<toDelete.length; i++)
             {
                 ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
             }
-        }
+            var options = gOptions[divId];
+            JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
+        });
 
-        var options = gOptions[divId];
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
     }
 }
 
@@ -1232,6 +1233,17 @@ function ACRM_createArray(length)
 }
 
 
+// ---------------------------------------------------------------------
+/**
+General purpose confirm() dialogue using JQueryUI dialog rather than the
+simple JavaScript confirm() method
+
+@param {string}   title    - title for the confirm box
+@param {string}   msg      - the message to be displayed
+@param {function} callback - callback function to be called
+
+- 15.06.14 Original   By: ACRM
+*/
 function ACRM_confirm(title, msg, callback) 
 {
     var dialogObj = $("<div style='display:none' title='" + title + "'>"+msg+"</div>");
@@ -1241,12 +1253,11 @@ function ACRM_confirm(title, msg, callback)
         modal: true,
         buttons: {
             Cancel: function() {
-                callback(false);
                 $( this ).dialog( "close" );
                 $( this ).remove();
             },
             "OK": function() {
-                callback(true);
+                callback();
                 $( this ).dialog( "close" );
                 $( this ).remove();
             }
@@ -1254,6 +1265,16 @@ function ACRM_confirm(title, msg, callback)
     });
 };
 
+// ---------------------------------------------------------------------
+/**
+General purpose alert() dialogue using JQueryUI dialog rather than the
+simple JavaScript alert() method
+
+@param {string}   title    - title for the confirm box
+@param {string}   msg      - the message to be displayed
+
+- 15.06.14 Original   By: ACRM
+*/
 function ACRM_alert(title, msg) 
 {
     var dialogObj = $("<div style='display:none' title='" + title + "'>"+msg+"</div>");
