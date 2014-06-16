@@ -63,6 +63,7 @@ TODO: 1. FASTA export
       4. Allow user to specify key sequence for sorting
       5. Ability to change colouring schemes
       6. Clean up passing of globals
+      7. Need to refresh the dotify and nocolour properties on a reload
 
 *************************************************************************/
 /**
