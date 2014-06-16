@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.2.2 16.06.14
+    JSAV V1.3 16.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.2.2
+   Version:    V1.3
    Date:       16.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -55,11 +55,12 @@
    V1.2.1 15.06.14   Added height option
                      Changed to use ACRM_alert()
    V1.2.2 16.06.14   Changed to use ACRM_confirm()
+   V1.3   16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
 
-TODO: 1. dot display where amino acid matches that above 
-      2. FASTA export
-      3. Consensus residue display
-      4. Bar display of conservation from entropy
+TODO: 1. FASTA export
+      2. Consensus residue display
+      3. Bar display of conservation from entropy
+      4. Allow user to specify key sequence for sorting
 
 *************************************************************************/
 /**
@@ -86,20 +87,26 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @param {object}    options   - options (see below)
 
 options are as follows:
-@param {bool}      sortable    - Should the sorting options be displayed
-                                 (default: false)
-@param {string}    width       - The width of the selection slider with
-                                 units (default: '400px')
-@param {string}    height      - The height of the selection slider with
-                                 units (default: '6pt')
-@param {bool}      selectable  - Should selection checkboxes be displayed
-                                 for each sequence
-@param {bool}      deletable   - Makes it possible to delete sequences
-@param {int[]}     highlight   - Array of ranges to highlight
-@param {string}    submit      - URL for submitting selected sequences
-@param {string}    submitLabel - Label for submit button
-@param {string}    action      - Function to call using selected sequences
-@param {string}    actionLabel - Label for action button
+@param {bool}      sortable       - Should the sorting options be displayed
+                                    (default: false)
+@param {string}    width          - The width of the selection slider with
+                                    units (default: '400px')
+@param {string}    height         - The height of the selection slider with
+                                    units (default: '6pt')
+@param {bool}      selectable     - Should selection checkboxes be displayed
+                                    for each sequence
+@param {bool}      deletable      - Makes it possible to delete sequences
+@param {int[]}     highlight      - Array of ranges to highlight
+@param {string}    submit         - URL for submitting selected sequences
+@param {string}    submitLabel    - Label for submit button
+@param {string}    action         - Function to call using selected sequences
+@param {string}    actionLabel    - Label for action button
+@param {bool}      dotify         - Repeated amino acids in the sequence are
+                                    replaced by a dot
+@param {bool}      nocolour       - Dotified amino acids are not coloured
+                                    (except deletions)
+@param {bool}      toggleDotify   - Create a check box for toggling dotify
+@param {bool}      toggleNocolour - Create a check box for toggling nocolour
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -113,38 +120,40 @@ options are as follows:
 - 13.06.14 Added highlight
 - 13.06.14 Added submit and action, submitLabel and actionLabel
 - 15.06.14 Added height
+- 16.06.14 Added dotify, nocolour, toggleDotify, toggleNocolour
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
-   if(options             == undefined) { options = Array();                         }
-   if(options.width       == undefined) { options.width       = "400px";             }
-   if(options.height      == undefined) { options.height      = "6pt";               }
-   if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences";  }
-   if(options.actionLabel == undefined) { options.actionLabel = "Process Sequences"; }
+   if(options             == undefined) { options = Array();                            }
+   if(options.width       == undefined) { options.width          = "400px";             }
+   if(options.height      == undefined) { options.height         = "6pt";               }
+   if(options.submitLabel == undefined) { options.submitLabel    = "Submit Sequences";  }
+   if(options.actionLabel == undefined) { options.actionLabel    = "Process Sequences"; }
+   if(options.nocolor)                  { options.nocolour       = true;                }
+   if(options.toggleNocolor)            { options.toggleNocolour = true;                }
 
    // Initialize globals if not yet done
    JSAV_init();
 
-   gOptions[divId] = options;
-   gSequences[divId] = sequences;
+   gOptions[divId]         = options;
+   gSequences[divId]       = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
 
    document.writeln("<div id='" + divId + "'>");
 
-   document.writeln("<div id='" + divId + "_sortable'>");
+   document.writeln("<div id='" + divId + "_sortable' class='JSAVDisplay'>");
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
-                                      options.selectable, options.highlight);
+                                      options.selectable, options.highlight,
+                                      options.dotify, options.nocolour);
    document.write(html);
    document.writeln("</div>");
-   document.writeln("<div>");
+   document.writeln("<div class='JSAVControls'>");
 
    if(options.sortable)
    {
       var start = 1;
       var stop  = gSequenceLengths[divId];
-
-      document.writeln("<p></p>");
 
       JSAV_printSlider(divId, stop, options.width, options.height);
 
@@ -168,6 +177,16 @@ function printJSAV(divId, sequences, options)
       JSAV_printAction(divId, options.action, options.actionLabel);
    }
 
+   if(options.toggleDotify)
+   {
+       document.writeln("<br />");
+       JSAV_printToggleDotify(divId, options);
+       if(options.toggleNocolour)
+       {
+           JSAV_printToggleNocolour(divId, options);
+       }
+   }
+
    document.writeln("</div>");
    document.writeln("</div>");
 
@@ -177,6 +196,50 @@ function printJSAV(divId, sequences, options)
    }
 }
 
+
+function JSAV_printToggleDotify(divId, options)
+{
+    var html = "";
+    var checked = "";
+    if(options.dotify) { checked = " checked='checked'"; };
+    var id = divId + "_toggleDotify";
+    var idText = " id='" + id + "'";
+    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
+
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/>Dotify</span>";
+
+    document.writeln(html);
+}
+
+function JSAV_printToggleNocolour(divId, options)
+{
+    var html = "";
+    var checked = "";
+    if(options.nocolour) { checked = " checked='checked'"; };
+    var id = divId + "_toggleNocolour";
+    var idText = " id='" + id + "'";
+    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
+
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/>Do not colour dots</span>";
+    document.writeln(html);
+}
+
+function JSAV_toggleOption(divId, theButton, theOption)
+{
+    var tag = "#" + theButton;
+    var status = $(tag).prop('checked');
+    var options = gOptions[divId];
+    options[theOption] = status;
+    if(options.sorted)
+    {
+        JSAV_sortAndRefreshSequences(divId, options.sortable, options.selectable, options.border)
+    }
+    else
+    {
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
+    }
+
+}
 
 // ---------------------------------------------------------------------
 /**
@@ -409,7 +472,7 @@ function JSAV_deleteSelectedSequences(divId)
                     ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
                 }
                 var options = gOptions[divId];
-                JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
+                JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
             }
         });
 
@@ -483,58 +546,91 @@ function JSAV_modifyCSS(divId)
 
 // ---------------------------------------------------------------------
 /**
-Prints a sequence as a table row. The row starts with the identifier
-and is followed by each amino acid in a separate <td> tag with a 
-class to indicate the amino acid type (e.g. aaW for a tryptophan). 
-
-@param {string} id         The identifier
-@param {string} sequence   A string containing the sequence
-
-- 29.05.14 Original  By: ACRM
-- 30.05.14 Now just calls JSAV_buildASequenceHTML() and prints result
-*/
-function JSAV_printASequence(id, sequence)
-{
-   var html  = JSAV_buildASequenceHTML(id, sequence, false);
-   document.write(html);
-}
-
-// ---------------------------------------------------------------------
-/**
 Builds the HTML for printing a sequence as a table row. The row 
 starts with the identifier and is followed by each amino acid in a 
 separate <td> tag with a class to indicate the amino acid type 
 (e.g. aaW for a tryptophan). 
 
-@param {string}   id         The identifier
-@param {string}   sequence   A string containing the sequence
-@param {bool}     selectable Display a selection checkbox
-@returns {string} text       HTML snippet
+@param {string}   id            The identifier
+@param {string}   sequence      A string containing the sequence
+@param {string}   prevSequence  A string containing the previous sequence
+@param {bool}     selectable    Display a selection checkbox
+@param {bool}     dotify        Dotify the sequence
+@param {bool}     nocolour      Don't colour dotified residues
+@returns {string} text          HTML snippet
 
 - 30.05.14 Original  By: ACRM
+- 16.06.14 Added dotify and nocolour
 */
-function JSAV_buildASequenceHTML(id, sequence, selectable)
+function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour)
 {
-   var tableLineArray = sequence.split("");
+    var seqArray = sequence.split("");
+    var prevSeqArray = undefined;
 
-   var tableLine = "<tr id='" + id + "'>";
-   tableLine += "<th class='titleCell'>" + id + "</th>";
+    if(dotify && (prevSequence != undefined))
+    {
+        prevSeqArray = prevSequence.split("");
+    }
 
-   if(selectable)
-   {
-      var name = "select_" + id;
-      tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
-   }
+    var tableLine = "<tr id='" + id + "'>";
+    tableLine += "<th class='titleCell'>" + id + "</th>";
 
-   var nResidues = tableLineArray.length;
-   for(var i=0; i<nResidues; i++)
-   {
-      var aa = tableLineArray[i];
-      tableLine += "<td class='aa" + aa + "'>" + aa + "</td>"
-   }
-   tableLine += "</td></tr>";
+    if(selectable)
+    {
+        var name = "select_" + id;
+        tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
+    }
 
-   return(tableLine);
+    var nResidues = seqArray.length;
+    if(dotify)
+    {
+        for(var i=0; i<nResidues; i++)
+        {
+            var aa     = seqArray[i];
+            var prevAa = '#';
+
+            var colourClass = "aa" + aa;
+            if(nocolour)
+            {
+                if(aa == "-") 
+                { 
+                    colourClass = "aaDel"; 
+                }
+            }
+
+            if(prevSeqArray != undefined)
+            {
+                prevAa = prevSeqArray[i];
+            }
+            if(aa == prevAa)
+            {
+                if(nocolour)
+                {
+                    if(aa == '-')
+                    {
+                        colourClass = "aaDel";
+                    }
+                    else
+                    {
+                        colourClass = "aaDot";
+                    }
+                }
+                if(aa != '-') {aa = '.';}
+            }
+            tableLine += "<td class='" + colourClass + "'>" + aa + "</td>";
+        }
+    }
+    else
+    {
+        for(var i=0; i<nResidues; i++)
+        {
+            var aa = seqArray[i];
+            tableLine += "<td class='aa" + aa + "'>" + aa + "</td>";
+        }
+    }
+    tableLine += "</td></tr>";
+
+    return(tableLine);
 }
 
 // ---------------------------------------------------------------------
@@ -651,14 +747,17 @@ them as a coloured table
                                   for sortable displays
 @param   {bool}       selectable  Should check marks be displayed
 @param   {int[]}      highlight   Ranges to be highlighted
+@param   {bool}       dotify      Dotify the sequence alignment
+@param   {bool}       nocolour    Don't colout dotified residues
 @returns {string}                 HTML
 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
 - 10.06.14 Added sortable and selectable parameters
 - 13.06.14 Added highlight
+- 16.06.14 Added dotify
 */
-function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight)
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight, dotify, nocolour)
 {
    var html = "";
    html += "<div class='JSAV'>\n";
@@ -679,7 +778,10 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
    // Build the actual sequence entries
    for(var i=0; i<sequences.length; i++)
    {
-      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
+      var prevSequence = undefined;
+      if(i>0) { prevSequence = sequences[i-1].sequence; }
+      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, prevSequence, 
+                                      selectable, dotify, nocolour) + "\n";
    }
 
    if(highlight != undefined)
@@ -1082,6 +1184,7 @@ that sorts and refreshes the display.
 - 29.05.14 Original   By: ACRM
 - 11.06.14 sequences is now global
 - 12.06.14 split out the JSAV_refresh() part
+- 16.06.14 Added dotify and nocolour options to refresh call
 */
 function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
@@ -1091,7 +1194,11 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
    var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
 
    JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
-                range[0], range[1], gOptions[divId].highlight);
+                range[0], range[1], gOptions[divId].highlight, 
+                gOptions[divId].dotify, gOptions[divId].nocolour);
+
+   // Record the fact that the display has been sorted
+   gOptions[divId].sorted = true;
 
    return(false);
 }
@@ -1110,12 +1217,17 @@ Also updates the marked range and the CSS if the border option is set
 @param {int}      start        start of selected region
 @param {int}      stop         end of selected region
 @param {int[]}    highlight    regions to be highlighted
+@param {bool}     dotify        Dotify the sequence
+@param {bool}     nocolour      Don't colour dotified residues
 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
+- 16.06.14  Added dotify and nocolour
 */
-function JSAV_refresh(divId, sequences, sortable, selectable, border, start, stop, highlight)
+function JSAV_refresh(divId, sequences, sortable, selectable, border, 
+                      start, stop, highlight, dotify, nocolour)
 {
-   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight);
+   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, 
+                                      selectable, highlight, dotify, nocolour);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    if(border)

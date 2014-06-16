@@ -43,6 +43,10 @@
   margin: -3px;
 }
 
+.JSAVControls {margin: 1em 0 0 0;}
+
+.JSAV .aaDel {background-color: #000000; color: #FFFFFF}
+.JSAV .aaDot {background-color: #FFFFFF; color: #000000}
 
 .JSAV .aaA {background-color: #CCFF00; color: #000000}
 .JSAV .aaG {background-color: #FF9900; color: #000000}

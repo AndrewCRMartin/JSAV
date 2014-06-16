@@ -1,5 +1,5 @@
-JavaScript Sequence Alignment Viewer (JSAV)
-===========================================
+JavaScript Sequence Alignment Viewer (JSAV) V1.3
+================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
 
@@ -30,6 +30,19 @@ positions 24-34 and 50-56)
 - `action`      - Function to call using selected sequences - the function will be passed 
 the divId and array of sequence objects
 - `actionLabel` - Label for action button
+- `dotify`      - Repeated residues in the alignment are replaced with dots
+- `nocolour` or `nocolor` - Repeated residues are not coloured
+- `toggleDotify` - Display a checkbox to toggle the dotify mode
+- `toggleNocolour` or `toggleNocolor - Display a checkbox to toggle the nocolour-dotify mode
+
+
+CSS Control
+-----------
+
+The overall JSAV component is wrapped in <div> with the ID specified in the call.
+Within this there are two <div>s 
+- the first displays the alignment and has class='JSAVDisplay'
+- the second displays the controls and has class='JSAVControls'
 
 Prerequisites
 -------------
