@@ -1,19 +1,19 @@
 /** @preserve 
     @file
-    JSAV V1.2.1 15.06.14
-    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
+    JSAV V1.2.2 16.06.14
+    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
 /** ***********************************************************************
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.2.1
-   Date:       15.06.14
+   Version:    V1.2.2
+   Date:       16.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
-   Author:     Dr. Andrew C. R. Martin
+   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
+   Author:     Dr. Andrew C.R. Martin
    Address:    Institute of Structural and Molecular Biology
                Division of Biosciences
                University College
@@ -54,6 +54,7 @@
                      Added action/actionLabel options
    V1.2.1 15.06.14   Added height option
                      Changed to use ACRM_alert()
+   V1.2.2 16.06.14   Changed to use ACRM_confirm()
 
 TODO: 1. dot display where amino acid matches that above 
       2. FASTA export
@@ -399,14 +400,17 @@ function JSAV_deleteSelectedSequences(divId)
     else
     {
         var message = "Delete " + count + " selected sequences?";
-        ACRM_confirm("Confirm", message, function(){
-            // Run through the global sequence array deleting the selected objects
-            for(var i=0; i<toDelete.length; i++)
+        ACRM_confirm("Confirm", message, function(confirm){
+            if(confirm)
             {
-                ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+                // Run through the global sequence array deleting the selected objects
+                for(var i=0; i<toDelete.length; i++)
+                {
+                    ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+                }
+                var options = gOptions[divId];
+                JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
             }
-            var options = gOptions[divId];
-            JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
         });
 
     }
@@ -662,14 +666,17 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
 
    if(selectable)
    {
-      html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
+       // Create the toggle all/none selection button
+       html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
    }
 
    if(highlight != undefined)
    {
+       // If we are highlighting regions in the sequence, do so
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
    }
 
+   // Build the actual sequence entries
    for(var i=0; i<sequences.length; i++)
    {
       html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, selectable) + "\n";
@@ -677,11 +684,13 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
 
    if(highlight != undefined)
    {
+       // If we are highlighting regions in the sequence, do so again at the bottom of the table
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
    }
 
    if(sortable)
    {
+      // The marker section which shows the range selected for sorting
       html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], selectable);
    }
 
@@ -1240,7 +1249,10 @@ simple JavaScript confirm() method
 
 @param {string}   title    - title for the confirm box
 @param {string}   msg      - the message to be displayed
-@param {function} callback - callback function to be called
+@param {function} callback - function to be called after the OK or cancel
+                             button is called. A boolean parameter is
+                             passed to the function - true for OK, false
+                             for cancel
 
 - 15.06.14 Original   By: ACRM
 */
@@ -1253,11 +1265,12 @@ function ACRM_confirm(title, msg, callback)
         modal: true,
         buttons: {
             Cancel: function() {
+                callback(false);
                 $( this ).dialog( "close" );
                 $( this ).remove();
             },
             "OK": function() {
-                callback();
+                callback(true);
                 $( this ).dialog( "close" );
                 $( this ).remove();
             }

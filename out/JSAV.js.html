@@ -27,20 +27,20 @@
         <article>
             <pre class="prettyprint source"><code>/** @preserve 
     @file
-    JSAV V1.2 13.06.14
-    Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
+    JSAV V1.2.2 16.06.14
+    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
 /** ***********************************************************************
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.2
-   Date:       13.06.14
+   Version:    V1.2.2
+   Date:       16.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
-   Copyright:  (c) Dr. Andrew C. R. Martin, UCL, 2014
-   Author:     Dr. Andrew C. R. Martin
+   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
+   Author:     Dr. Andrew C.R. Martin
    Address:    Institute of Structural and Molecular Biology
                Division of Biosciences
                University College
@@ -50,8 +50,10 @@
    EMail:      andrew@bioinf.org.uk
                
 **************************************************************************
-   This program is distributed under the Gnu Public licence (GPLv2)
-   Alternative licences are available on request.
+   This program is distributed under the Gnu Public licence (GPLv2 or 
+   above)
+
+   Alternative licences for commercial use are available on request.
 **************************************************************************
    Description:
    ============
@@ -77,8 +79,14 @@
    V1.2   13.06.14   Added highlight option
                      Added submit/submitLabel options
                      Added action/actionLabel options
+   V1.2.1 15.06.14   Added height option
+                     Changed to use ACRM_alert()
+   V1.2.2 16.06.14   Changed to use ACRM_confirm()
 
-TODO: dot diaplay where amino acid matches that above 
+TODO: 1. dot display where amino acid matches that above 
+      2. FASTA export
+      3. Consensus residue display
+      4. Bar display of conservation from entropy
 
 *************************************************************************/
 /**
@@ -109,6 +117,8 @@ options are as follows:
                                  (default: false)
 @param {string}    width       - The width of the selection slider with
                                  units (default: '400px')
+@param {string}    height      - The height of the selection slider with
+                                 units (default: '6pt')
 @param {bool}      selectable  - Should selection checkboxes be displayed
                                  for each sequence
 @param {bool}      deletable   - Makes it possible to delete sequences
@@ -129,12 +139,14 @@ options are as follows:
 - 13.06.14 Cleaned up use of defaults
 - 13.06.14 Added highlight
 - 13.06.14 Added submit and action, submitLabel and actionLabel
+- 15.06.14 Added height
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
    if(options             == undefined) { options = Array();                         }
    if(options.width       == undefined) { options.width       = "400px";             }
+   if(options.height      == undefined) { options.height      = "6pt";               }
    if(options.submitLabel == undefined) { options.submitLabel = "Submit Sequences";  }
    if(options.actionLabel == undefined) { options.actionLabel = "Process Sequences"; }
 
@@ -161,7 +173,7 @@ function printJSAV(divId, sequences, options)
 
       document.writeln("&lt;p>&lt;/p>");
 
-      JSAV_printSlider(divId, stop, options.width);
+      JSAV_printSlider(divId, stop, options.width, options.height);
 
       var html = "&lt;button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort&lt;/button>";
       document.writeln(html);
@@ -386,6 +398,8 @@ Deletes a set of sequences that have been clicked
 @param {string}  divId   - The ID of the div to work in
 
 - 12.06.14 Original   By: ACRM
+- 15.06.14 Changed from alert() to ACRM_alert()
+- 16.06.14 Changed from confirm() to ACRM_confirm()
 */
 function JSAV_deleteSelectedSequences(divId)
 {
@@ -404,26 +418,28 @@ function JSAV_deleteSelectedSequences(divId)
 
     if(count == 0)
     {
-        alert("You must select some sequences!");
+        ACRM_alert("Error!","You must select some sequences!");
     }
     else if(count == gSequences[divId].length)
     {
-        alert("You can't delete all the sequences!");
+        ACRM_alert("Error!","You can't delete all the sequences!");
     }
     else
     {
         var message = "Delete " + count + " selected sequences?";
-        if(confirm(message))
-        {
-            // Run through the global sequence array deleting the selected objects
-            for(var i=0; i&lt;toDelete.length; i++)
+        ACRM_confirm("Confirm", message, function(confirm){
+            if(confirm)
             {
-                ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+                // Run through the global sequence array deleting the selected objects
+                for(var i=0; i&lt;toDelete.length; i++)
+                {
+                    ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+                }
+                var options = gOptions[divId];
+                JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
             }
-        }
+        });
 
-        var options = gOptions[divId];
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight);
     }
 }
 
@@ -557,14 +573,16 @@ i.e. the whole sequence length
 @param {string}   divId   The name of the div used for the display
 @param {int}      seqLen  The length of the sequence alignment
 @param {string}   width   The width of the slider
+@param {string}   height  The height of the slider (text size)
 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant variable and changed divs to spans
+- 15.06.14 Added height
 */
-function JSAV_printSlider(divId, seqLen, width)
+function JSAV_printSlider(divId, seqLen, width, height)
 {
    document.writeln("&lt;span id='" + divId + "_showrange'>&lt;/span>");
-   document.writeln("&lt;span id='" + divId + "_slider'>&lt;/span>");
+   document.writeln("&lt;span id='" + divId + "_slider' style='font-size: " + height + ";'>&lt;/span>");
 
    var id = divId + "_slider";
    var tag = "#" + id;
@@ -1228,7 +1246,8 @@ ACRM_createArray(3, 2); // [new Array(2),
                    //  new Array(2),
                    //  new Array(2)]
 
-- 29.05.14 Taken from http://stackoverflow.com/questions/966225/how-can-i-create-a-two-dimensional-array-in-javascript
+- 29.05.14 Taken from http://stackoverflow.com/questions/966225/
+           how-can-i-create-a-two-dimensional-array-in-javascript
 */
 function ACRM_createArray(length) 
 {
@@ -1245,6 +1264,67 @@ function ACRM_createArray(length)
 }
 
 
+// ---------------------------------------------------------------------
+/**
+General purpose confirm() dialogue using JQueryUI dialog rather than the
+simple JavaScript confirm() method
+
+@param {string}   title    - title for the confirm box
+@param {string}   msg      - the message to be displayed
+@param {function} callback - function to be called after the OK or cancel
+                             button is called. A boolean parameter is
+                             passed to the function - true for OK, false
+                             for cancel
+
+- 15.06.14 Original   By: ACRM
+*/
+function ACRM_confirm(title, msg, callback) 
+{
+    var dialogObj = $("&lt;div style='display:none' title='" + title + "'>"+msg+"&lt;/div>");
+    $('body').append(dialogObj);
+    $(dialogObj).dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            Cancel: function() {
+                callback(false);
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            },
+            "OK": function() {
+                callback(true);
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            }
+        }
+    });
+};
+
+// ---------------------------------------------------------------------
+/**
+General purpose alert() dialogue using JQueryUI dialog rather than the
+simple JavaScript alert() method
+
+@param {string}   title    - title for the confirm box
+@param {string}   msg      - the message to be displayed
+
+- 15.06.14 Original   By: ACRM
+*/
+function ACRM_alert(title, msg) 
+{
+    var dialogObj = $("&lt;div style='display:none' title='" + title + "'>"+msg+"&lt;/div>");
+    $('body').append(dialogObj);
+    $(dialogObj).dialog({
+        resizable: false,
+        modal: true,
+        buttons: {
+            "OK": function() {
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            }
+        }
+    });
+};
 </code></pre>
         </article>
     </section>
@@ -1255,13 +1335,13 @@ function ACRM_createArray(length)
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_createArray">ACRM_createArray</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printAction">JSAV_printAction</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_printDelete">JSAV_printDelete</a></li><li><a href="global.html#JSAV_printSlider">JSAV_printSlider</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_alert">ACRM_alert</a></li><li><a href="global.html#ACRM_confirm">ACRM_confirm</a></li><li><a href="global.html#ACRM_createArray">ACRM_createArray</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printAction">JSAV_printAction</a></li><li><a href="global.html#JSAV_printASequence">JSAV_printASequence</a></li><li><a href="global.html#JSAV_printDelete">JSAV_printDelete</a></li><li><a href="global.html#JSAV_printSlider">JSAV_printSlider</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Jun 14 2014 09:58:05 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jun 16 2014 09:49:06 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
