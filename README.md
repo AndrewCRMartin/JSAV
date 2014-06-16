@@ -33,7 +33,7 @@ the divId and array of sequence objects
 - `dotify`      - Repeated residues in the alignment are replaced with dots
 - `nocolour` or `nocolor` - Repeated residues are not coloured
 - `toggleDotify` - Display a checkbox to toggle the dotify mode
-- `toggleNocolour` or `toggleNocolor - Display a checkbox to toggle the nocolour-dotify mode
+- `toggleNocolour` or `toggleNocolor` - Display a checkbox to toggle the nocolour-dotify mode
 
 
 CSS Control
