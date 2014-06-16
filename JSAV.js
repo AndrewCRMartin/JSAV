@@ -61,6 +61,8 @@ TODO: 1. FASTA export
       2. Consensus residue display
       3. Bar display of conservation from entropy
       4. Allow user to specify key sequence for sorting
+      5. Ability to change colouring schemes
+      6. Clean up passing of globals
 
 *************************************************************************/
 /**
@@ -197,6 +199,15 @@ function printJSAV(divId, sequences, options)
 }
 
 
+// ---------------------------------------------------------------------
+/** 
+Print a checkbox for toggling dotify mode
+
+@param {string}  divId    The div that we are working in
+@param {object}  options  The options
+
+- 16.06.14 Original   By: ACRM
+*/
 function JSAV_printToggleDotify(divId, options)
 {
     var html = "";
@@ -211,6 +222,15 @@ function JSAV_printToggleDotify(divId, options)
     document.writeln(html);
 }
 
+// ---------------------------------------------------------------------
+/** 
+Print a checkbox for toggling nocolour-dotify mode
+
+@param {string}  divId    The div that we are working in
+@param {object}  options  The options
+
+- 16.06.14 Original   By: ACRM
+*/
 function JSAV_printToggleNocolour(divId, options)
 {
     var html = "";
@@ -224,12 +244,21 @@ function JSAV_printToggleNocolour(divId, options)
     document.writeln(html);
 }
 
+// ---------------------------------------------------------------------
+/** 
+Read a checkbox and toggle the associated option, refreshing the display
+
+@param {string}  divId     The div that we are working in
+@param {string}  theButton The ID of the checkbox we are looking at
+@param {string}  theOption The name of the option we are toggling
+
+- 16.06.14 Original   By: ACRM
+*/
 function JSAV_toggleOption(divId, theButton, theOption)
 {
-    var tag = "#" + theButton;
-    var status = $(tag).prop('checked');
+    var tag     = "#" + theButton;
     var options = gOptions[divId];
-    options[theOption] = status;
+    options[theOption] = $(tag).prop('checked');
     if(options.sorted)
     {
         JSAV_sortAndRefreshSequences(divId, options.sortable, options.selectable, options.border)
@@ -238,7 +267,6 @@ function JSAV_toggleOption(divId, theButton, theOption)
     {
         JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
     }
-
 }
 
 // ---------------------------------------------------------------------
@@ -473,6 +501,7 @@ function JSAV_deleteSelectedSequences(divId)
                 }
                 var options = gOptions[divId];
                 JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
+                options.sorted = false;
             }
         });
 
@@ -560,7 +589,7 @@ separate <td> tag with a class to indicate the amino acid type
 @returns {string} text          HTML snippet
 
 - 30.05.14 Original  By: ACRM
-- 16.06.14 Added dotify and nocolour
+- 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
 */
 function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour)
 {
