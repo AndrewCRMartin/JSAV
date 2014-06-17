@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.4-alpha2 17.06.14
+    JSAV V1.4-alpha3 17.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.4-alpha2
+   Version:    V1.4-alpha3
    Date:       17.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -58,14 +58,16 @@
    V1.3    16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
    V1.4.a1 17.06.14   Added fasta/fastaLabel export options
    V1.4.a2 17.06.14   Added consensus sequence display and colourScheme
+   V1.4.a3 17.06.14   Added selectColour/selectColor and
+                      colourChoices/colorChoices
 
 TODO: 
       1. Bar display of conservation from entropy
       2. Allow user to specify key sequence for sorting
       3. Ability to change colouring schemes
       4. Clean up passing of globals
-      5. Need to refresh the dotify, nocolour and select-all 
-         properties on a reload
+      5. Need to refresh the dotify, nocolour, select-all and
+         colour-selector properties on a reload
 
 *************************************************************************/
 /**
@@ -115,10 +117,14 @@ options are as follows:
 @param {bool}      fasta          - Create a FASTA export button 
 @param {string}    fastaLabel     - Label for FASTA export button
 @param {bool}      consensus      - Display consensus sequence
-@param {string}    colourScheme   - Colour scheme - valid options depend on
-                                    the css, but are currently
+@param {string}    colourScheme   - Default colour scheme - valid options 
+                                    depend on the css, but are currently
                                     taylor, clustal, zappo, hphob, helix, 
                                     strand, turn, buried
+@param {bool}      selectColour   - Display a pull-down to choose the colour 
+                                    scheme.
+@param {string[]}  colourChoices  - Array of colour scheme names - only used
+                                    if the user has added to the CSS
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -135,7 +141,8 @@ options are as follows:
 - 16.06.14 Added dotify, nocolour, toggleDotify, toggleNocolour
 - 17.06.14 Added fasta, fastaLabel
            Added consensus
-           Added colourScheme / colorScheme
+           Added colourScheme/colorScheme
+           Added selectColour/selectColor and colourChoices/colorChoices
 */
 function printJSAV(divId, sequences, options)
 {
@@ -150,6 +157,8 @@ function printJSAV(divId, sequences, options)
    if(options.fastaLabel   == undefined) { options.fastaLabel     = "Export Selected";   }
    if(options.colorScheme)               { options.colourScheme   = options.colorScheme; }
    if(options.colourScheme == undefined) { options.colourScheme   = "taylor";            }
+   if(options.selectColor)               { options.selectColour   = true;                }
+   if(options.colorChoices != undefined) { options.colourChoices  = options.colorChoices;}
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -205,9 +214,17 @@ function printJSAV(divId, sequences, options)
       JSAV_printFASTA(divId);
    }
 
-   if(options.toggleDotify)
+   // Colour related - on a new line
+   if(options.selectColour || options.toggleDotify)
    {
        document.writeln("<br />");
+   }
+   if(options.selectColour)
+   {
+       JSAV_printColourSelector(divId, options);
+   }
+   if(options.toggleDotify)
+   {
        JSAV_printToggleDotify(divId, options);
        if(options.toggleNocolour)
        {
@@ -224,6 +241,65 @@ function printJSAV(divId, sequences, options)
    }
 }
 
+
+// ---------------------------------------------------------------------
+/** 
+Prints a pulldown menu to select a colour scheme
+
+@param {string} divId   - The ID of the div we are printing in
+@param {object} options - User options
+
+- 17.06.14 Original   By: ACRM
+*/
+function JSAV_printColourSelector(divId, options)
+{
+   // Initialize colour choices if not provided
+   if(options.colourChoices == undefined)
+   {
+      options.colourChoices = JSAV_initColourChoices();
+   }
+
+    var html = "<select onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+    for(var i=0; i<options.colourChoices.length; i++)
+    {
+        var lcChoice = options.colourChoices[i].toLowerCase();
+        var selected = "";
+        if(options.colourScheme == lcChoice)
+        {
+            selected = " selected='selected'";
+        }
+        html += "<option value='" + lcChoice + "'" + selected + ">" + 
+                options.colourChoices[i] + "</option>";
+    }
+    html += "</select>";
+
+    document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Called when the colour scheme selector is changed. Sets the selected
+colour scheme and refreshes the display
+
+@param {object}  select   - The select pull-down
+@param {string}  divId    - The ID of the div we are working in
+
+- 17.06.14  Original   By: ACRM
+*/
+function JSAV_setColourScheme(divId, select)
+{
+    gOptions[divId].colourScheme = select.value;
+
+    var options = gOptions[divId];
+    if(options.sorted)
+    {
+        JSAV_sortAndRefreshSequences(divId, options.sortable, options.selectable, options.border)
+    }
+    else
+    {
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus);
+    }
+}
 
 // ---------------------------------------------------------------------
 /**
@@ -1443,6 +1519,21 @@ function JSAV_init()
    }
 }
 
+
+// ---------------------------------------------------------------------
+/**
+Simply returns an array of the available colouring schemes in the CSS
+file
+
+@returns {string[]}   - Colour schemes
+
+- 17.06.14   Original   By: ACRM
+*/
+function JSAV_initColourChoices()
+{
+    return(['Taylor', 'Clustal', 'Zappo', 'HPhob', 'Helix', 'Strand',
+            'Turn', 'Buried']);
+}
 
 // ---------------------------------------------------------------------
 /**
