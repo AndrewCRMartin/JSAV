@@ -110,6 +110,7 @@ options are as follows:
                                     (except deletions)
 @param {bool}      toggleDotify   - Create a check box for toggling dotify
 @param {bool}      toggleNocolour - Create a check box for toggling nocolour
+@param {bool}      fasta          - Create a FASTA export button 
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -124,6 +125,7 @@ options are as follows:
 - 13.06.14 Added submit and action, submitLabel and actionLabel
 - 15.06.14 Added height
 - 16.06.14 Added dotify, nocolour, toggleDotify, toggleNocolour
+- 17.06.14 Added fasta
 */
 function printJSAV(divId, sequences, options)
 {
@@ -135,6 +137,7 @@ function printJSAV(divId, sequences, options)
    if(options.actionLabel == undefined) { options.actionLabel    = "Process Sequences"; }
    if(options.nocolor)                  { options.nocolour       = true;                }
    if(options.toggleNocolor)            { options.toggleNocolour = true;                }
+   if(options.exportLabel == undefined) { options.exportLabel    = "Export Selected";   }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -180,6 +183,11 @@ function printJSAV(divId, sequences, options)
       JSAV_printAction(divId, options.action, options.actionLabel);
    }
 
+   if(options.fasta != undefined)
+   {
+      JSAV_printFASTA(divId);
+   }
+
    if(options.toggleDotify)
    {
        document.writeln("<br />");
@@ -199,6 +207,23 @@ function printJSAV(divId, sequences, options)
    }
 }
 
+
+// ---------------------------------------------------------------------
+function JSAV_printFASTA(divId)
+{
+   var label = gOptions[divId].exportLabel;
+   var html = "<button type='button' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
+   document.writeln(html);
+}
+
+// ---------------------------------------------------------------------
+// This should probably be combined with JSAV_submitSequences()
+function JSAV_exportFASTA(divId)
+{
+   var sequenceText = JSAV_buildFASTA(divId);
+
+   ACRM_dialog("FASTA Export", sequenceText, 600, true);
+}
 
 // ---------------------------------------------------------------------
 /** 
@@ -422,38 +447,47 @@ and then submits the form.
 @param {string} divId  - The ID of the div we are working in
 
 - 13.06.14  Original   By: ACRM
+- 17.06.14  Split out the JSAV_buildFASTA() section
 */
 function JSAV_submitSequences(divId)
 {
+   var sequenceText = JSAV_buildFASTA(divId);
+
+   var textTag = "textarea#" + divId + "_submit";
+   $(textTag).text(sequenceText);
+
+   var formTag = "#" + divId + "_form";
+   $(formTag).submit();
+}
+
+function JSAV_buildFASTA(divId)
+{
    // See if any checkboxes are set
    var count = 0;
-   var toSubmit = Array();
+   var toFASTA = Array();
    // Find the selected sequences
    var tag = "#" + divId + " .selectCell input";
    $(tag).each(function(index) {
        if($(this).prop('checked'))
        {
            var id = $(this).parent().parent().attr('id');
-           toSubmit[id] = 1;
+           toFASTA[id] = 1;
            count++;
        }
    });
 
-   var textTag = "textarea#" + divId + "_submit";
    var sequenceText = "";
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
-       if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
+       if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
        {
            sequenceText += ">" + sequences[i].id + "\n";
            sequenceText += sequences[i].sequence + "\n";
        }
    }
-   $(textTag).text(sequenceText);
 
-   var formTag = "#" + divId + "_form";
-   $(formTag).submit();
+   return(sequenceText);
 }
 
 // ---------------------------------------------------------------------
@@ -1439,6 +1473,41 @@ function ACRM_alert(title, msg)
         modal: true,
         buttons: {
             "OK": function() {
+                $( this ).dialog( "close" );
+                $( this ).remove();
+            }
+        }
+    });
+};
+
+// ---------------------------------------------------------------------
+/**
+General purpose alert() dialogue using JQueryUI dialog rather than the
+simple JavaScript alert() method
+
+@param {string}   title    - title for the confirm box
+@param {string}   msg      - the message to be displayed
+
+- 15.06.14 Original   By: ACRM
+*/
+function ACRM_dialog(title, msg, width, pre) 
+{
+    var dialogObj;
+    if(pre)
+    {
+        dialogObj = $("<div style='display:none' title='" + title + "'><pre>"+msg+"</pre></div>");
+    }
+    else
+    {
+        dialogObj = $("<div style='display:none' title='" + title + "'>"+msg+"</div>");
+    }
+    $('body').append(dialogObj);
+    $(dialogObj).dialog({
+        resizable: false,
+        width: width,
+        modal: true,
+        buttons: {
+            "Dismiss": function() {
                 $( this ).dialog( "close" );
                 $( this ).remove();
             }
