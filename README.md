@@ -1,4 +1,4 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.3
+JavaScript Sequence Alignment Viewer (JSAV) V1.4
 ================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
@@ -34,6 +34,17 @@ the divId and array of sequence objects
 - `nocolour` or `nocolor` - Repeated residues are not coloured
 - `toggleDotify` - Display a checkbox to toggle the dotify mode
 - `toggleNocolour` or `toggleNocolor` - Display a checkbox to toggle the nocolour-dotify mode
+- `fasta`          - Create a FASTA export button 
+- `fastaLabel`     - Label for FASTA export button
+- `consensus`      - Display consensus sequence
+- `colourScheme` or `colorScheme`   - Default colour scheme - valid options 
+                                    depend on the css, but are currently
+                                    taylor, clustal, zappo, hphob, helix, 
+                                    strand, turn, buried
+- `selectColour` or `selectColor`  - Display a pull-down to choose the colour 
+                                    scheme.
+- `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
+                                    if the user has added to the CSS
 
 
 CSS Control
