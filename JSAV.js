@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.4-alpha3 17.06.14
+    JSAV V1.4 17.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.4-alpha3
+   Version:    V1.4
    Date:       17.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -56,18 +56,16 @@
                       Changed to use ACRM_alert()
    V1.2.2  16.06.14   Changed to use ACRM_confirm()
    V1.3    16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
-   V1.4.a1 17.06.14   Added fasta/fastaLabel export options
-   V1.4.a2 17.06.14   Added consensus sequence display and colourScheme
-   V1.4.a3 17.06.14   Added selectColour/selectColor and
+   V1.4    17.06.14   Added fasta/fastaLabel export options
+                      Added consensus sequence display and colourScheme
+                      Added selectColour/selectColor and
                       colourChoices/colorChoices
+                      Added refresh of options on reload
 
 TODO: 
       1. Bar display of conservation from entropy
       2. Allow user to specify key sequence for sorting
-      3. Ability to change colouring schemes
-      4. Clean up passing of globals
-      5. Need to refresh the dotify, nocolour, select-all and
-         colour-selector properties on a reload
+      3. Clean up passing of globals
 
 *************************************************************************/
 /**
@@ -239,8 +237,63 @@ function printJSAV(divId, sequences, options)
    {
        JSAV_modifyCSS(divId);
    }
+
+    // Ensure buttons etc match the data
+    window.onload = function(){JSAV_refreshSettings(divId);};
 }
 
+// ---------------------------------------------------------------------
+/**
+Updates the buttons to match the settings. This is called when the
+window is reloaded
+
+@param {string} divId   - The ID of the div we are printing in
+
+- 17.06.14 Original   By: ACRM
+
+*/
+function JSAV_refreshSettings(divId)
+{
+    if(gOptions[divId].selectColour)
+    {
+        // Colour scheme
+        var tag = "#" + divId + "_selectColour";
+        $(tag).val(gOptions[divId].colourScheme);
+    }
+    if(gOptions[divId].toggleDotify)
+    {
+        // Dotify option
+        var tag = "#" + divId + "_toggleDotify";
+        if(gOptions[divId].dotify == undefined)
+        {
+            $(tag).prop('checked', false);
+        }
+        else
+        {
+            $(tag).prop('checked', gOptions[divId].dotify);
+        }
+    }
+    if(gOptions[divId].toggleNocolour)
+    {
+        // Dotify-nocolour option
+        var tag = "#" + divId + "_toggleNocolour";
+        if(gOptions[divId].nocolour == undefined)
+        {
+            $(tag).prop('checked', false);
+        }
+        else
+        {
+            $(tag).prop('checked', gOptions[divId].nocolour);
+        }
+    }
+    if(gOptions[divId].selectable)
+    {
+        // Selectable
+        var tag = "#" + divId + "_AllNone";
+        $(tag).prop('checked', false);
+//        JSAV_unselectAll(divId);
+    }
+}
 
 // ---------------------------------------------------------------------
 /** 
@@ -259,7 +312,8 @@ function JSAV_printColourSelector(divId, options)
       options.colourChoices = JSAV_initColourChoices();
    }
 
-    var html = "<select onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+    var id   = divId + "_selectColour";
+    var html = "<select id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
     for(var i=0; i<options.colourChoices.length; i++)
     {
         var lcChoice = options.colourChoices[i].toLowerCase();
