@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.4-alpha1 17.06.14
+    JSAV V1.4-alpha2 17.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.4-alpha1
+   Version:    V1.4-alpha2
    Date:       17.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -56,16 +56,16 @@
                       Changed to use ACRM_alert()
    V1.2.2  16.06.14   Changed to use ACRM_confirm()
    V1.3    16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
-   V1.4.a1 17.06.14   Added fasta export
-   
+   V1.4.a1 17.06.14   Added fasta/fastaLabel export options
+   V1.4.a2 17.06.14   Added consensus sequence display and colourScheme
 
 TODO: 
-      2. Consensus residue display
-      3. Bar display of conservation from entropy
-      4. Allow user to specify key sequence for sorting
-      5. Ability to change colouring schemes
-      6. Clean up passing of globals
-      7. Need to refresh the dotify and nocolour properties on a reload
+      1. Bar display of conservation from entropy
+      2. Allow user to specify key sequence for sorting
+      3. Ability to change colouring schemes
+      4. Clean up passing of globals
+      5. Need to refresh the dotify, nocolour and select-all 
+         properties on a reload
 
 *************************************************************************/
 /**
@@ -113,6 +113,12 @@ options are as follows:
 @param {bool}      toggleDotify   - Create a check box for toggling dotify
 @param {bool}      toggleNocolour - Create a check box for toggling nocolour
 @param {bool}      fasta          - Create a FASTA export button 
+@param {string}    fastaLabel     - Label for FASTA export button
+@param {bool}      consensus      - Display consensus sequence
+@param {string}    colourScheme   - Colour scheme - valid options depend on
+                                    the css, but are currently
+                                    taylor, clustal, zappo, hphob, helix, 
+                                    strand, turn, buried
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -127,19 +133,23 @@ options are as follows:
 - 13.06.14 Added submit and action, submitLabel and actionLabel
 - 15.06.14 Added height
 - 16.06.14 Added dotify, nocolour, toggleDotify, toggleNocolour
-- 17.06.14 Added fasta
+- 17.06.14 Added fasta, fastaLabel
+           Added consensus
+           Added colourScheme / colorScheme
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
-   if(options             == undefined) { options = Array();                            }
-   if(options.width       == undefined) { options.width          = "400px";             }
-   if(options.height      == undefined) { options.height         = "6pt";               }
-   if(options.submitLabel == undefined) { options.submitLabel    = "Submit Sequences";  }
-   if(options.actionLabel == undefined) { options.actionLabel    = "Process Sequences"; }
-   if(options.nocolor)                  { options.nocolour       = true;                }
-   if(options.toggleNocolor)            { options.toggleNocolour = true;                }
-   if(options.exportLabel == undefined) { options.exportLabel    = "Export Selected";   }
+   if(options              == undefined) { options = Array();                            }
+   if(options.width        == undefined) { options.width          = "400px";             }
+   if(options.height       == undefined) { options.height         = "6pt";               }
+   if(options.submitLabel  == undefined) { options.submitLabel    = "Submit Sequences";  }
+   if(options.actionLabel  == undefined) { options.actionLabel    = "Process Sequences"; }
+   if(options.nocolor)                   { options.nocolour       = true;                }
+   if(options.toggleNocolor)             { options.toggleNocolour = true;                }
+   if(options.fastaLabel   == undefined) { options.fastaLabel     = "Export Selected";   }
+   if(options.colorScheme)               { options.colourScheme   = options.colorScheme; }
+   if(options.colourScheme == undefined) { options.colourScheme   = "taylor";            }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -148,12 +158,17 @@ function printJSAV(divId, sequences, options)
    gSequences[divId]       = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
 
+   if(options.consensus)
+   {
+       gConsensus[divId] = JSAV_buildConsensus(sequences);
+   }
+
    document.writeln("<div id='" + divId + "'>");
 
    document.writeln("<div id='" + divId + "_sortable' class='JSAVDisplay'>");
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
                                       options.selectable, options.highlight,
-                                      options.dotify, options.nocolour);
+                                      options.dotify, options.nocolour, options.consensus);
    document.write(html);
    document.writeln("</div>");
    document.writeln("<div class='JSAVControls'>");
@@ -220,7 +235,7 @@ Prints the button to allow FASTA export
 */
 function JSAV_printFASTA(divId)
 {
-   var label = gOptions[divId].exportLabel;
+   var label = gOptions[divId].fastaLabel;
    var html = "<button type='button' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
    document.writeln(html);
 }
@@ -294,6 +309,7 @@ Read a checkbox and toggle the associated option, refreshing the display
 @param {string}  theOption The name of the option we are toggling
 
 - 16.06.14 Original   By: ACRM
+- 17.06.14 Added consensus
 */
 function JSAV_toggleOption(divId, theButton, theOption)
 {
@@ -306,7 +322,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
     }
     else
     {
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus);
     }
 }
 
@@ -523,6 +539,7 @@ Deletes a set of sequences that have been clicked
 - 12.06.14 Original   By: ACRM
 - 15.06.14 Changed from alert() to ACRM_alert()
 - 16.06.14 Changed from confirm() to ACRM_confirm()
+- 17.06.14 Added consensus
 */
 function JSAV_deleteSelectedSequences(divId)
 {
@@ -558,12 +575,23 @@ function JSAV_deleteSelectedSequences(divId)
                 {
                     ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
                 }
+
                 var options = gOptions[divId];
-                JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour);
+
+                // Update the consensus
+                if(options.consensus)
+                {
+                    gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+                }
+
+                // Refresh the display
+                JSAV_refresh(divId, gSequences[divId], options.sortable, 
+                             options.selectable, options.border, 
+                             gStartPos[divId]-1, gStopPos[divId]-1, options.highlight,
+                             options.dotify, options.nocolour, options.consensus);
                 options.sorted = false;
             }
         });
-
     }
 }
 
@@ -637,7 +665,7 @@ function JSAV_modifyCSS(divId)
 Builds the HTML for printing a sequence as a table row. The row 
 starts with the identifier and is followed by each amino acid in a 
 separate <td> tag with a class to indicate the amino acid type 
-(e.g. aaW for a tryptophan). 
+(e.g. taylorW for a tryptophan in Willie Taylor scheme). 
 
 @param {string}   id            The identifier
 @param {string}   sequence      A string containing the sequence
@@ -645,12 +673,15 @@ separate <td> tag with a class to indicate the amino acid type
 @param {bool}     selectable    Display a selection checkbox
 @param {bool}     dotify        Dotify the sequence
 @param {bool}     nocolour      Don't colour dotified residues
+@param {bool}     isConsensus   This is the consensus sequence
 @returns {string} text          HTML snippet
 
 - 30.05.14 Original  By: ACRM
 - 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
+- 17.06.14 Added isConsensus and colourScheme
 */
-function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour)
+function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour,
+                                isConsensus, colourScheme)
 {
     var seqArray = sequence.split("");
     var prevSeqArray = undefined;
@@ -665,19 +696,32 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
 
     if(selectable)
     {
-        var name = "select_" + id;
-        tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
+        if(isConsensus)
+        {
+            tableLine += "<th class='consensusSelectCell'></th>";
+        }
+        else
+        {
+            var name = "select_" + id;
+            tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
+        }
+    }
+
+    var consensusClass = "";
+    if(isConsensus)
+    {
+        consensusClass = " consensusCell";
     }
 
     var nResidues = seqArray.length;
-    if(dotify)
+    if(dotify && !isConsensus)
     {
         for(var i=0; i<nResidues; i++)
         {
             var aa     = seqArray[i];
             var prevAa = '#';
 
-            var colourClass = "aa" + aa;
+            var colourClass = colourScheme + aa;
             if(nocolour)
             {
                 if(aa == "-") 
@@ -713,7 +757,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
         for(var i=0; i<nResidues; i++)
         {
             var aa = seqArray[i];
-            tableLine += "<td class='aa" + aa + "'>" + aa + "</td>";
+            tableLine += "<td class='" + colourScheme + aa + consensusClass + "'>" + aa + "</td>";
         }
     }
     tableLine += "</td></tr>";
@@ -844,8 +888,10 @@ them as a coloured table
 - 10.06.14 Added sortable and selectable parameters
 - 13.06.14 Added highlight
 - 16.06.14 Added dotify
+- 17.06.14 Added consensus
 */
-function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight, dotify, nocolour)
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight, 
+                                 dotify, nocolour, consensus)
 {
    var html = "";
    html += "<div class='JSAV'>\n";
@@ -869,7 +915,14 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
       var prevSequence = undefined;
       if(i>0) { prevSequence = sequences[i-1].sequence; }
       html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, prevSequence, 
-                                      selectable, dotify, nocolour) + "\n";
+                                      selectable, dotify, nocolour, false, 
+                                      gOptions[divId].colourScheme) + "\n";
+   }
+
+   if(consensus != undefined)
+   {
+       html += JSAV_buildASequenceHTML('Consensus', gConsensus[divId], undefined, selectable,
+                                       dotify, nocolour, true, gOptions[divId].colourScheme) + "\n";
    }
 
    if(highlight != undefined)
@@ -1181,7 +1234,7 @@ function JSAV_calcDifferenceMatrix(sequences, start, stop, ignoreEnds)
 {
    var nSeq = sequences.length;
 
-   var differenceMatrix = ACRM_createArray(nSeq, nSeq);
+   var differenceMatrix = ACRM_array(nSeq, nSeq);
    for(var i=0; i<nSeq; i++)
    {
       for(var j=0; j<nSeq; j++)
@@ -1273,6 +1326,7 @@ that sorts and refreshes the display.
 - 11.06.14 sequences is now global
 - 12.06.14 split out the JSAV_refresh() part
 - 16.06.14 Added dotify and nocolour options to refresh call
+- 17.06.14 Added consensus
 */
 function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
@@ -1283,7 +1337,8 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 
    JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
                 range[0], range[1], gOptions[divId].highlight, 
-                gOptions[divId].dotify, gOptions[divId].nocolour);
+                gOptions[divId].dotify, gOptions[divId].nocolour, 
+                gOptions[divId].consensus);
 
    // Record the fact that the display has been sorted
    gOptions[divId].sorted = true;
@@ -1310,12 +1365,13 @@ Also updates the marked range and the CSS if the border option is set
 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
 - 16.06.14  Added dotify and nocolour
+- 17.06.14  Added consensus
 */
 function JSAV_refresh(divId, sequences, sortable, selectable, border, 
-                      start, stop, highlight, dotify, nocolour)
+                      start, stop, highlight, dotify, nocolour, consensus)
 {
    var html = JSAV_buildSequencesHTML(divId, sequences, sortable, 
-                                      selectable, highlight, dotify, nocolour);
+                                      selectable, highlight, dotify, nocolour, consensus);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    if(border)
@@ -1364,6 +1420,7 @@ Initializes global array
 
 - 09.06.14 Original   By: ACRM
 - 12.06.14 Added more arrays
+- 17.06.14 Added gConsensus array
 */
 function JSAV_init()
 {
@@ -1379,10 +1436,76 @@ function JSAV_init()
    {
        gSequences = Array();
        gOptions   = Array();
+       gStartPos  = Array();
+       gStopPos   = Array();
+       gConsensus = Array();
        gSequenceLengths = Array();
-       gStartPos = Array();
-       gStopPos  = Array();
    }
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Calculates a consensus sequence
+
+@param   {object[]}  sequences  - Array of sequence objects
+@returns {string}               - Consensus sequence
+
+- 17.06.14  Original   By: ACRM
+*/
+function JSAV_buildConsensus(sequences)
+{
+    var nSeqs    = sequences.length;
+    var seqLen   = sequences[0].sequence.length;
+    // Initialize array
+    var aaCounts = Array(seqLen);
+    for(var i=0; i<seqLen; i++)
+    {
+        aaCounts[i] = Array();
+    }
+
+    // Step through the sequences
+    for(var seq=0; seq<nSeqs; seq++)
+    {
+        var seqArray = sequences[seq].sequence.split('');
+
+        // Step through the positions
+        for(var pos=0; pos<seqLen; pos++)
+        {
+            if(aaCounts[pos][seqArray[pos]] == undefined)
+            {
+                aaCounts[pos][seqArray[pos]] = 1;
+            }
+            else
+            {
+                aaCounts[pos][seqArray[pos]]++;
+            }
+        }
+    }
+
+    // Step through the positions to determine the most common residue
+    var consensus = "";
+    var validAAs = "ACDEFGHIKLMNPQRSTVWY-".split('');
+    for(var pos=0; pos<seqLen; pos++)
+    {
+        var mostCommon = undefined;
+        var maxAA      = 0;
+        for(var aaCount=0; aaCount<validAAs.length; aaCount++)
+        {
+            if((aaCounts[pos][validAAs[aaCount]] != undefined) &&
+               (aaCounts[pos][validAAs[aaCount]] >  maxAA))
+            {
+                mostCommon = validAAs[aaCount];
+                maxAA = aaCounts[pos][validAAs[aaCount]];
+            }
+        }
+        if(maxAA <= (nSeqs / 2))
+        {
+            mostCommon = mostCommon.toLowerCase();
+        }
+        consensus += mostCommon;
+    }
+    return(consensus);
 }
 
 
@@ -1418,16 +1541,16 @@ General purpose function to create a multi-dimensional array
 @returns {array}                  (multi-dimensional) Array
 
 Usage:
-ACRM_createArray();     // [] or new Array()
-ACRM_createArray(2);    // new Array(2)
-ACRM_createArray(3, 2); // [new Array(2),
-                   //  new Array(2),
-                   //  new Array(2)]
+ACRM_array();     // [] or new Array()
+ACRM_array(2);    // new Array(2)
+ACRM_array(3, 2); // [new Array(2),
+                  //  new Array(2),
+                  //  new Array(2)]
 
 - 29.05.14 Taken from http://stackoverflow.com/questions/966225/
            how-can-i-create-a-two-dimensional-array-in-javascript
 */
-function ACRM_createArray(length) 
+function ACRM_array(length) 
 {
     var arr = new Array(length || 0),
         i = length;
@@ -1435,7 +1558,7 @@ function ACRM_createArray(length)
     if (arguments.length > 1) 
     {
         var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = ACRM_createArray.apply(this, args);
+        while(i--) arr[length-1 - i] = ACRM_array.apply(this, args);
     }
 
     return arr;
@@ -1539,3 +1662,5 @@ function ACRM_dialog(title, msg, width, pre)
         }
     });
 };
+
+
