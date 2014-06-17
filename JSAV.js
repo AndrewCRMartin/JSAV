@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.3 16.06.14
+    JSAV V1.4-alpha1 17.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.3
-   Date:       16.06.14
+   Version:    V1.4-alpha1
+   Date:       17.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
@@ -36,28 +36,30 @@
 **************************************************************************
    Revision History:
    =================
-   V1.0   06.06.14   Original  By: ACRM
-   V1.1   10.06.14   Code cleanup
-                     Changed options to a hash
-                     Further code cleanup - some code was assuming
-                     sequences were stored in an array called 'sequences'
-                     Added 'selectable' option
-          12.06.14   Added 'deletable' and 'border' options
-                     Implemented sequence deletion
-          13.06.14   Checks that some sequences are selected before 
-                     deletion
-                     Cleaned up comments/documentation
-                     Cleaned up defaults in printJSAV
-                     Changed some routine names
-   V1.2   13.06.14   Added highlight option
-                     Added submit/submitLabel options
-                     Added action/actionLabel options
-   V1.2.1 15.06.14   Added height option
-                     Changed to use ACRM_alert()
-   V1.2.2 16.06.14   Changed to use ACRM_confirm()
-   V1.3   16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
+   V1.0    06.06.14   Original  By: ACRM
+   V1.1    10.06.14   Code cleanup
+                      Changed options to a hash
+                      Further code cleanup - some code was assuming
+                      sequences were stored in an array called 'sequences'
+                      Added 'selectable' option
+           12.06.14   Added 'deletable' and 'border' options
+                      Implemented sequence deletion
+           13.06.14   Checks that some sequences are selected before 
+                      deletion
+                      Cleaned up comments/documentation
+                      Cleaned up defaults in printJSAV
+                      Changed some routine names
+   V1.2    13.06.14   Added highlight option
+                      Added submit/submitLabel options
+                      Added action/actionLabel options
+   V1.2.1  15.06.14   Added height option
+                      Changed to use ACRM_alert()
+   V1.2.2  16.06.14   Changed to use ACRM_confirm()
+   V1.3    16.06.14   Added dotify/nocolour/toggleDotify/toggleNocolour
+   V1.4.a1 17.06.14   Added fasta export
+   
 
-TODO: 1. FASTA export
+TODO: 
       2. Consensus residue display
       3. Bar display of conservation from entropy
       4. Allow user to specify key sequence for sorting
@@ -209,6 +211,13 @@ function printJSAV(divId, sequences, options)
 
 
 // ---------------------------------------------------------------------
+/**
+Prints the button to allow FASTA export
+
+@param {string} divId   - The ID of the div we are printing in
+
+- 17.06.14 Original   By: ACRM
+*/
 function JSAV_printFASTA(divId)
 {
    var label = gOptions[divId].exportLabel;
@@ -217,7 +226,13 @@ function JSAV_printFASTA(divId)
 }
 
 // ---------------------------------------------------------------------
-// This should probably be combined with JSAV_submitSequences()
+/**
+Exports the selected sequences as FASTA
+
+@param {string} divId   - The ID of the div we are printing in
+
+- 17.06.14 Original   By: ACRM
+*/
 function JSAV_exportFASTA(divId)
 {
    var sequenceText = JSAV_buildFASTA(divId);
@@ -398,8 +413,8 @@ function JSAV_printAction(divId, action, label)
 // ---------------------------------------------------------------------
 /**
 Wrap the action function. When the action button is clicked, this function
-is called so extract the relevant sequence data and call the user specified
-function, passing the divId and and array of sequence objects
+is called to extract the relevant sequence data and call the user specified
+function, passing the divId and an array of sequence objects
 
 @param {string}  divId   - The ID of the div to work in
 @param {string}  action  - The name of the user function
@@ -460,6 +475,15 @@ function JSAV_submitSequences(divId)
    $(formTag).submit();
 }
 
+// ---------------------------------------------------------------------
+/**
+Builds a FASTA version of the sequences that are currently selected, or all
+sequences if none are selected
+
+@param {string} divId   - The ID of the div we are printing in
+
+- 17.06.14 Split out from JSAV_submitSequences()  By: ACRM
+*/
 function JSAV_buildFASTA(divId)
 {
    // See if any checkboxes are set
@@ -1482,13 +1506,14 @@ function ACRM_alert(title, msg)
 
 // ---------------------------------------------------------------------
 /**
-General purpose alert() dialogue using JQueryUI dialog rather than the
-simple JavaScript alert() method
+General purpose dialogue using JQueryUI dialog
 
 @param {string}   title    - title for the confirm box
 @param {string}   msg      - the message to be displayed
+@param {string}   width    - the width of the window (e.g. '600px')
+@param {bool}     pre      - wrap the displayed text in <pre> tags
 
-- 15.06.14 Original   By: ACRM
+- 17.06.14 Original   By: ACRM
 */
 function ACRM_dialog(title, msg, width, pre) 
 {
