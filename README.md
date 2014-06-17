@@ -50,8 +50,8 @@ the divId and array of sequence objects
 CSS Control
 -----------
 
-The overall JSAV component is wrapped in <div> with the ID specified in the call.
-Within this there are two <div>s 
+The overall JSAV component is wrapped in a div with the ID specified in the call.
+Within this there are two divs 
 - the first displays the alignment and has class='JSAVDisplay'
 - the second displays the controls and has class='JSAVControls'
 
