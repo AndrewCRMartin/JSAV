@@ -45,7 +45,7 @@ the divId and array of sequence objects
                                     scheme.
 - `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
                                     if the user has added to the CSS
-- `noTooltips` - disable tool-tips
+- `plainTooltips` - disable JQuery tool-tips
 
 
 CSS Control
@@ -65,10 +65,22 @@ the CSS file from your HTML. You can customize the look and feel of
 the slider and the confirmation/alert boxes by choosing a different
 (or customized) JQuery-UI theme.
 
+Your code should include these with something like:
+    <link href="external/jquery.css" rel="stylesheet" />
+    <script type='text/javascript' src='external/jquery-1.10.2.min.js'></script>
+    <script type='text/javascript' src='external/jquery-ui-1.10.4.custom.min.js'></script>
+
+**Note** that this must appear *before* including the JSAV.js code and CSS:
+
+    <link href="JSAV.css" rel="stylesheet" />
+    <script type='text/javascript' src='JSAV.js'></script>
+
+
 Optional styling
 ----------------
 
-By default, JQuery tooltips are enabled. As abovem these can be disabled using the `noTooltips` option.
+By default, JQuery tooltips are enabled. As above, these can be
+disabled using the `plainTooltips` option.
 
 The tooltips are fully compatible with the tooltipster package which
 gives more attractive tooltips. If you wish to use this, simply
@@ -76,15 +88,18 @@ download the package from
 https://github.com/iamceege/tooltipster/archive/master.zip and add the
 following lines to your HTML:
 
-```javascript
-<link href="tooltipster-master/css/tooltipster.css" rel="stylesheet" />
-<script type='text/javascript' src='tooltipster-master/js/jquery.tooltipster.min.js'></script>
-<script>
-    $(document).ready(function() {
-        $('.tooltip').tooltipster();
-    });
-</script>
-```
+    <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
+    <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
+    <script>
+    $('div').tooltipster();
+        $(document).ready(function() {
+            $('.tooltip').tooltipster();
+        });
+    </script>
+
+**Note** that this must appear *after* including the JSAV.js code and
+CSS (unless you also remember to set the `options.plainTooltips`
+option).
 
 
 Note
