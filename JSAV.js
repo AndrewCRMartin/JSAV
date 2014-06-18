@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.4 17.06.14
+    JSAV V1.5 18.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.4
-   Date:       17.06.14
+   Version:    V1.5
+   Date:       18.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
@@ -61,6 +61,7 @@
                       Added selectColour/selectColor and
                       colourChoices/colorChoices
                       Added refresh of options on reload
+   V1.5    18.06.14   Added tooltips
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -124,6 +125,8 @@ options are as follows:
 @param {string[]}  colourChoices  - Array of colour scheme names - only used
                                     if the user has added to the CSS
 
+@param {bool}      noTooltips     - Switch off tooltips
+
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
 - 05.06.14 Added divId parameter and sortable
@@ -141,6 +144,7 @@ options are as follows:
            Added consensus
            Added colourScheme/colorScheme
            Added selectColour/selectColor and colourChoices/colorChoices
+- 18.06.14 Added tooltips and noTooltips option
 */
 function printJSAV(divId, sequences, options)
 {
@@ -165,6 +169,15 @@ function printJSAV(divId, sequences, options)
    gSequences[divId]       = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
 
+
+   // Enable tooltips
+   if(!options.noTooltips)
+   {
+      $(function() {
+         $(document).tooltip();
+      });
+   }
+
    if(options.consensus)
    {
        gConsensus[divId] = JSAV_buildConsensus(sequences);
@@ -187,7 +200,7 @@ function printJSAV(divId, sequences, options)
 
       JSAV_printSlider(divId, stop, options.width, options.height);
 
-      var html = "<button type='button' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
+      var html = "<button type='button' class='tooltip' title='Sort the sequences based on the range specified with the slider' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       document.writeln(html);
 
    }
@@ -313,7 +326,7 @@ function JSAV_printColourSelector(divId, options)
    }
 
     var id   = divId + "_selectColour";
-    var html = "<select id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+    var html = "<select class='tooltip' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
     for(var i=0; i<options.colourChoices.length; i++)
     {
         var lcChoice = options.colourChoices[i].toLowerCase();
@@ -366,7 +379,7 @@ Prints the button to allow FASTA export
 function JSAV_printFASTA(divId)
 {
    var label = gOptions[divId].fastaLabel;
-   var html = "<button type='button' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
+   var html = "<button type='button' class='tooltip' title='Export the selected sequences, or all sequences if none selected' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
    document.writeln(html);
 }
 
@@ -402,8 +415,9 @@ function JSAV_printToggleDotify(divId, options)
     var id = divId + "_toggleDotify";
     var idText = " id='" + id + "'";
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
+    var tooltip = "Replace repeated residues with dots";
 
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/>Dotify</span>";
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Dotify</label></span>";
 
     document.writeln(html);
 }
@@ -425,8 +439,9 @@ function JSAV_printToggleNocolour(divId, options)
     var id = divId + "_toggleNocolour";
     var idText = " id='" + id + "'";
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
+    var tooltip = "Do not colour repeated residues";
 
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/>Do not colour dots</span>";
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Do not colour dots</label></span>";
     document.writeln(html);
 }
 
@@ -512,7 +527,7 @@ Prints the delete button
 */
 function JSAV_printDelete(divId)
 {
-   var html = "<button type='button' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
+   var html = "<button type='button' class='tooltip' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
    document.writeln(html);
 }
 
@@ -528,7 +543,7 @@ Prints the submit button
 */
 function JSAV_printSubmit(divId, url, label)
 {
-   var html = "<button type='button' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip' title='Submit the selected sequences, or all sequences if none selected' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
    document.writeln(html);
 
    // Build a hidden sequences text box in the form to contain
@@ -552,7 +567,7 @@ Prints the action button
 */
 function JSAV_printAction(divId, action, label)
 {
-   var html = "<button type='button' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
    document.writeln(html);
 }
 
@@ -1087,7 +1102,7 @@ function JSAV_buildSelectAllHTML(divId, seqLen)
    var html;
    var id = divId + "_AllNone";
 
-   html = "<tr><th>All/None</th><th><input id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
+   html = "<tr><th>All/None</th><th><input class='tooltip' title='Select or deselect all sequences' id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
    for(var i=0; i<seqLen; i++)
    {
       html += "<td></td>";

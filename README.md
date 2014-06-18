@@ -1,4 +1,4 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.4
+JavaScript Sequence Alignment Viewer (JSAV) V1.5
 ================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
@@ -45,6 +45,7 @@ the divId and array of sequence objects
                                     scheme.
 - `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
                                     if the user has added to the CSS
+- `noTooltips` - disable tool-tips
 
 
 CSS Control
@@ -63,6 +64,28 @@ from http://www.jqueryui.com/ and access the two JavaScript files and
 the CSS file from your HTML. You can customize the look and feel of
 the slider and the confirmation/alert boxes by choosing a different
 (or customized) JQuery-UI theme.
+
+Optional styling
+----------------
+
+By default, JQuery tooltips are enabled. As abovem these can be disabled using the `noTooltips` option.
+
+The tooltips are fully compatible with the tooltipster package which
+gives more attractive tooltips. If you wish to use this, simply
+download the package from
+https://github.com/iamceege/tooltipster/archive/master.zip and add the
+following lines to your HTML:
+
+```javascript
+<link href="tooltipster-master/css/tooltipster.css" rel="stylesheet" />
+<script type='text/javascript' src='tooltipster-master/js/jquery.tooltipster.min.js'></script>
+<script>
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
+    });
+</script>
+```
+
 
 Note
 ----
