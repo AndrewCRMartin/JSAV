@@ -66,9 +66,16 @@ the slider and the confirmation/alert boxes by choosing a different
 (or customized) JQuery-UI theme.
 
 Your code should include these with something like:
+
     <link href="external/jquery.css" rel="stylesheet" />
     <script type='text/javascript' src='external/jquery-1.10.2.min.js'></script>
     <script type='text/javascript' src='external/jquery-ui-1.10.4.custom.min.js'></script>
+
+alternatively, you could access the JQuery code from Google APIs:
+
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 
 **Note** that this must appear *before* including the JSAV.js code and CSS:
 
