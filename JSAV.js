@@ -90,39 +90,37 @@ Where 'mySeqDisplay' is the name of a div that will be created
 
 @param {object[]}  sequences -  Array of sequence objects
 @param {string}    divId     - ID of div to print in
-@param {object}    options   - options (see below)
-
-options are as follows:
-@param {bool}      sortable       - Should the sorting options be displayed
+@param {Object}    options
+{bool}      options.sortable       - Should the sorting options be displayed
                                     (default: false)
-@param {string}    width          - The width of the selection slider with
+{string}    options.width          - The width of the selection slider with
                                     units (default: '400px')
-@param {string}    height         - The height of the selection slider with
+{string}    options.height         - The height of the selection slider with
                                     units (default: '6pt')
-@param {bool}      selectable     - Should selection checkboxes be displayed
+{bool}      options.selectable     - Should selection checkboxes be displayed
                                     for each sequence
-@param {bool}      deletable      - Makes it possible to delete sequences
-@param {int[]}     highlight      - Array of ranges to highlight
-@param {string}    submit         - URL for submitting selected sequences
-@param {string}    submitLabel    - Label for submit button
-@param {string}    action         - Function to call using selected sequences
-@param {string}    actionLabel    - Label for action button
-@param {bool}      dotify         - Repeated amino acids in the sequence are
-                                    replaced by a dot
-@param {bool}      nocolour       - Dotified amino acids are not coloured
-                                    (except deletions)
-@param {bool}      toggleDotify   - Create a check box for toggling dotify
-@param {bool}      toggleNocolour - Create a check box for toggling nocolour
-@param {bool}      fasta          - Create a FASTA export button 
-@param {string}    fastaLabel     - Label for FASTA export button
-@param {bool}      consensus      - Display consensus sequence
-@param {string}    colourScheme   - Default colour scheme - valid options 
-                                    depend on the css, but are currently
-                                    taylor, clustal, zappo, hphob, helix, 
-                                    strand, turn, buried
-@param {bool}      selectColour   - Display a pull-down to choose the colour 
-                                    scheme.
-@param {string[]}  colourChoices  - Array of colour scheme names - only used
+{bool}      options.deletable      - Makes it possible to delete sequences
+{int[]}     options.highlight      - Array of ranges to highlight
+{string}    options.submit         - URL for submitting selected sequences
+{string}    options.submitLabel    - Label for submit button
+{string}    options.action         - Function to call using selected sequences
+{string}    options.actionLabel    - Label for action button
+{bool}      options.dotify         - Repeated amino acids in the sequence are
+                             replaced by a dot
+{bool}      options.nocolour       - Dotified amino acids are not coloured
+                             (except deletions)
+{bool}      options.toggleDotify   - Create a check box for toggling dotify
+{bool}      options.toggleNocolour - Create a check box for toggling nocolour
+{bool}      options.fasta          - Create a FASTA export button 
+{string}    options.fastaLabel     - Label for FASTA export button
+{bool}      options.consensus      - Display consensus sequence
+{string}    options.colourScheme   - Default colour scheme - valid options 
+                             depend on the css, but are currently
+                             taylor, clustal, zappo, hphob, helix, 
+                             strand, turn, buried
+{bool}      options.selectColour   - Display a pull-down to choose the colour 
+                             scheme.
+{string[]}  options.colourChoices  - Array of colour scheme names - only used
                                     if the user has added to the CSS
 
 @param {bool}      noTooltips     - Switch off tooltips
@@ -617,7 +615,7 @@ function JSAV_wrapAction(divId, action)
 // ---------------------------------------------------------------------
 /**
 Handles the user clicking the submit button. Build a FASTA version of the
-sequences that have been selected, fills them into a <textarea> in a form
+sequences that have been selected, fills them into a textarea in a form
 and then submits the form.
 
 @param {string} divId  - The ID of the div we are working in
