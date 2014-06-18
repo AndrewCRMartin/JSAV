@@ -83,6 +83,9 @@ options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
 options.submitLabel = "Submit sequences";
 options.action = "myAction";
 options.actionLabel = "My Action";
+options.consensus = true;
+options.deletable = true;
+options.fasta = true;
 printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
@@ -90,41 +93,44 @@ Where 'mySeqDisplay' is the name of a div that will be created
 
 @param {object[]}  sequences -  Array of sequence objects
 @param {string}    divId     - ID of div to print in
-@param {Object}    options
-{bool}      options.sortable       - Should the sorting options be displayed
+@param {Object}    options   - Options that can be provided - see Properties
+@property {bool}      options.sortable       - Should the sorting options be displayed
                                     (default: false)
-{string}    options.width          - The width of the selection slider with
+@property {string}    options.width          - The width of the selection slider with
                                     units (default: '400px')
-{string}    options.height         - The height of the selection slider with
+@property {string}    options.height         - The height of the selection slider with
                                     units (default: '6pt')
-{bool}      options.selectable     - Should selection checkboxes be displayed
+@property {bool}      options.selectable     - Should selection checkboxes be displayed
                                     for each sequence
-{bool}      options.deletable      - Makes it possible to delete sequences
-{int[]}     options.highlight      - Array of ranges to highlight
-{string}    options.submit         - URL for submitting selected sequences
-{string}    options.submitLabel    - Label for submit button
-{string}    options.action         - Function to call using selected sequences
-{string}    options.actionLabel    - Label for action button
-{bool}      options.dotify         - Repeated amino acids in the sequence are
+@property {bool}      options.deletable      - Makes it possible to delete sequences
+@property {int[]}     options.highlight      - Array of ranges to highlight
+@property {string}    options.submit         - URL for submitting selected sequences
+@property {string}    options.submitLabel    - Label for submit button
+@property {string}    options.action         - Function to call using selected sequences
+@property {string}    options.actionLabel    - Label for action button
+@property {bool}      options.dotify         - Repeated amino acids in the sequence are
                              replaced by a dot
-{bool}      options.nocolour       - Dotified amino acids are not coloured
+@property {bool}      options.nocolour       - Dotified amino acids are not coloured
                              (except deletions)
-{bool}      options.toggleDotify   - Create a check box for toggling dotify
-{bool}      options.toggleNocolour - Create a check box for toggling nocolour
-{bool}      options.fasta          - Create a FASTA export button 
-{string}    options.fastaLabel     - Label for FASTA export button
-{bool}      options.consensus      - Display consensus sequence
-{string}    options.colourScheme   - Default colour scheme - valid options 
+@property {bool}      options.toggleDotify   - Create a check box for toggling dotify
+@property {bool}      options.toggleNocolour - Create a check box for toggling nocolour
+@property {bool}      options.fasta          - Create a FASTA export button 
+@property {string}    options.fastaLabel     - Label for FASTA export button
+@property {bool}      options.consensus      - Display consensus sequence
+@property {string}    options.colourScheme   - Default colour scheme - valid options 
                              depend on the css, but are currently
                              taylor, clustal, zappo, hphob, helix, 
-                             strand, turn, buried
-{bool}      options.selectColour   - Display a pull-down to choose the colour 
+                             strand, turn, buried. Note that this must be
+                             specified in lower case
+@property {bool}      options.selectColour   - Display a pull-down to choose the colour 
                              scheme.
-{string[]}  options.colourChoices  - Array of colour scheme names - only used
-                                    if the user has added to the CSS
+@property {string[]}  options.colourChoices  - Array of colour scheme names - only used
+                                    if the user has added to the CSS. This
+                                    can be in mixed case.
 
-{bool}      plainTooltips          - Don't use JQuery tooltips
+@property {bool}      options.plainTooltips    - Don't use JQuery tooltips
 
+@author 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
 - 05.06.14 Added divId parameter and sortable
@@ -260,8 +266,8 @@ window is reloaded
 
 @param {string} divId   - The ID of the div we are printing in
 
+@author 
 - 17.06.14 Original   By: ACRM
-
 */
 function JSAV_refreshSettings(divId)
 {
@@ -313,6 +319,7 @@ Prints a pulldown menu to select a colour scheme
 @param {string} divId   - The ID of the div we are printing in
 @param {object} options - User options
 
+@author 
 - 17.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -350,6 +357,7 @@ colour scheme and refreshes the display
 @param {object}  select   - The select pull-down
 @param {string}  divId    - The ID of the div we are working in
 
+@author 
 - 17.06.14  Original   By: ACRM
 */
 function JSAV_setColourScheme(divId, select)
@@ -373,6 +381,7 @@ Prints the button to allow FASTA export
 
 @param {string} divId   - The ID of the div we are printing in
 
+@author 
 - 17.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -389,6 +398,7 @@ Exports the selected sequences as FASTA
 
 @param {string} divId   - The ID of the div we are printing in
 
+@author 
 - 17.06.14 Original   By: ACRM
 */
 function JSAV_exportFASTA(divId)
@@ -405,6 +415,7 @@ Print a checkbox for toggling dotify mode
 @param {string}  divId    The div that we are working in
 @param {object}  options  The options
 
+@author 
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -430,6 +441,7 @@ Print a checkbox for toggling nocolour-dotify mode
 @param {string}  divId    The div that we are working in
 @param {object}  options  The options
 
+@author 
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -455,6 +467,7 @@ Read a checkbox and toggle the associated option, refreshing the display
 @param {string}  theButton The ID of the checkbox we are looking at
 @param {string}  theOption The name of the option we are toggling
 
+@author 
 - 16.06.14 Original   By: ACRM
 - 17.06.14 Added consensus
 */
@@ -484,6 +497,7 @@ count from zero.
 @param {bool}    selectable - Are there sequences selection boxes
 @param {int[]}   highlight  - Array of residue ranges to highlight
 
+@author 
 - 13.06.14   Original   By: ACRM
 */
 function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
@@ -525,6 +539,7 @@ Prints the delete button
 
 @param {string}  divId   - The ID of the div to print in
 
+@author 
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -542,6 +557,7 @@ Prints the submit button
 @param {string}  url     - URL to which we are submitting
 @param {string}  label   - Label for submit button
 
+@author 
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -567,6 +583,7 @@ Prints the action button
 @param {string}  action  - Function to call
 @param {string}  label   - Label for action button
 
+@author 
 - 13.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -585,6 +602,7 @@ function, passing the divId and an array of sequence objects
 @param {string}  divId   - The ID of the div to work in
 @param {string}  action  - The name of the user function
 
+@author 
 - 13.06.14  Original   By: ACRM
 */
 function JSAV_wrapAction(divId, action)
@@ -627,6 +645,7 @@ and then submits the form.
 
 @param {string} divId  - The ID of the div we are working in
 
+@author 
 - 13.06.14  Original   By: ACRM
 - 17.06.14  Split out the JSAV_buildFASTA() section
 */
@@ -648,6 +667,7 @@ sequences if none are selected
 
 @param {string} divId   - The ID of the div we are printing in
 
+@author 
 - 17.06.14 Split out from JSAV_submitSequences()  By: ACRM
 */
 function JSAV_buildFASTA(divId)
@@ -686,6 +706,7 @@ Deletes a set of sequences that have been clicked
 
 @param {string}  divId   - The ID of the div to work in
 
+@author 
 - 12.06.14 Original   By: ACRM
 - 15.06.14 Changed from alert() to ACRM_alert()
 - 16.06.14 Changed from confirm() to ACRM_confirm()
@@ -751,6 +772,7 @@ Toggle selection of all sequence selection buttons
 
 @param {string}  divId   - The ID of the div to work in
 
+@author 
 - 09.06.14 Original   By: ACRM
 */
 function JSAV_selectAllOrNone(divId)
@@ -774,6 +796,7 @@ Select all sequence selection buttons
 
 @param {string}  divId   - The ID of the div to work in
 
+@author 
 - 09.06.14 Original   By: ACRM
 */
 function JSAV_selectAll(divId)
@@ -788,6 +811,7 @@ Unselect all sequence selection buttons
 
 @param {string}  divId   - The ID of the div to work in
 
+@author 
 - 09.06.14 Original   By: ACRM
 */
 function JSAV_unselectAll(divId)
@@ -802,6 +826,7 @@ Change the <td> elements to have a white border
 
 @param {string}  divId   - The ID of the div to work in
 
+@author 
 - 12.06.14 Original   By: ACRM
 */
 function JSAV_modifyCSS(divId)
@@ -826,6 +851,7 @@ separate <td> tag with a class to indicate the amino acid type
 @param {bool}     isConsensus   This is the consensus sequence
 @returns {string} text          HTML snippet
 
+@author 
 - 30.05.14 Original  By: ACRM
 - 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
 - 17.06.14 Added isConsensus and colourScheme
@@ -935,6 +961,7 @@ i.e. the whole sequence length
 @param {string}   width   The width of the slider
 @param {string}   height  The height of the slider (text size)
 
+@author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant variable and changed divs to spans
 - 15.06.14 Added height
@@ -976,6 +1003,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 @param {text}      ebentOrId    Identifier of the display div
 @param {null}      ui           Must be set to null
 
+@author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
 */
@@ -1018,6 +1046,7 @@ Simple wrapper function to obtain the currently selected range
 @param   {string}   divId    Identifier for display div
 @returns {int[]}             Start and stop of range
 
+@author 
 - 06.06.14  Original   By: ACRM
 */
 function JSAV_getRange(divId)
@@ -1042,6 +1071,7 @@ them as a coloured table
 @param   {bool}       nocolour    Don't colout dotified residues
 @returns {string}                 HTML
 
+@author 
 - 30.05.14 Original  By: ACRM
 - 06.06.14 Added call to build the marker row of selected residues
 - 10.06.14 Added sortable and selectable parameters
@@ -1109,6 +1139,7 @@ for selecting/deselecting all sequences
 @param {string}  divId  - ID of the div we are working in
 @param {int}     seqLen - sequence length
 
+@author 
 - 09.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 */
@@ -1135,6 +1166,7 @@ residues to be used for sorting
 @param {int}      seqLen     - Length of sequences alignement
 @param {int}      selectable - Do we have select boxes?
 
+@author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Added 'selectable'
 */
@@ -1173,6 +1205,7 @@ i.e. <= rather than < the last position
 @returns {int[]}               Offsets of first and last real
                                amino acid
 
+@author 
 - 04.06.14 Original   By: ACRM
 */
 function JSAV_FindRealSequenceEnds(seqArray)
@@ -1209,6 +1242,7 @@ chooses the one with fewest differences
 @eturns {int}                        Index of the representative
                                     sequence
 
+@author 
 - 29.05.14 Original   By: ACRM
 */
 function JSAV_chooseRepresentative(differenceMatrix)
@@ -1255,6 +1289,7 @@ reference sequence
 @eturns {int[]}                         Indexes of the sequences closest to
                                         the reference sequence
 
+@author 
 - 04.06.14 Original    By: ACRM
 */
 function JSAV_findClosestSequences(sequenceIndexes, refSeq, differenceMatrix)
@@ -1298,6 +1333,7 @@ sequence
 @param   {int}        stop        Offset of end of region to sort
 @returns {object[]}               Sorted array of sequence objects
 
+@author 
 - 29.05.14 Original   By: ACRM
 - 04.06.14 Added ignoreEnds (true) to JSAV_calcDifferenceMatrix() call
          Range version
@@ -1386,6 +1422,7 @@ of sequences
 @eturns {int-2DArray}                Differences between each pair
                                  of sequences
 
+@author 
 - 29.05.14 Original   By: ACRM
 - 04.06.14 Added ignoreEnds handling
          Range version
@@ -1422,6 +1459,7 @@ the ends of the sequences
                               in calculating differences
 @returns {int}                Number of differences between the sequences
 
+@author 
 - 29.05.14 Original  By: ACRM
 - 04.06.14 Added ignoreEnds handling
          Created this Range version
@@ -1482,6 +1520,7 @@ that sorts and refreshes the display.
 @param {bool}  selectable   Are checkboxes shown next to sequences
 @param {bool}  border       Should CSS be updated to show a border
 
+@author 
 - 29.05.14 Original   By: ACRM
 - 11.06.14 sequences is now global
 - 12.06.14 split out the JSAV_refresh() part
@@ -1523,6 +1562,7 @@ Also updates the marked range and the CSS if the border option is set
 @param {bool}     dotify        Dotify the sequence
 @param {bool}     nocolour      Don't colour dotified residues
 
+@author 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
 - 16.06.14  Added dotify and nocolour
 - 17.06.14  Added consensus
@@ -1554,6 +1594,7 @@ class to pick up the appropriate colour for the cells from CSS
 @param {int}       stop    Offset of last residue to be
                            marked (0-based)
 
+@author 
 - 06.06.14  Original   By: ACRM
 - 13.06.14  Changed from highlighted to marked
 */
@@ -1576,8 +1617,9 @@ function JSAV_markRange(divId, seqLen, start, stop)
 
 // ---------------------------------------------------------------------
 /**
-Initializes global array
+Initializes global arrays
 
+@author 
 - 09.06.14 Original   By: ACRM
 - 12.06.14 Added more arrays
 - 17.06.14 Added gConsensus array
@@ -1611,6 +1653,7 @@ file
 
 @returns {string[]}   - Colour schemes
 
+@author 
 - 17.06.14   Original   By: ACRM
 */
 function JSAV_initColourChoices()
@@ -1626,6 +1669,7 @@ Calculates a consensus sequence
 @param   {object[]}  sequences  - Array of sequence objects
 @returns {string}               - Consensus sequence
 
+@author 
 - 17.06.14  Original   By: ACRM
 */
 function JSAV_buildConsensus(sequences)
@@ -1694,6 +1738,7 @@ where the object contains the specified key:value pair.
 @param {string}   value - The value to check
 @param {object[]} array - The array of objects to manipulate
 
+@author 
 - 12.06.14 Original   By: ACRM
 */
 function ACRM_deleteItemByLabel(key, value, array)
@@ -1722,6 +1767,7 @@ ACRM_array(3, 2); // [new Array(2),
                   //  new Array(2),
                   //  new Array(2)]
 
+@author 
 - 29.05.14 Taken from http://stackoverflow.com/questions/966225/
            how-can-i-create-a-two-dimensional-array-in-javascript
 */
@@ -1752,6 +1798,7 @@ simple JavaScript confirm() method
                              passed to the function - true for OK, false
                              for cancel
 
+@author 
 - 15.06.14 Original   By: ACRM
 */
 function ACRM_confirm(title, msg, callback) 
@@ -1784,6 +1831,7 @@ simple JavaScript alert() method
 @param {string}   title    - title for the confirm box
 @param {string}   msg      - the message to be displayed
 
+@author 
 - 15.06.14 Original   By: ACRM
 */
 function ACRM_alert(title, msg) 
@@ -1811,6 +1859,7 @@ General purpose dialogue using JQueryUI dialog
 @param {string}   width    - the width of the window (e.g. '600px')
 @param {bool}     pre      - wrap the displayed text in <pre> tags
 
+@author 
 - 17.06.14 Original   By: ACRM
 */
 function ACRM_dialog(title, msg, width, pre) 
