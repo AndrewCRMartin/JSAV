@@ -123,7 +123,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
 {string[]}  options.colourChoices  - Array of colour scheme names - only used
                                     if the user has added to the CSS
 
-@param {bool}      noTooltips     - Switch off tooltips
+{bool}      plainTooltips          - Don't use JQuery tooltips
 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -142,7 +142,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Added consensus
            Added colourScheme/colorScheme
            Added selectColour/selectColor and colourChoices/colorChoices
-- 18.06.14 Added tooltips and noTooltips option
+- 18.06.14 Added tooltips and plainTooltips option
 */
 function printJSAV(divId, sequences, options)
 {
@@ -159,6 +159,7 @@ function printJSAV(divId, sequences, options)
    if(options.colourScheme == undefined) { options.colourScheme   = "taylor";            }
    if(options.selectColor)               { options.selectColour   = true;                }
    if(options.colorChoices != undefined) { options.colourChoices  = options.colorChoices;}
+   if(options.deletable)                 { options.selectable     = true;                }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -167,9 +168,8 @@ function printJSAV(divId, sequences, options)
    gSequences[divId]       = sequences;
    gSequenceLengths[divId] = sequences[0].sequence.length;
 
-
-   // Enable tooltips
-   if(!options.noTooltips)
+   // Enable JQuery tooltips
+   if(!options.plainTooltips)
    {
       $(function() {
          $(document).tooltip();
@@ -188,7 +188,7 @@ function printJSAV(divId, sequences, options)
                                       options.selectable, options.highlight,
                                       options.dotify, options.nocolour, options.consensus);
    document.write(html);
-   document.writeln("</div>");
+   document.writeln("</div>"); // End of divId_sortable
    document.writeln("<div class='JSAVControls'>");
 
    if(options.sortable)
@@ -203,7 +203,7 @@ function printJSAV(divId, sequences, options)
 
    }
 
-   if(options.selectable && options.deletable)
+   if(options.deletable)
    {
       JSAV_printDelete(divId);
    }
@@ -218,7 +218,7 @@ function printJSAV(divId, sequences, options)
       JSAV_printAction(divId, options.action, options.actionLabel);
    }
 
-   if(options.fasta != undefined)
+   if(options.fasta)
    {
       JSAV_printFASTA(divId);
    }
@@ -241,8 +241,8 @@ function printJSAV(divId, sequences, options)
        }
    }
 
-   document.writeln("</div>");
-   document.writeln("</div>");
+   document.writeln("</div>"); // End of JSAVControls
+   document.writeln("</div>"); // End of divId
 
    if(options.border)
    {
@@ -314,6 +314,7 @@ Prints a pulldown menu to select a colour scheme
 @param {object} options - User options
 
 - 17.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printColourSelector(divId, options)
 {
@@ -373,6 +374,7 @@ Prints the button to allow FASTA export
 @param {string} divId   - The ID of the div we are printing in
 
 - 17.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printFASTA(divId)
 {
@@ -404,6 +406,7 @@ Print a checkbox for toggling dotify mode
 @param {object}  options  The options
 
 - 16.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printToggleDotify(divId, options)
 {
@@ -428,6 +431,7 @@ Print a checkbox for toggling nocolour-dotify mode
 @param {object}  options  The options
 
 - 16.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printToggleNocolour(divId, options)
 {
@@ -522,6 +526,7 @@ Prints the delete button
 @param {string}  divId   - The ID of the div to print in
 
 - 12.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printDelete(divId)
 {
@@ -538,6 +543,7 @@ Prints the submit button
 @param {string}  label   - Label for submit button
 
 - 12.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printSubmit(divId, url, label)
 {
@@ -562,6 +568,7 @@ Prints the action button
 @param {string}  label   - Label for action button
 
 - 13.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_printAction(divId, action, label)
 {
@@ -822,6 +829,7 @@ separate <td> tag with a class to indicate the amino acid type
 - 30.05.14 Original  By: ACRM
 - 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
 - 17.06.14 Added isConsensus and colourScheme
+- 18.06.14 Added tooltip
 */
 function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour,
                                 isConsensus, colourScheme)
@@ -834,7 +842,15 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
         prevSeqArray = prevSequence.split("");
     }
 
-    var tableLine = "<tr id='" + id + "'>";
+    var tableLine = "";
+    if(isConsensus)
+    {
+        tableLine = "<tr class='tooltip' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
+    }
+    else
+    {
+        tableLine = "<tr id='" + id + "'>";
+    }
     tableLine += "<th class='titleCell'>" + id + "</th>";
 
     if(selectable)
@@ -1094,6 +1110,7 @@ for selecting/deselecting all sequences
 @param {int}     seqLen - sequence length
 
 - 09.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
 */
 function JSAV_buildSelectAllHTML(divId, seqLen)
 {
