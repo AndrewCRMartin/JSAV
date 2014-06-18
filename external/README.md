@@ -10,6 +10,7 @@ The following are required for JSAV to work
 - JQuery UI is available from http://www.jqueryui.com/
 
 Your HTML should import these with:
+
     <link href="external/jquery.css" rel="stylesheet" />
     <script type='text/javascript' src='external/jquery-1.10.2.min.js'></script>
     <script type='text/javascript' src='external/jquery-ui-1.10.4.custom.min.js'></script>
