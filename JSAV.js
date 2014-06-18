@@ -602,7 +602,7 @@ function JSAV_wrapAction(divId, action)
 // ---------------------------------------------------------------------
 /**
 Handles the user clicking the submit button. Build a FASTA version of the
-sequences that have been selected, fills them into a <textarea> in a form
+sequences that have been selected, fills them into a textarea in a form
 and then submits the form.
 
 @param {string} divId  - The ID of the div we are working in
