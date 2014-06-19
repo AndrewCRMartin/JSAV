@@ -98,10 +98,9 @@ following lines to your HTML:
     <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
     <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
     <script>
-    $('div').tooltipster();
-        $(document).ready(function() {
-            $('.tooltip').tooltipster();
-        });
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
+    });
     </script>
 
 **Note** that this must appear *after* including the JSAV.js code and
