@@ -27,8 +27,19 @@ To use this, your HTML should include:
     <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
     <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
     <script>
-    $(document).ready(function() {
-        $('.tooltip').tooltipster();
-    });
+    function enableTooltipster()
+    {
+        $(document).ready(function() {
+            $('.tooltip').tooltipster();
+        });
+    }
+    enableTooltipster();
     </script>
+
+and your options for JSAV should include:
+
+```javascript
+    options.callback = "enableTooltipster";
+```
+
 
