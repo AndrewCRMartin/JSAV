@@ -1,5 +1,5 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.5
-================================================
+JavaScript Sequence Alignment Viewer (JSAV) V1.5.1
+==================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
 
@@ -46,6 +46,8 @@ the divId and array of sequence objects
 - `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
                                     if the user has added to the CSS
 - `plainTooltips` - disable JQuery tool-tips
+- `callback`      - name of a function to be called whenever the display is
+                    refreshed. The divId is passed into this function.
 
 
 CSS Control
@@ -98,15 +100,24 @@ following lines to your HTML:
     <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
     <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
     <script>
-    $(document).ready(function() {
-        $('.tooltip').tooltipster();
-    });
+    function enableTooltipster()
+    {
+        $(document).ready(function() {
+            $('.tooltip').tooltipster();
+        });
+    enableTooltipster();
     </script>
 
 **Note** that this must appear *after* including the JSAV.js code and
 CSS (unless you also remember to set the `options.plainTooltips`
 option).
 
+The `enableTooltipster()` function must be called whenever the display is refreshed. This is achieved by
+adding the option:
+
+```javascript
+    options.callback = "enableTooltipster";
+```
 
 Note
 ----

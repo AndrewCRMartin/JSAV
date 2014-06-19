@@ -16,9 +16,13 @@
 <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
 <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
 <script>
-$(document).ready(function() {
-    $('.tooltip').tooltipster();
-});
+function enableTooltipster()
+{
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
+    });
+}
+enableTooltipster();
 </script>
 <!-- END -->
 
@@ -109,6 +113,7 @@ MyOptions.fasta = true;
 MyOptions.consensus = true;
 MyOptions.colourScheme = "zappo";
 MyOptions.selectColour = true;
+MyOptions.callback = "enableTooltipster";
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
 </script>

@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.5 18.06.14
+    JSAV V1.5.1 19.06.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.5
-   Date:       18.06.14
+   Version:    V1.5.1
+   Date:       19.06.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
@@ -62,6 +62,7 @@
                       colourChoices/colorChoices
                       Added refresh of options on reload
    V1.5    18.06.14   Added tooltips
+   V1.5.1  19.06.14   Added callback option
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -106,7 +107,9 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @property {int[]}     options.highlight      - Array of ranges to highlight
 @property {string}    options.submit         - URL for submitting selected sequences
 @property {string}    options.submitLabel    - Label for submit button
-@property {string}    options.action         - Function to call using selected sequences
+@property {string}    options.action         - Function to call using selected sequences.
+                                               This is passed the seqId and array of
+                                               currently selected sequence objects
 @property {string}    options.actionLabel    - Label for action button
 @property {bool}      options.dotify         - Repeated amino acids in the sequence are
                              replaced by a dot
@@ -129,6 +132,9 @@ Where 'mySeqDisplay' is the name of a div that will be created
                                     can be in mixed case.
 
 @property {bool}      options.plainTooltips    - Don't use JQuery tooltips
+@property {callback}  options.callback       - Specify the name of a function to be
+                                               called whenever the display is refreshed.
+                                               This is passed the seqId
 
 @author 
 - 29.05.14 Original  By: ACRM
@@ -149,6 +155,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Added colourScheme/colorScheme
            Added selectColour/selectColor and colourChoices/colorChoices
 - 18.06.14 Added tooltips and plainTooltips option
+- 19.06.14 Added callback
 */
 function printJSAV(divId, sequences, options)
 {
@@ -257,6 +264,11 @@ function printJSAV(divId, sequences, options)
 
     // Ensure buttons etc match the data
     window.onload = function(){JSAV_refreshSettings(divId);};
+
+    if(options.callback != undefined)
+    {
+        window[options.callback](divId);
+    }
 }
 
 // ---------------------------------------------------------------------
@@ -1566,6 +1578,7 @@ Also updates the marked range and the CSS if the border option is set
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
 - 16.06.14  Added dotify and nocolour
 - 17.06.14  Added consensus
+- 19.06.14  Added callback
 */
 function JSAV_refresh(divId, sequences, sortable, selectable, border, 
                       start, stop, highlight, dotify, nocolour, consensus)
@@ -1579,6 +1592,12 @@ function JSAV_refresh(divId, sequences, sortable, selectable, border,
        JSAV_modifyCSS(divId);
    }
    JSAV_markRange(divId, gSequenceLengths[divId], start, stop);
+
+    if(gOptions[divId].callback != undefined)
+    {
+        window[gOptions[divId].callback](divId);
+    }
+
 }
 
 // ---------------------------------------------------------------------
