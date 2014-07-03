@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>JSAV demonstration</title>
+<script type='text/javascript' src='JSAV/external/jquery-1.10.2.min.js'></script>
+</head>
+
+<body>
+<h1>JSAV demonstration</h1>
+
+<p>You <b>must</b> provide your sequences <b>ready-aligned</b> in FASTA format.</p>
+
+<form action='jsav.cgi' method='post'>
+<textarea name='seqs' cols='80' rows='20'>
+>id1b1.L
+SASSSVNYMYACREFGHIKLMNPTRSTVWY
+>id1a.L
+SASSSTNYMYACDEFGHIKLMNPQRSTVWY
+>id2b1.L
+SASSTCNYMTACDEEGHIKLMNP-RSTCWY
+>id2a.L
+SASSSCNYMTLCDEHGHIKLMNP-RSTCWY
+>id2a1.L
+SASSSCNYMTLCDEHGHIKLMNPQRSTCWY
+>id1.L
+SASSSVNYMYACDEFGHIKLMNPQRSTVWY
+>id1b.L
+SASSSVNYMYACREFGHIKLMNPQRSTVWY
+>id1a1.L
+SASSSTNYMYLCDEFGHIKLMNPQRSTVWY
+>id2.L
+SASSSCNYMTACDEHGHIKLMNP-RSTCWY
+>id2b.L
+SASSTCNYMTACDEHGHIKLMNP-RSTCWY
+</textarea><br />
+<input type='submit' id='submit_button' value='Align'/>
+<input type='reset' />
+</form>
+
+</body>
+</html>
