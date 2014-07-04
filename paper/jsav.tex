@@ -56,7 +56,7 @@ Two of the earlier such tools are HOMED\cite{stockwell:homed} and
 MALIGNED\cite{clark:maligned} written for VAX/VMS workstations.
 Neither seems to be actively maintained or easily available any
 more. Other early viewers include GeneDoc\cite{nicholas:genedoc},
-BioEdit and Seaview\cite{galtier:seavier}.
+BioEdit and Seaview\cite{galtier:seaview}.
 
 RnaViz\cite{derijk:rnaviz}, a program for visualizing RNA
 secondary structure contains DCSE\cite{derijk:dcse}, an interactive
@@ -89,10 +89,10 @@ complete list is available on the web at
 \url{http://en.wikipedia.org/wiki/List_of_alignment_visuzlization_software}.
 
 Probably the most popular of the available tools is Jalview from Geoff
-Barton's group in Dundee. Jalview is available in two versions: a
-standalone Java application which is operating system independent and
-provides many tools and facilities, and as a `light' version
-(JalviewLight) --- a Java applet that can be embedded in a web
+Barton's group in Dundee\cite{clamp:jalview}. Jalview is available in
+two versions: a standalone Java application which is operating system
+independent and provides many tools and facilities, and as a `light'
+version (JalviewLight) --- a Java applet that can be embedded in a web
 page. The latter responds to the need for web site developers to be
 able to embed sequence alignment visualization tools into web pages.
 
@@ -121,9 +121,37 @@ as integration with other web pages and local JavaScript code.
 \section{Implementation}
 
 \begin{figure}
+\footnotesize
+\begin{verbatim}
+var MySeqs = Array();
+
+MySeqs.push({ id :"id1b1",  
+   sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+MySeqs.push({ id :"id1a",   
+   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2b1",  
+   sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
+
+var MyOptions = Array();
+MyOptions.sortable = true;
+MyOptions.selectable = true;
+MyOptions.deletable = true;
+MyOptions.toggleDotify = true;
+MyOptions.toggleNocolour = true;
+MyOptions.consensus = true;
+MyOptions.selectColour = true;
+
+printJSAV('sequenceDisplay', MySeqs, MyOptions);
+\end{verbatim}
 \caption{\label{fig:code}Example code illustrating the creation of a
 JavaScript array of sequence objects, the options and the call
 necessary to create the alignment viewer.}
+\end{figure}
+
+\begin{figure}
+\epsfig{file=demo.eps,width=\columnwidth}
+\caption{\label{fig:demo}Results of displaying sequences using 
+  code of the form shown in Fig~\ref{fig:code}.}
 \end{figure}
 
 JSAV is implemented purely in JavaScript. JSAV employs the JQuery
@@ -136,8 +164,27 @@ contain two elements: a unique identifier for a sequence and the
 sequence itself --- all sequences must be pre-aligned.  Secondly a set
 of options can be provided. These control the display and facilities
 available to the end user of a web site.  A brief piece of example
-code is shown in Figure~\ref{fig:code} and available options are
-described in Table~\ref{tab:options}.
+code is shown in Fig~\ref{fig:code} with the results shown in
+Fig~\ref{fig:demo}. 
+
+The code allows the user to modify the view of the sequence in a
+number of ways. The web-site provider has control over which of these
+is available to the end user. First, the sequences can be sorted ---
+the code selects the most representative sequence displaying that at
+the top of the alignment followed by the most similar sequence and so
+on. By default, sorting is performed across the whole sequence, but a
+two-handled slider allows the range of positions to be sorted to
+modified. Different colouring schemes are available duplicating those
+provided in JalView. The alignment can also be `dotified', replacing
+residues repeated between sequences with dots in order to emphasize
+amino acid differences. Colouring of dotified residues can also be
+switched off or on. Sequences can be selected and deleted from the
+alignment; a consensus sequence can be displayed at the bottom of the
+alignment and automatically updates when sequences are deleted. The
+complete set of sequences, or a selected subset, can be submitted to
+another web site, or passed to another JavaScript function for
+integration with other tools. Tooltips are provided for each option
+and all options are documented in detail on the web site.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Availability}
@@ -145,5 +192,7 @@ The software may be downloaded from
 \url{http://www.bioinf.org.uk/software/jsav/} or from
 \url{http://www.github.com/AndrewCRMartin/JSAV/} and used freely. The
 web site provides demonstrations and full documentation. 
+
+\bibliography{jsav}
 
 \end{document}
