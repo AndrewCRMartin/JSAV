@@ -1,5 +1,5 @@
-TEXINPUTS=".:bioinfo::"
-BSTINPUTS=".:bioinfo::"
+TEXINPUTS=".:./bioinfo::"
+BSTINPUTS=".:./bioinfo::"
 latex jsav
 bibtex jsav
 latex jsav
