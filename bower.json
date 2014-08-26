@@ -13,6 +13,7 @@
   "private": true,
   "dependencies": {
     "jquery": "1.11.1",
-    "jqueryui": "1.10.4"
+    "jqueryui": "1.10.4",
+    "tooltipster": "3.2.6"
   }
 }
