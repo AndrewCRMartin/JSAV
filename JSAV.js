@@ -918,7 +918,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
             var aa     = seqArray[i];
             var prevAa = '#';
 
-            var colourClass = colourScheme + aa;
+            var colourClass = colourScheme + aa.toUpperCase();
             if(nocolour)
             {
                 if(aa == "-") 
@@ -954,7 +954,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
         for(var i=0; i<nResidues; i++)
         {
             var aa = seqArray[i];
-            tableLine += "<td class='" + colourScheme + aa + consensusClass + "'>" + aa + "</td>";
+            tableLine += "<td class='" + colourScheme + aa.toUpperCase() + consensusClass + "'>" + aa + "</td>";
         }
     }
     tableLine += "</td></tr>";
