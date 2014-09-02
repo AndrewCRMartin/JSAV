@@ -156,6 +156,8 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Added selectColour/selectColor and colourChoices/colorChoices
 - 18.06.14 Added tooltips and plainTooltips option
 - 19.06.14 Added callback
+- 02.09.14 Avoid using write and writeln. Rather use jQuery to insert into DOM.
+           Fixes overwrite issues with using after page closure.
 */
 function printJSAV(divId, sequences, options)
 {
@@ -265,18 +267,18 @@ function printJSAV(divId, sequences, options)
        }
    }
 
-   // if(options.border)
-   // {
-   //     JSAV_modifyCSS(divId);
-   // }
+   if(options.border)
+   {
+       JSAV_modifyCSS(divId);
+   }
 
-   //  // Ensure buttons etc match the data
-   //  window.onload = function(){JSAV_refreshSettings(divId);};
+    // Ensure buttons etc match the data
+    window.onload = function(){JSAV_refreshSettings(divId);};
 
-   //  if(options.callback != undefined)
-   //  {
-   //      window[options.callback](divId);
-   //  }
+    if(options.callback != undefined)
+    {
+        window[options.callback](divId);
+    }
 }
 
 // ---------------------------------------------------------------------
