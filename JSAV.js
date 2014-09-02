@@ -193,16 +193,27 @@ function printJSAV(divId, sequences, options)
    {
        gConsensus[divId] = JSAV_buildConsensus(sequences);
    }
+   var div = '';
+   if($("#" + divId).length == 0) {
+       div = $('<div />').appendTo($('body'));
+       div.attr('id', divId);
+   }
+   else{
+       div = $("#" + divId);
+   }
+   var div_sortable = $('<div />').appendTo(div);
+   div_sortable.attr('id', divId + '_sortable');
+   div_sortable.attr('class', 'JSAVDisplay');
 
-   document.writeln("<div id='" + divId + "'>");
-
-   document.writeln("<div id='" + divId + "_sortable' class='JSAVDisplay'>");
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
                                       options.selectable, options.highlight,
                                       options.dotify, options.nocolour, options.consensus);
-   document.write(html);
-   document.writeln("</div>"); // End of divId_sortable
-   document.writeln("<div class='JSAVControls'>");
+   div_sortable.append(html);
+
+
+   var div_controls = $('<div />').appendTo(div);
+   div_controls.attr('id', divId + '_controls');
+   div_controls.attr('class', 'JSAVControls');
 
    if(options.sortable)
    {
@@ -212,7 +223,7 @@ function printJSAV(divId, sequences, options)
       JSAV_printSlider(divId, stop, options.width, options.height);
 
       var html = "<button type='button' class='tooltip' title='Sort the sequences based on the range specified with the slider' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
-      document.writeln(html);
+      div_controls.append(html);
 
    }
 
@@ -239,7 +250,7 @@ function printJSAV(divId, sequences, options)
    // Colour related - on a new line
    if(options.selectColour || options.toggleDotify)
    {
-       document.writeln("<br />");
+       div_controls.append("<br />");
    }
    if(options.selectColour)
    {
@@ -254,21 +265,18 @@ function printJSAV(divId, sequences, options)
        }
    }
 
-   document.writeln("</div>"); // End of JSAVControls
-   document.writeln("</div>"); // End of divId
+   // if(options.border)
+   // {
+   //     JSAV_modifyCSS(divId);
+   // }
 
-   if(options.border)
-   {
-       JSAV_modifyCSS(divId);
-   }
+   //  // Ensure buttons etc match the data
+   //  window.onload = function(){JSAV_refreshSettings(divId);};
 
-    // Ensure buttons etc match the data
-    window.onload = function(){JSAV_refreshSettings(divId);};
-
-    if(options.callback != undefined)
-    {
-        window[options.callback](divId);
-    }
+   //  if(options.callback != undefined)
+   //  {
+   //      window[options.callback](divId);
+   //  }
 }
 
 // ---------------------------------------------------------------------
@@ -357,8 +365,8 @@ function JSAV_printColourSelector(divId, options)
                 options.colourChoices[i] + "</option>";
     }
     html += "</select>";
-
-    document.writeln(html);
+    var parrenttag = '#' + divId + '_controls';
+    $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -399,9 +407,10 @@ Prints the button to allow FASTA export
 */
 function JSAV_printFASTA(divId)
 {
+   var parrenttag = '#' + divId + '_controls';
    var label = gOptions[divId].fastaLabel;
    var html = "<button type='button' class='tooltip' title='Export the selected sequences, or all sequences if none selected' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
-   document.writeln(html);
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -443,7 +452,8 @@ function JSAV_printToggleDotify(divId, options)
 
     html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Dotify</label></span>";
 
-    document.writeln(html);
+    var parrenttag = '#' + divId + '_controls';
+    $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -468,7 +478,8 @@ function JSAV_printToggleNocolour(divId, options)
     var tooltip = "Do not colour repeated residues";
 
     html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Do not colour dots</label></span>";
-    document.writeln(html);
+    var parrenttag = '#' + divId + '_controls';
+    $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -557,8 +568,9 @@ Prints the delete button
 */
 function JSAV_printDelete(divId)
 {
+   var parrenttag = '#' + divId + '_controls';
    var html = "<button type='button' class='tooltip' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
-   document.writeln(html);
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -575,8 +587,9 @@ Prints the submit button
 */
 function JSAV_printSubmit(divId, url, label)
 {
+   var parrenttag = '#' + divId + '_controls';
    var html = "<button type='button' class='tooltip' title='Submit the selected sequences, or all sequences if none selected' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
-   document.writeln(html);
+   $(parrenttag).append(html);
 
    // Build a hidden sequences text box in the form to contain
    var formId = divId + "_form"; 
@@ -584,7 +597,7 @@ function JSAV_printSubmit(divId, url, label)
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
    html += "</form></div>";
-   document.writeln(html);
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -601,8 +614,9 @@ Prints the action button
 */
 function JSAV_printAction(divId, action, label)
 {
+   var parrenttag = '#' + divId + '_controls';
    var html = "<button type='button' class='tooltip' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
-   document.writeln(html);
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -980,11 +994,13 @@ i.e. the whole sequence length
 */
 function JSAV_printSlider(divId, seqLen, width, height)
 {
-   document.writeln("<span id='" + divId + "_showrange'></span>");
-   document.writeln("<span id='" + divId + "_slider' style='font-size: " + height + ";'></span>");
 
+   var parrenttag = '#' + divId + '_controls';
    var id = divId + "_slider";
    var tag = "#" + id;
+
+   var span_showrange = $("<span id='" + divId + "_showrange'></span>").appendTo(parrenttag);
+   var span_slider = $("<span id='" + divId + "_slider'></span>").appendTo(parrenttag);
 
    $(tag).css('width',   width);
    $(tag).css('margin',  '10px');
@@ -1091,7 +1107,7 @@ them as a coloured table
 - 16.06.14 Added dotify
 - 17.06.14 Added consensus
 */
-function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight, 
+function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight,
                                  dotify, nocolour, consensus)
 {
    var html = "";
@@ -1199,7 +1215,7 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
     for(var i=0; i<seqLen; i++)
     {
         var id = divId + "_JSAVMarker" + i;
-        html += "<td id='" + id + "' class='unmarked' />&nbsp;</td>";
+        html += "<td id='" + id + "' class='unmarked'>&nbsp;</td>";
     }
     html += "</tr>\n";
     return(html);
