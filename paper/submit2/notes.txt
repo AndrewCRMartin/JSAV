@@ -3,3 +3,29 @@ http://www.mybiosoftware.com/phylogenetic-analysis/2668
 http://seqanswers.com/wiki/Belvu
 http://www.mbio.ncsu.edu/bioedit/bioedit.html
 PMC2896197 SATCHMO-JS
+
+
+Possible Journals
+Proteins: Struc Func Bioinf
+BMC Research Notes
+F1000Research
+
+
+
+MODexplorer: an integrated tool for exploring protein sequence,
+structure and function relationships. kosinski:2013
+
+Sequence alignment visualization in HTML5 without Java.   gille:2014
+
+Alignment-Annotator web server: rendering and annotating sequence
+alignments. gille:2014aa
+
+SnipViz: a compact and lightweight web site widget for display and
+dissemination of multiple versions of gene and protein sequences. jaschob:2014
+
+Sequence, a BioJS component for visualizing sequences. gomez:2014
+
+Need to point out highlighting ability
+
+Has been tested with Firefox 9.0.1 - V32.0, recent versions of Chrome
+(V37). Need to test on MIE and Safari
