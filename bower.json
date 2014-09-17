@@ -1,6 +1,6 @@
 {
   "name": "JSAV",
-  "version": "1.5.3",
+  "version": "1.6",
   "main": "JSAV.min.js",
   "ignore": [
     "external",

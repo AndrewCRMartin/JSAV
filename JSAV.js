@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.5.1 19.06.14
+    JSAV V1.6 17.09.14
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.5.1
-   Date:       19.06.14
+   Version:    V1.6
+   Date:       17.09.14
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
@@ -63,6 +63,8 @@
                       Added refresh of options on reload
    V1.5    18.06.14   Added tooltips
    V1.5.1  19.06.14   Added callback option
+   V1.6    17.09.14   Changed to manipulate the DOM rather than writing
+                      to the document  By: JHN
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -157,7 +159,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
 - 18.06.14 Added tooltips and plainTooltips option
 - 19.06.14 Added callback
 - 02.09.14 Avoid using write and writeln. Rather use jQuery to insert into DOM.
-           Fixes overwrite issues with using after page closure.
+           Fixes overwrite issues with using after page closure. By: JHN
 */
 function printJSAV(divId, sequences, options)
 {
@@ -344,6 +346,7 @@ Prints a pulldown menu to select a colour scheme
 @author 
 - 17.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than writing to document  By: JHN
 */
 function JSAV_printColourSelector(divId, options)
 {
@@ -406,6 +409,7 @@ Prints the button to allow FASTA export
 @author 
 - 17.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 */
 function JSAV_printFASTA(divId)
 {
@@ -441,6 +445,7 @@ Print a checkbox for toggling dotify mode
 @author 
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 */
 function JSAV_printToggleDotify(divId, options)
 {
@@ -468,6 +473,7 @@ Print a checkbox for toggling nocolour-dotify mode
 @author 
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 */
 function JSAV_printToggleNocolour(divId, options)
 {
@@ -567,6 +573,7 @@ Prints the delete button
 @author 
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 */
 function JSAV_printDelete(divId)
 {
@@ -586,6 +593,7 @@ Prints the submit button
 @author 
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 */
 function JSAV_printSubmit(divId, url, label)
 {
