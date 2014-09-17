@@ -1,0 +1,11 @@
+%% acrmbio.sty
+% These are modifications to the behaviour of \cite and \shortcite
+% for the natbib.sty style to allow them to be used the way I like
+% i.e. 
+% \cite does a full citation in parentheses, but leaves a space first
+% \shortcite gives the year only, in parentheses.
+% These allow an easy switch to a 'power' style of citation without
+% having to remove spaces
+\let\cite\citep
+\let\shortcite\citeyearpar
+\renewcommand{\NAT@open}{\ (}
