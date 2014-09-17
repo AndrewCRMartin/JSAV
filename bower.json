@@ -1,0 +1,19 @@
+{
+  "name": "JSAV",
+  "version": "1.5.3",
+  "main": "JSAV.min.js",
+  "ignore": [
+    "external",
+    "demo",
+    "out",
+    "paper",
+    "index*",
+    "makefile"
+  ],
+  "private": true,
+  "dependencies": {
+    "jquery": "1.11.1",
+    "jqueryui": "1.10.4",
+    "tooltipster": "3.2.6"
+  }
+}
