@@ -47,8 +47,8 @@ requirement in analysis of protein sequences, allowing us to visualize
 conservation across protein families as well as unusual features of
 particular sequences. As a result, there are a plethora of tools for
 viewing MSAs. These range from tools which provide attractive printed
-output, through (operating-system dependent, or independent)
-standalone tools, to web-based viewers.
+output, through standalone tools --- either operating-system
+dependent, or independent --- to web-based viewers.
 
 Two of the earliest tools were HOMED\cite{stockwell:homed} and
 MALIGNED\cite{clark:maligned} written for VAX/VMS workstations.
@@ -214,12 +214,9 @@ features in different tools.
 \footnotesize
 \begin{verbatim}
 var MySeqs = Array();
-MySeqs.push({ id :"id1b1.L",  
-   sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
-MySeqs.push({ id :"id1a.L",   
-   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
-MySeqs.push({ id :"id2b1.L",  
-   sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id1b1.L", sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+MySeqs.push({ id :"id1a.L",  sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2b1.L", sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
 
 var MyOptions = Array();
 MyOptions.sortable = true;
@@ -232,9 +229,9 @@ MyOptions.selectColour = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
 \end{verbatim}
-\caption{\label{fig:code}Example code to create a
-JavaScript array of sequence objects, set options and 
-create the alignment viewer.}
+\caption{\label{fig:code}Example code illustrating the creation of a
+JavaScript array of sequence objects, the options and the call
+necessary to create the alignment viewer.}
 \end{figure}
 
 \begin{figure}
@@ -242,25 +239,25 @@ create the alignment viewer.}
 \caption{\label{fig:demo}A typical JSAV alignment view}
 \end{figure}
 
-%JSAV is implemented purely in JavaScript. JSAV employs the JQuery
-%library to ease access to elements of the HTML that it generates and
-%uses JQuery-UI to implement a two-value slider that is used to specify
-%a range of positions in the alignment.
+JSAV is implemented purely in JavaScript. JSAV employs the JQuery
+library to ease access to elements of the HTML that it generates and
+uses JQuery-UI to implement a two-value slider that is used to specify
+a range of positions in the alignment.  As input, the code requires an
+array of JavaScript objects which contain two elements: a unique
+identifier for a sequence and the sequence itself --- all sequences
+must be pre-aligned.  Secondly a set of options can be provided. These
+control the display and facilities available to the end user of a web
+site to modify the view of the MSA.  A brief extract of sample code is
+shown in Fig~\ref{fig:code} with the results shown in
+Fig~\ref{fig:demo}.
 
-JSAV is implemented purely in JavaScript employing the JQuery and
-JQuery-UI libraries. As input, the code requires an array of
-JavaScript objects which contain two elements: a unique identifier for
-a sequence and the sequence itself --- all sequences must be
-pre-aligned.  Secondly a set of options can be provided. These control
-the display and facilities available to the end user of a web site to
-modify the view of the MSA.  A brief extract of sample code is shown
-in Fig~\ref{fig:code} with the results shown in Fig~\ref{fig:demo}.
-
-The end-user can sort the sequences --- the code selects the most
-representative sequence, displaying that at the top of the alignment
-followed by the most similar sequence and so on. By default, sorting
-is performed across the whole sequence, but a two-handled slider
-allows the range of positions on which the sort is based to be
+JSAV allows the end-user to modify the display in a number of ways The
+web-site provider has control over which of these is available to the
+end user. First, the sequences can be sorted --- the code selects the
+most representative sequence, displaying that at the top of the
+alignment followed by the most similar sequence and so on. By default,
+sorting is performed across the whole sequence, but a two-handled
+slider allows the range of positions on which the sort is based to be
 modified. Different colouring schemes are available duplicating those
 provided in Jalview. The alignment can also be `dotified', replacing
 residues repeated between sequences with dots in order to emphasize
