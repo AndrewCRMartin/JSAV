@@ -1,26 +1,19 @@
-\documentclass[a4]{bioinfo}
+\documentclass[a4]{article}
 \usepackage{url}
-\usepackage{acrmbio}
 \usepackage{epsfig}
 \usepackage{tabularx}
 
-\bibliographystyle{bioinformatics}
-%\bibliographystyle{natbib}
+\bibliographystyle{unsrt}
 \emergencystretch 2in
 
-\copyrightyear{2014}
-\pubyear{2014}
-\title[JSAV: JavaScript Sequence Alignment Viewer]{Application Note:\\
-JSAV: JavaScript Sequence Alignment Viewer}
-\date{26th June, 2014}
-\author[Martin]{Andrew C. R. Martin\mbox{${}^{\rm a}$}\footnote{to whom
-    correspondence should be addressed}}
-\address{\mbox{${}^{\rm a}$}Institute of Structural and Molecular Biology, 
-Division of Biosciences,
-University College London, Darwin Building, Gower Street, London WC1E 6BT}
-\history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
-
-\editor{Associate Editor: XXXXXXX}
+\title{JSAV: JavaScript Sequence Alignment Viewer}
+\date{18th September, 2014}
+\author{Andrew C. R. Martin\mbox{${}^{\rm a}$}\footnote{to whom
+    correspondence should be addressed}\\
+    \mbox{${}^{\rm a}$}Institute of Structural and Molecular Biology,\\
+Division of Biosciences, University College London,\\
+Darwin Building, Gower Street,\\
+London WC1E 6BT}
 
 \begin{document}
 \maketitle
@@ -34,8 +27,8 @@ schemes, sorting of sequences and `dotifying' repeated amino acids. An
 option is also available to submit selected sequences to another web
 site, or to other JavaScript code.  \\
 \noindent{\bfseries Availability and Implementation:} 
-JSAV is implemented purely in JavaScript making use of JQuery and
-JQuery-UI. It does not use any HTML5 specific options to help with
+JSAV is implemented purely in JavaScript making use of the JQuery and
+JQuery-UI libraries. It does not use any HTML5 specific options to help with
 browser compatibility. The code is documented using JSDOC
 and is available from \url{http://www.bioinf.org.uk/software/jsav/}\\
 \noindent{\bfseries Contact:} andrew@bioinf.org.uk --or--
@@ -61,9 +54,9 @@ BioEdit, Seaview\cite{galtier:seaview} and DCSE\cite{derijk:dcse}
 which is part of the RnaViz package for visualizing RNA secondary
 structure\cite{derijk:rnaviz}, but which can be used for protein
 sequence alignments.  A problem in writing graphical software is the
-operating-system dependency of many graphics
-libraries. CINEMA\cite{parrysmith:cinema} was probably the first
-sequence alignment viewer and editor implemented in Java, a platform
+operating-system dependency of many graphics libraries.
+CINEMA\cite{parrysmith:cinema} was probably the first sequence
+alignment viewer and editor implemented in Java, a platform
 independent programming language allowing graphical user interfaces
 (GUIs) to run on any operating system. It has now been rewritten in
 C++ and is part of UTOPIA\cite{pettifer:utopia}. Other software
@@ -90,7 +83,7 @@ Jalview\cite{clamp:jalview} which is available in two versions: a
 standalone Java application which provides many tools and facilities,
 and as a `light' version (JalviewLight) --- a Java applet that can be
 embedded in a web page. The latter responds to the need for web site
-developers to be able to embed MSA visualization into web pages.
+developers to be able to embed MSA visualization.
 
 However, in recent years there has been a gradual move away from using
 Java applets in web development. New HTML features such as the HTML5
@@ -103,15 +96,67 @@ used widely by popular web sites such as Google Mail, Google Docs and
 Facebook.  Recently the Jmol structure viewer has been reimplemented
 in JavaScript as JSmol.
 
-To our knowledge, while there is an intention to port JalviewLight to
-JavaScript, there are currently no JavaScript based sequence alignment
-viewers available. To address this, and our own requirements to embed
-MSA visualization into web pages, we have developed JSAV (JavaScript
-Sequence Alignment Viewer). JSAV is designed to be a lightweight
-component that can easily be dropped into a web site to display and
-manipulate a sequence alignment. It allows colouring, sorting and
-removing sequences as well as integration with other web pages and
-local JavaScript code.
+Consequently, over the last couple of years a small number of
+JavaScript-based sequence alignment viewers have started to be
+developed. These include MODalign\cite{barbato:modalign},
+Alignment-Annotator\cite{gille:2014aa}, SnipViz\cite{jaschob:2014},
+and `Sequence', a component of the BioJS library\cite{gomez:2014}.
+
+MODalign is part of the MODexplorer package\cite{kosinski:2013}, a web
+site for protein modelling, but does not appear to be available as a
+download for use in other web sites. 
+
+Alignment-Editor is part of a more complex system, STRAP. STRAP uses a
+Java server-side interpreter, Alignment-to-HTML\cite{gille:2014},
+which parses the STRAP scripting language and create an alignment in a
+form that can be rendered in Web browsers. The server-side element
+allows tasks such as sequence retrieval, computation of alignments and
+communication with BioDAS-servers. The rendering system includes a
+selection of colouring schemes, highlighting of conserved and variable
+positions in the alignment, reordering and deletion of sequence by
+drag-and-drop, and residue annotation as well as links to 3D
+visualization and sequence groups. It exploits JavaScript and HTML5
+using the HTML5 canvas to draw helices and other visual elements.  The
+description of Alignment-Editor\cite{gille:2014aa} suggests that
+alignments should be prepared using the full Java system and the final
+alignment can then be downloaded as HTML files in a ZIP archive. The
+software is licenced under the GPL and available from the authors on
+request, but the JavaScript visualizer doesn't apperar to be available
+by itself. While in principle possible, no simple documentation is
+provided to enable the client-side JavaScript/HTML5 viewer to be used
+without the server side software.
+
+SnipViz is a compact and lightweight component designed for display 
+of multiple versions of gene and protein sequences ---
+i.e.\ essentially identical sequences with mutations.
+It provides a very simple clean display focused around both DNA and
+protein sequences allowing very long sequences through a scrolling
+mechanism which also shows a small box on a representation of the
+complete sequence to show the relative position within the complete
+alignment.  It also allows display of phylogenetic trees stored in
+Newick format.
+
+`Sequence', is a BioJS component for visualizing sequences. It
+Only very simple views though flexible highlighting
+
+
+
+Sequence \ldots.
+In addition, there is an intention to port JalviewLight to
+JavaScript.
+
+JSAV (JavaScript Sequence Alignment Viewer) is a novel JavaScript
+component that adds to this list. The primary motivation for
+implementing a new tool was the need for a tool with the following
+requirements: (i)~a very simple-to-use lightweight component that can
+easily be dropped into a web site; (ii)~provision of flexible
+colouring schemes and `dotifying' alignments (replacing repeated
+residues with dots); (iii)~the ability to sort sequences --- both
+complete sequences or regions of sequences; (iii)~the ability to
+remove sequences from the alignment; (iv)~the ability to highlight
+regions in the alignment; (v)~the ability to export a selected set of
+sequences in FASTA format; (vi)~the ability to submit a selected set
+of sequences to another web site or to local JavaScipt code.
 
 
 

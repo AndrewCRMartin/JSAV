@@ -125,3 +125,8 @@ In future, the slider may be replaced with
    http://refreshless.com/nouislider/
 which works better on touchscreens.
 
+Contributing to JSAV
+--------------------
+Contributions to JSAV through pull requests are encouraged. If you
+contribute, you acknowledge that you transfer copyright in your
+modifications to University College London and Dr. Andrew C.R. Martin.

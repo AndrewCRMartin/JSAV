@@ -15,15 +15,31 @@ F1000Research
 MODexplorer: an integrated tool for exploring protein sequence,
 structure and function relationships. kosinski:2013
 
-Sequence alignment visualization in HTML5 without Java.   gille:2014
+Sequence alignment visualization in HTML5 without Java.   gille:2014 / gille:2014aa
+Part of STRAP - Strap is JAVA but enables alignments to be generated in pure HTML
+Licenced under GPL but the JavaScript visualizer doesn't apperar to be
+available by itself. Controlled by a
+'Strap' scripting language. 
+http://www.bioinformatics.org/strap/aa/
+Quoting from the documents on the web:
+"Prepare your alignment in Strap or the webservice Alignment
+Annotator. Load your sequences, add your annotations, balloon
+messages, icons and 3D-structures. "
+Link on "Batch mode - preparing alignment views non-interactively:" is
+broken
 
-Alignment-Annotator web server: rendering and annotating sequence
-alignments. gille:2014aa
 
 SnipViz: a compact and lightweight web site widget for display and
 dissemination of multiple versions of gene and protein sequences. jaschob:2014
+http://www.yeastrc.org/snipviz/
+Very simple display, none of the options we require. Does support DNA
+and Newick files for displaying trees. Scrollable display for long DNA sequences.
 
 Sequence, a BioJS component for visualizing sequences. gomez:2014
+Overhead of BioJS
+Only very simple views though flexible highlighting
+
+
 
 Need to point out highlighting ability
 
