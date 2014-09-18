@@ -2,6 +2,10 @@
 \usepackage{url}
 \usepackage{epsfig}
 \usepackage{tabularx}
+%\usepackage{dingbat}
+
+%\let\tick\checkmark
+\newcommand{\tick}{\mbox{$\surd$}}
 
 \bibliographystyle{unsrt}
 \emergencystretch 2in
@@ -94,71 +98,114 @@ support, have overtaken Java as the method of choice for creating
 interactive web sites with complex requirements.  Such features are
 used widely by popular web sites such as Google Mail, Google Docs and
 Facebook.  Recently the Jmol structure viewer has been reimplemented
-in JavaScript as JSmol.
+in JavaScript as JSmol (\url{http://sourceforge.net/projects/jsmol/}).
 
 Consequently, over the last couple of years a small number of
 JavaScript-based sequence alignment viewers have started to be
 developed. These include MODalign\cite{barbato:modalign},
 Alignment-Annotator\cite{gille:2014aa}, SnipViz\cite{jaschob:2014},
-and `Sequence', a component of the BioJS library\cite{gomez:2014}.
+and `Sequence'\cite{gomez:2014}, a component of the BioJS
+library\cite{corpas:biojs}. In addition, there is an intention to port
+JalviewLight to JavaScript.  The available programs are briefly
+reviewed:
 
-MODalign is part of the MODexplorer package\cite{kosinski:2013}, a web
-site for protein modelling, but does not appear to be available as a
-download for use in other web sites. 
+\begin{description}
+\item[MODalign] is part of the MODexplorer
+  package\cite{kosinski:2013}, a web site for protein modelling, but
+  does not appear to be available as a download for use in other web
+  sites.
+\item[Alignment-Editor] is part of a more complex system, STRAP. It
+  uses a Java server-side interpreter,
+  Alignment-to-HTML\cite{gille:2014}, which parses the STRAP scripting
+  language and create an alignment in a form that can be rendered in
+  Web browsers. The server-side element allows tasks such as sequence
+  retrieval, computation of alignments and communication with
+  BioDAS-servers. The rendering system includes a selection of
+  colouring schemes, highlighting of conserved and variable positions
+  in the alignment, reordering and deletion of sequence by
+  drag-and-drop, and residue annotation as well as links to 3D
+  visualization and sequence groups. It exploits JavaScript and HTML5
+  using the HTML5 canvas to draw helices and other visual elements.
+  The description of Alignment-Editor\cite{gille:2014aa} suggests that
+  alignments should be prepared using the full Java system and the
+  final alignment can then be downloaded as HTML files in a ZIP
+  archive. The software is licenced under the GPL and available from
+  the authors on request or a desktop version of STRAP can be
+  downloaded or run using Java WebStart. However the JavaScript
+  visualizer does not apperar to be available by itself. While in
+  principle possible, no simple documentation is provided to enable
+  the client-side JavaScript/HTML5 viewer to be used without the
+  server side software.
+\item[SnipViz] is a compact and lightweight component designed for
+  display of multiple versions of gene and protein sequences --- i.e.\
+  essentially identical sequences with mutations.  It provides a very
+  simple clean display focused around both DNA and protein sequences
+  allowing very long sequences through a scrolling mechanism which
+  also shows a small box on a representation of the complete sequence
+  to show the relative position within the complete alignment.  It
+  also allows display of phylogenetic trees stored in Newick
+  format. Note that SnipViz should not be confused with
+  SNPViz\cite{langewisch:snpviz}.
+\item[Sequence] is a BioJS component for visualizing sequences rather
+  than alignments.  It only very simple views with no choices of
+  colouring schemes although it does provide very flexible
+  highlighting of sequences.
+\end{description}
 
-Alignment-Editor is part of a more complex system, STRAP. STRAP uses a
-Java server-side interpreter, Alignment-to-HTML\cite{gille:2014},
-which parses the STRAP scripting language and create an alignment in a
-form that can be rendered in Web browsers. The server-side element
-allows tasks such as sequence retrieval, computation of alignments and
-communication with BioDAS-servers. The rendering system includes a
-selection of colouring schemes, highlighting of conserved and variable
-positions in the alignment, reordering and deletion of sequence by
-drag-and-drop, and residue annotation as well as links to 3D
-visualization and sequence groups. It exploits JavaScript and HTML5
-using the HTML5 canvas to draw helices and other visual elements.  The
-description of Alignment-Editor\cite{gille:2014aa} suggests that
-alignments should be prepared using the full Java system and the final
-alignment can then be downloaded as HTML files in a ZIP archive. The
-software is licenced under the GPL and available from the authors on
-request, but the JavaScript visualizer doesn't apperar to be available
-by itself. While in principle possible, no simple documentation is
-provided to enable the client-side JavaScript/HTML5 viewer to be used
-without the server side software.
-
-SnipViz is a compact and lightweight component designed for display 
-of multiple versions of gene and protein sequences ---
-i.e.\ essentially identical sequences with mutations.
-It provides a very simple clean display focused around both DNA and
-protein sequences allowing very long sequences through a scrolling
-mechanism which also shows a small box on a representation of the
-complete sequence to show the relative position within the complete
-alignment.  It also allows display of phylogenetic trees stored in
-Newick format.
-
-`Sequence', is a BioJS component for visualizing sequences. It
-Only very simple views though flexible highlighting
-
-
-
-Sequence \ldots.
-In addition, there is an intention to port JalviewLight to
-JavaScript.
+\begin{table}
+\footnotesize
+\begin{center}
+\begin{tabularx}{\linewidth}{Xlllll} \hline
+                                  &       & MOD-     & Alignment-       &         &          \\
+                                  & JSAV  &    align &           Editor & SnipViz & Sequence \\ \hline
+Simple, lightweight plugin        & \tick & $\dag$   & $\ddag$          & \tick   & \tick    \\
+Flexible colouring schemes        & \tick & \tick    & \tick            &         &          \\
+Dotifying                         & \tick &          &                  &         &          \\
+Automatic sequence sorting        & \tick &          &                  &         &          \\
+Manual sequence sorting           &       &          & \tick            &         &          \\
+Remove sequences                  & \tick &          & \tick            &         &          \\
+Highlight regions                 & \tick &          & \tick            & \S      & \tick    \\
+FASTA export                      & \tick & \tick    & \tick            &         & \tick    \\
+Submission to another site        & \tick & *        &                  &         &          \\
+Submission to JavaScript          & \tick &          &                  &         &          \\
+Display consensus sequence        & \tick & \tick    & \P               &         &          \\
+Display secondary structure       &       & \tick    & \tick            &         &          \\
+Alignment editing                 &       & \tick    &                  &         &          \\
+Link to structure viewer          &       & \tick    & \tick            &         &          \\
+Display phylogenetic tree         &       &          &                  & \tick   &          \\
+Optimized for very long sequences &       &          &                  & \tick   &          \\ \hline
+\end{tabularx}
+\end{center}
+\caption{\label{tab:features}Summary of availability of features in
+  various JavaScript sequence alignment display tools as described in
+  their respective papers and web sites. Note that the MODAlign web
+  site was unavailable at the time of writing. $\dag$~not available
+  for use in other web sites. $\ddag$~Should be possible, but not
+  designed to be used in this way. *~Submission to Modeller only. 
+  \S~Automatically highlights mutated residues. \P~highlights residues
+  conserved at a spcified level rather than displaying a consensus.}
+\end{table}
 
 JSAV (JavaScript Sequence Alignment Viewer) is a novel JavaScript
 component that adds to this list. The primary motivation for
-implementing a new tool was the need for a tool with the following
-requirements: (i)~a very simple-to-use lightweight component that can
-easily be dropped into a web site; (ii)~provision of flexible
-colouring schemes and `dotifying' alignments (replacing repeated
-residues with dots); (iii)~the ability to sort sequences --- both
-complete sequences or regions of sequences; (iii)~the ability to
-remove sequences from the alignment; (iv)~the ability to highlight
-regions in the alignment; (v)~the ability to export a selected set of
-sequences in FASTA format; (vi)~the ability to submit a selected set
-of sequences to another web site or to local JavaScipt code.
-
-
+implementing a new tool was for development of our abYsis database
+(\url{http://www.abysis.org/}), where we required a simple JavaScript
+plugin that would enable us to display a set of aligned sequences,
+sort and select sequences in that alignment for further analysis, and
+highlight regions of the alignment corresponding to the CDR loop
+regions of antibodies. Consequently the requirements were as follows:
+(i)~a very simple-to-use lightweight component that can easily be
+dropped into a web site; (ii)~provision of flexible colouring schemes
+and `dotifying' alignments (replacing repeated residues with dots);
+(iii)~the ability to sort sequences --- both complete sequences or
+regions of sequences (such as a CDR loop or framework region of an
+antibody); (iii)~the ability to remove sequences from the alignment;
+(iv)~the ability to highlight regions in the alignment; (v)~the
+ability to export a selected set of sequences in FASTA format;
+(vi)~the ability to submit a selected set of sequences to another web
+site or to client-side JavaScript code for further processing.
+Table~\ref{tab:features} lists the availability of these and other
+features in different tools.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
