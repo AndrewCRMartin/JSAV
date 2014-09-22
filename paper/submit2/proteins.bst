@@ -11,7 +11,8 @@
         % 28.06.95 Fixed use of commas
         % 30.07.07 Modified to remove commas between initials and now 
         %          year;vol:page-page rather than vol:page-page, year
-
+        % 22.09.14 Commas weren't appearing when only 2 authors - fixed!
+        %          Also removed comma before 'Jr'
 ENTRY
   { address
     author
@@ -266,17 +267,13 @@ FUNCTION {format.names}
   s num.names$ 'numnames :=
   numnames 'namesleft :=
   { namesleft #0 > }
-  { s nameptr "{vv~}{ll}{, jj}{~f{}}" format.name$ 't :=
+  { s nameptr "{vv~}{ll}{~jj}{~f{}}" format.name$ 't :=
       nameptr #1 >
         { namesleft #1 >
             { ", " * t * }
-            { numnames #2 >
-                { "," * }
-                'skip$
-              if$
-              t "others" =
+            { t "others" =
                 { " et~al." * }
-                { " " * t * }
+                { ", " * t * }
               if$
             }
           if$
