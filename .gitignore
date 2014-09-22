@@ -4,5 +4,8 @@
 *.dvi
 *.log
 *.pdf
+*.fff
+*.lof
+*.ttt
 *.*~
 !paper/bioinfo/*

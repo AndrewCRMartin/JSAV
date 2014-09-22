@@ -1,0 +1,316 @@
+%% proteins.sty
+%% ------------
+%%
+%% Style for Proteins: Structure, Function & Genetics. 
+%% Andrew C.R. Martin, 09.06.95
+%% Some mods for final style, 28.06.95
+%%
+%% Creates correct style for Proteins including placing
+%% figures and tables at the end of the document, double spacing,
+%% etc. The [proof] option allows a normal in-line figure version to
+%% be generated while developing the manuscript. Initial references to
+%% tables and figures should use the \tableref{\ref{xxxx}} and
+%% \figref{\ref{xxxx}} commands which will insert marginal notes in
+%% the final version.
+%%
+%% Also provide the command \tablenote{} which is used to provide a
+%% footnote after a table (This should go after the \end{center}). It
+%% sets the text in double spaced for final and single spaced for
+%% proof.
+%%
+%% Also provides the command \prooftext{} which produces text only in
+%% proof mode.
+%%
+%% Also provides the commands \rtitle{} and \keywords{} to be used by
+%% \maketitle when generating the title section
+%%
+%% Some attention must be paid to tables. The caption must come before
+%% the body of the table and should be placed between rules. Extended
+%% text must be placed in a table footnote which follows the body of
+%% the table. This is best acieved by using the tabularx environment
+%% for tables using the X column type to expand columns where possible
+%% and specifying a total width of \linewidth
+%% One can then use the \hrule command to draw a line, place the
+%% caption next then do the tabular: e.g.
+%% \begin{table}
+%% \hrule
+%% \caption{.......}
+%% \begin{tabularx}{\linewidth}{XXXX} \line
+%% ... 
+%% \end{tabularx}
+%% \end{table}
+%%
+%% The tabularx style is automatically loaded by this package.
+%%
+%% Requires the packages: ifthen, doublespace, endfloat, tabularx,
+%% array and namedacrm 
+%%
+\def\filename{proteins}
+\def\fileversion{v1.0}
+\def\filedate{1995/06/09}
+\def\docdate {1995/06/09}
+
+\ProvidesPackage{proteins}[\filedate\space\fileversion\space
+               LaTeX2e package for Proteins: Structure, Function and %
+Genetics Style]
+
+\RequirePackage{ifthen}
+\RequirePackage{doublespace}
+
+% Declare Options
+%%%%%%%%%%%%%%%%%
+\newboolean{proofmode}
+\setboolean{proofmode}{false}
+\DeclareOption{proof}{\setboolean{proofmode}{true}}
+
+% Execute Options
+%%%%%%%%%%%%%%%%%
+\ProcessOptions
+
+% Code Dependent on options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% User commands for getting figure and table references plus
+% marginal notes
+% ----------------------------------------------------------
+\ifthenelse{\boolean{proofmode}}%
+{%
+   % Definitions for use in [proof] versions
+   \newcommand{\tableref}[1]{Table~#1}%
+   \newcommand{\figref}[1]{Figure~#1}%
+   \newcommand{\tablenote}[1]{\mbox{$^a$}#1}%
+   \newcommand{\prooftext}[1]{#1 }%
+}{%
+   \newcommand{\tableref}[1]{Table~#1\marginpar{$\Leftarrow$Table~#1}}%
+   \newcommand{\figref}[1]{Figure~#1\marginpar{$\Leftarrow$Figure~#1}}%
+   \newcommand{\tablenote}[1]{\def\baselinestretch{1.7}
+      \ifx\undefined\selectfont % Not NFSS
+         \small\normalsize%
+      \else                     % NFSS
+         \@newbaseline %
+      \fi %
+      \mbox{$^a$}#1%
+   }%
+   \newcommand{\prooftext}[1]{\relax}%
+}
+
+% Print proof mode or include the endfloat package
+% ------------------------------------------------
+\ifthenelse{\boolean{proofmode}}%
+{%
+   \setstretch{1.0}%
+   \message{--PROOF MODE--}%
+}{%
+   \setstretch{1.7}%
+   \RequirePackage[nomarkers,tablesfirst,notablist]{endfloat}%
+   \@domarkersfalse%
+   \@tablesfirsttrue%
+   \@tablistfalse%
+   \@figlisttrue%
+}
+
+
+% Redefine the abstract environment
+% ---------------------------------
+\ifthenelse{\boolean{proofmode}}%
+{%
+  \renewenvironment{abstract}{%
+      \small%
+      \scshape \abstractname\hspace{1em}%
+      \bfseries%
+  }
+  {\par}
+}{%
+  \renewenvironment{abstract}{%
+      \section{Abstract}
+  }
+  {\par}
+}
+
+
+
+% Stop the endfloat style from putting headings on the figure and
+% table pages. 
+% This redefines makecaption to stop it from printing any text. This
+% we do by forcing the caption off the bottom of the page. We need to
+% print #2 somewhere otherwise the cross-referencing stops
+% working. Don't ask me why!!
+% This also redefines \numberline since the 1994/8/12 version seems to
+% screw up by making an enormous space for the figure number
+
+% ---------------------------------------------------------------
+\ifthenelse{\boolean{proofmode}}% 
+{}
+{% 
+    \def\processfigures{%
+       \def\numberline##1{##1 }                                            % ACRM
+       \def\@makecaption##1##2{\protect\vspace*{12in}\centerline{##1:##2}} % ACRM
+       \expandafter\ifnum \csname @ef@fffopen\endcsname>0
+       \immediate\closeout\efloat@postfff \ef@setct{fff}{0}
+       \clearpage                                                          % bj
+       \if@figlist                                                         % bj
+          {\normalsize\listoffigures}                                      % bj
+          \clearpage                                                       % bj
+       \fi
+       \if@fighead
+          \section*{\figuresection}                                        % bj
+          \suppressfloats[t]                                               % jpg
+       \fi%
+%      \markboth{\uppercase{\figuresection}}{\uppercase{\figuresection}}   % bj
+       \markboth{\mbox{ }}{\mbox{ }}                                       % ACRM
+       \pagestyle{empty}                                                   % ACRM
+       \processfigures@hook \@input{\jobname.fff}
+    \fi}
+    \def\processtables{%
+       \expandafter\ifnum \csname @ef@tttopen\endcsname>0
+       \immediate\closeout\efloat@postttt \ef@setct{ttt}{0}
+       \clearpage                                                          % bj
+       \if@tablist                                                         % bj
+          {\normalsize\listoftables}                                       % bj
+          \clearpage                                                       % bj
+       \fi
+       \if@tabhead
+          \section*{\tablesection}                                         % bj
+          \suppressfloats[t]                                               % jpg
+       \fi%
+%       \markboth{\uppercase{\tablesection}}{\uppercase{\tablesection}}    % bj
+       \markboth{\mbox{ }}{\mbox{ }}                                       % ACRM
+       \pagestyle{empty}                                                   % ACRM
+       \processtables@hook \@input{\jobname.ttt}
+    \fi}
+}
+
+% Remove dots and page number from figure and table caption lists
+% ---------------------------------------------------------------
+\ifthenelse{\boolean{proofmode}}%
+{}{%
+   \renewcommand\l@figure[2]{%
+      \vskip 1.0em%
+      \noindent%
+      \begingroup%
+         Figure~#1%
+      \endgroup%
+   }%
+   \renewcommand\l@table[2]{%
+      \vskip 1.0em%
+      \noindent%
+      \begingroup%
+         Table~#1%
+      \endgroup%
+   }%
+}
+
+
+% Change section titles and stop any running titles in the figures and
+% tables.
+% --------------------------------------------------------------------
+\ifthenelse{\boolean{proofmode}}%
+{}{%
+   \renewcommand{\figuresection}{\mbox{ }}%
+   \renewcommand{\tablesection}{\mbox{ }}%
+   \renewcommand\listfigurename{Figure Legends}%
+   \renewcommand\listtablename{Table Legends}%
+}
+
+% Generate a title page in final mode, otherwise modify \@maketitle to
+% include the running title and keywords
+% --------------------------------------------------------------------
+\ifthenelse{\boolean{proofmode}}% 
+{%
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@rtitle}%
+    \vskip 1em%
+    {\large \@keywords}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+}{%
+  \renewcommand\maketitle{%
+  \null\vfil
+  \vskip 60\p@
+  \begin{center}%
+    {\Large \@title \par}%
+    \vskip 3em%
+    {\large
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+%      \vskip 1in%
+        \vfill\vfill
+    {\large \@rtitle \par}%
+    {\large \@keywords \par}%
+  \end{center}\par
+  \vfil\null
+  \clearpage%
+  \setcounter{footnote}{0}%
+  \let\thanks\relax\let\maketitle\relax
+  \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\gdef\@rtitle{}\gdef\@keywords{}}
+}
+
+
+% Package Loading
+%%%%%%%%%%%%%%%%%
+\RequirePackage{tabularx}
+
+% Option independent main code
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{myheadings}
+\markright{\mbox{ }}
+\renewcommand{\thetable}{\Roman{table}}
+\setcounter{secnumdepth}{0}
+
+% Add new parts for the title page
+\def\rtitle#1{\gdef\@rtitle{{\bfseries Running Title: }#1}}
+\def\keywords#1{\gdef\@keywords{{\bfseries Key words: }#1}}
+
+% Redefine the sectioning commands to give centred text
+\renewcommand{\section}{\@startsection%
+   {section}%                           % type
+   {1}%                                 % level
+   {0em}%                               % indent
+   {-3.5ex \@plus -1ex \@minus -.2ex}%  % Before-skip
+   {2.3ex \@plus.2ex}%                  % After-skip
+   {\reset@font\centering\LARGE\scshape}}
+\renewcommand\subsection{\@startsection%
+   {subsection}%                        % type 
+   {2}%                                 % level
+   {0em}%                               % indent
+   {-3.25ex\@plus -1ex \@minus -.2ex}%  % Before-skip
+   {1.5ex \@plus .2ex}%                 % AFter-skip
+   {\reset@font\centering\large\scshape}}
+\renewcommand\subsubsection{\@startsection%
+   {subsubsection}%                     % type
+   {3}%                                 % level
+   {0em}%                               % indent
+   {-3.25ex\@plus -1ex \@minus -.2ex}%  % Before-skip
+   {1.5ex \@plus .2ex}%                 % After-skip
+   {\reset@font\centering\normalsize\scshape}}
+\renewcommand\paragraph{\@startsection%
+   {paragraph}%                         % type
+   {4}%                                 % level
+   {\z@}%                               % indent
+   {3.25ex \@plus1ex \@minus.2ex}%      % Before-skip
+   {-1em}%                              % After-skip
+   {\reset@font\normalsize\bfseries}}
+\renewcommand\subparagraph{\@startsection%
+   {subparagraph}%                      % type
+   {5}%                                 % level
+   {\parindent}%                        % indent
+   {3.25ex \@plus1ex \@minus .2ex}%     % Before-skip
+   {-1em}%                              % After-skip
+   {\reset@font\normalsize\bfseries}}
+
+
+

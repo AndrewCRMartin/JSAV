@@ -1,4 +1,9 @@
-\documentclass[a4]{article}
+%\documentclass[12pt]{article}
+%\usepackage{proteins}
+\documentclass{article}
+\usepackage[proof]{proteins}
+
+\usepackage{a4}
 \usepackage{url}
 \usepackage{epsfig}
 \usepackage{tabularx}
@@ -7,36 +12,38 @@
 %\let\tick\checkmark
 \newcommand{\tick}{\mbox{$\surd$}}
 
-\bibliographystyle{unsrt}
+\bibliographystyle{proteins}
 \emergencystretch 2in
 
-\title{JSAV: JavaScript Sequence Alignment Viewer}
+\title{Short Communication - JSAV: JavaScript Sequence Alignment Viewer}
+\rtitle{Viewing sequences alignments with JavaScript}
+\keywords{software component; multiple sequence
+alignment; web development; sustainable software; HTML; web browser}
 \date{18th September, 2014}
-\author{Andrew C. R. Martin\mbox{${}^{\rm a}$}\footnote{to whom
-    correspondence should be addressed}\\
-    \mbox{${}^{\rm a}$}Institute of Structural and Molecular Biology,\\
-Division of Biosciences, University College London,\\
-Darwin Building, Gower Street,\\
-London WC1E 6BT}
+\author{Andrew C. R. Martin\\
+  andrew@bioinf.org.uk -or- andrew.martin@ucl.ac.uk \\
+  (to whom correspondence should be addressed)\\
+  Institute of Structural and Molecular Biology,\\
+  Division of Biosciences, University College London,\\
+  Darwin Building, Gower Street,\\
+  London WC1E 6BT}
 
 \begin{document}
 \maketitle
 
+
 \begin{abstract}
-\noindent{\bfseries Summary:} The JavaScript Sequence Alignment Viewer
+The JavaScript Sequence Alignment Viewer
 (JSAV) is designed as a simple-to-use JavaScript component for
 displaying sequence alignments on web pages.  The display of sequences
 is highly configurable with options to allow alternative colouring
 schemes, sorting of sequences and `dotifying' repeated amino acids. An
 option is also available to submit selected sequences to another web
-site, or to other JavaScript code.  \\
-\noindent{\bfseries Availability and Implementation:} 
+site, or to other JavaScript code. 
 JSAV is implemented purely in JavaScript making use of the JQuery and
-JQuery-UI libraries. It does not use any HTML5 specific options to help with
+JQuery-UI libraries. It does not use any HTML5-specific options to help with
 browser compatibility. The code is documented using JSDOC
-and is available from \url{http://www.bioinf.org.uk/software/jsav/}\\
-\noindent{\bfseries Contact:} andrew@bioinf.org.uk --or--
-andrew.martin@ucl.ac.uk
+and is available from \url{http://www.bioinf.org.uk/software/jsav/}
 \end{abstract}
 
 
@@ -47,7 +54,7 @@ requirement in analysis of protein sequences, allowing us to visualize
 conservation across protein families as well as unusual features of
 particular sequences. As a result, there are a plethora of tools for
 viewing MSAs. These range from tools which provide attractive printed
-output, through standalone tools --- either operating-system
+output, through standalone graphical tools --- either operating-system
 dependent, or independent --- to web-based viewers.
 
 Two of the earliest tools were HOMED\cite{stockwell:homed} and
@@ -90,21 +97,29 @@ embedded in a web page. The latter responds to the need for web site
 developers to be able to embed MSA visualization.
 
 However, in recent years there has been a gradual move away from using
-Java applets in web development. New HTML features such as the HTML5
-Canvas, and powerful JavaScript libraries such as Bootstrap, JQuery
-and JQuery-UI that provide an easier syntax for accessing elements of
-a web page together with new widgets such as sliders and drag-and-drop
-support, have overtaken Java as the method of choice for creating
-interactive web sites with complex requirements.  Such features are
-used widely by popular web sites such as Google Mail, Google Docs and
-Facebook.  Recently the Jmol structure viewer has been reimplemented
-in JavaScript as JSmol (\url{http://sourceforge.net/projects/jsmol/}).
+Java applets in web development.  Java creates an additional layer of
+software (including additional memory consumption) and modern browsers
+enforce much more caution in running Java applets to avoid security
+threats. This can result in user irritation with having to accept
+various popup warnings and/or configure security settings, often
+having to repeat this process when there is a software update. It is
+not uncommon for Java applets simply to fail to run, perhaps because
+users do not understand what settings need to be changed.  New HTML
+features such as the HTML5 Canvas, and powerful JavaScript libraries
+such as Bootstrap, JQuery and JQuery-UI that provide an easier syntax
+for accessing elements of a web page together with new widgets such as
+sliders and drag-and-drop support, have overtaken Java as the method
+of choice for creating interactive web sites with complex
+requirements.  Such features are used widely by popular web sites such
+as Google Mail, Google Docs, Twitter and Facebook.  Illustrating this
+trend, the Jmol structure viewer has recently been reimplemented in
+JavaScript as JSmol (\url{http://sourceforge.net/projects/jsmol/}).
 
 Consequently, over the last couple of years a small number of
-JavaScript-based sequence alignment viewers have started to be
+JavaScript-based sequence and alignment viewers have started to be
 developed. These include MODalign\cite{barbato:modalign},
 Alignment-Annotator\cite{gille:2014aa}, SnipViz\cite{jaschob:2014},
-and `Sequence'\cite{gomez:2014}, a component of the BioJS
+and Sequence\cite{gomez:2014}, a component of the BioJS
 library\cite{corpas:biojs}. In addition, there is an intention to port
 JalviewLight to JavaScript.  The available programs are briefly
 reviewed:
@@ -117,7 +132,7 @@ reviewed:
 \item[Alignment-Editor] is part of a more complex system, STRAP. It
   uses a Java server-side interpreter,
   Alignment-to-HTML\cite{gille:2014}, which parses the STRAP scripting
-  language and create an alignment in a form that can be rendered in
+  language and creates an alignment in a form that can be rendered in
   Web browsers. The server-side element allows tasks such as sequence
   retrieval, computation of alignments and communication with
   BioDAS-servers. The rendering system includes a selection of
@@ -126,16 +141,16 @@ reviewed:
   drag-and-drop, and residue annotation as well as links to 3D
   visualization and sequence groups. It exploits JavaScript and HTML5
   using the HTML5 canvas to draw helices and other visual elements.
-  The description of Alignment-Editor\cite{gille:2014aa} suggests that
-  alignments should be prepared using the full Java system and the
-  final alignment can then be downloaded as HTML files in a ZIP
-  archive. The software is licenced under the GPL and available from
-  the authors on request or a desktop version of STRAP can be
-  downloaded or run using Java WebStart. However the JavaScript
-  visualizer does not apperar to be available by itself. While in
-  principle possible, no simple documentation is provided to enable
-  the client-side JavaScript/HTML5 viewer to be used without the
-  server side software.
+  However the JavaScript visualizer does not appear to be available by
+  itself. The description of Alignment-Editor\cite{gille:2014aa}
+  suggests that alignments should be prepared using the full Java
+  system and the final alignment can then be downloaded as HTML files
+  in a ZIP archive. The software is licenced under the GPL and
+  available from the authors on request, or a desktop version of STRAP
+  can be downloaded or run using Java WebStart. While in principle
+  possible, no simple documentation is provided to enable the
+  client-side JavaScript/HTML5 viewer to be used without the server
+  side software.
 \item[SnipViz] is a compact and lightweight component designed for
   display of multiple versions of gene and protein sequences --- i.e.\
   essentially identical sequences with mutations.  It provides a very
@@ -147,9 +162,9 @@ reviewed:
   format. Note that SnipViz should not be confused with
   SNPViz\cite{langewisch:snpviz}.
 \item[Sequence] is a BioJS component for visualizing sequences rather
-  than alignments.  It only very simple views with no choices of
-  colouring schemes although it does provide very flexible
-  highlighting of sequences.
+  than alignments.  It only provides very simple views with no choices
+  of colouring schemes, although it does provide very flexible
+  highlighting of regions within a sequence.
 \end{description}
 
 \begin{table}
@@ -158,7 +173,7 @@ reviewed:
 \begin{tabularx}{\linewidth}{Xlllll} \hline
                                   &       & MOD-     & Alignment-       &         &          \\
                                   & JSAV  &    align &           Editor & SnipViz & Sequence \\ \hline
-Simple, lightweight plugin        & \tick & $\dag$   & $\ddag$          & \tick   & \tick    \\
+Simple, lightweight component     & \tick & \dag     & \ddag            & \tick   & \tick    \\
 Flexible colouring schemes        & \tick & \tick    & \tick            &         &          \\
 Dotifying                         & \tick &          &                  &         &          \\
 Automatic sequence sorting        & \tick &          &                  &         &          \\
@@ -179,36 +194,39 @@ Optimized for very long sequences &       &          &                  & \tick 
 \caption{\label{tab:features}Summary of availability of features in
   various JavaScript sequence alignment display tools as described in
   their respective papers and web sites. Note that the MODAlign web
-  site was unavailable at the time of writing. $\dag$~not available
-  for use in other web sites. $\ddag$~Should be possible, but not
-  designed to be used in this way. *~Submission to Modeller only. 
-  \S~Automatically highlights mutated residues. \P~highlights residues
-  conserved at a spcified level rather than displaying a consensus.}
+  site was unavailable at the time of writing so capabilities have
+  been judged purely on what is published in the paper. \dag~not
+  available for use in other web sites. \ddag~Should be possible,
+  but not designed to be used in this way. *~Submission to Modeller
+  only. \S~Automatically highlights mutated residues. \P~highlights
+  columns of residues conserved at a specified level rather than
+  displaying a consensus.} 
 \end{table}
 
 JSAV (JavaScript Sequence Alignment Viewer) is a novel JavaScript
 component that adds to this list. The primary motivation for
-implementing a new tool was for development of our abYsis database
-(\url{http://www.abysis.org/}), where we required a simple JavaScript
-plugin that would enable us to display a set of aligned sequences,
-sort and select sequences in that alignment for further analysis, and
-highlight regions of the alignment corresponding to the CDR loop
-regions of antibodies. Consequently the requirements were as follows:
-(i)~a very simple-to-use lightweight component that can easily be
-dropped into a web site; (ii)~provision of flexible colouring schemes
-and `dotifying' alignments (replacing repeated residues with dots);
-(iii)~the ability to sort sequences --- both complete sequences or
-regions of sequences (such as a CDR loop or framework region of an
-antibody); (iii)~the ability to remove sequences from the alignment;
-(iv)~the ability to highlight regions in the alignment; (v)~the
-ability to export a selected set of sequences in FASTA format;
-(vi)~the ability to submit a selected set of sequences to another web
-site or to client-side JavaScript code for further processing.
+implementing a new tool was for development of our abYsis antibody
+database (\url{http://www.abysis.org/}), where we required a simple
+JavaScript component that would enable us to display a set of aligned
+sequences, sort and select sequences in that alignment for further
+analysis, and highlight regions of the alignment corresponding to the
+CDR loop regions of antibodies. Consequently the requirements were as
+follows: (i)~a very simple-to-use lightweight component that can
+easily be dropped into a web site; (ii)~provision of flexible
+colouring schemes and `dotifying' alignments (replacing repeated
+residues with dots); (iii)~the ability to sort sequences --- based
+both on complete sequences or regions of sequences (such as a CDR loop
+or framework region of an antibody); (iii)~the ability to remove
+sequences from the alignment; (iv)~the ability to highlight regions in
+the alignment and to display a consensus sequence; (v)~the ability to
+export a selected set of sequences in FASTA format; (vi)~the ability
+to submit a selected set of sequences to another web site or to
+client-side JavaScript code for further processing.
 Table~\ref{tab:features} lists the availability of these and other
 features in different tools.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Implementation}
+\section{Results and Discussion}
 
 \begin{figure}
 \footnotesize
@@ -239,22 +257,10 @@ necessary to create the alignment viewer.}
 \caption{\label{fig:demo}A typical JSAV alignment view}
 \end{figure}
 
-JSAV is implemented purely in JavaScript. JSAV employs the JQuery
-library to ease access to elements of the HTML that it generates and
-uses JQuery-UI to implement a two-value slider that is used to specify
-a range of positions in the alignment.  As input, the code requires an
-array of JavaScript objects which contain two elements: a unique
-identifier for a sequence and the sequence itself --- all sequences
-must be pre-aligned.  Secondly a set of options can be provided. These
-control the display and facilities available to the end user of a web
-site to modify the view of the MSA.  A brief extract of sample code is
-shown in Fig~\ref{fig:code} with the results shown in
-Fig~\ref{fig:demo}.
-
-JSAV allows the end-user to modify the display in a number of ways The
-web-site provider has control over which of these is available to the
-end user. First, the sequences can be sorted --- the code selects the
-most representative sequence, displaying that at the top of the
+JSAV allows the end-user to modify the display in a number of ways.
+The web-site provider has control over which of these is available to
+the end user. First, the sequences can be sorted --- the code selects
+the most representative sequence, displaying that at the top of the
 alignment followed by the most similar sequence and so on. By default,
 sorting is performed across the whole sequence, but a two-handled
 slider allows the range of positions on which the sort is based to be
@@ -268,16 +274,98 @@ alignment and updates automatically when sequences are deleted. The
 complete set of sequences, or a selected subset, can be submitted to
 another web site, or passed to another JavaScript function for
 integration with other tools. Tooltips are provided for each option
-and all options are documented in detail on the web site. The number
-and size of sequences in the MSA is limited only by the memory
-available to the web browser.
+and all options are documented in detail on the web site.
+
+JSAV is implemented purely in JavaScript. Code is managed using GitHub
+(\url{http://www.github.com}) and documented using JSDOC
+(\url{http://usejsdoc.org}). JSAV employs the JQuery library to ease
+access to elements of the HTML that it generates and uses JQuery-UI to
+implement a two-value slider that is used to specify a range of
+positions in the alignment.  As input, the code requires an array of
+JavaScript objects which contain two elements: a unique identifier for
+a sequence and the sequence itself --- all sequences must be
+pre-aligned.  Secondly a set of options can be provided. Options fall
+into two classes - those that control the (initial) display and those
+that control facilities available to the end user of a web site to
+modify the view of the MSA. Options that control the display include:
+(i)~ranges of alignment column positions to be highlighted; (ii)~the
+colour scheme to be used; (iii)~whether the sequence should be
+dotified and whether repeated residues should be coloured;
+(iv)~whether a consensus sequence should be displayed; (v)~whether a
+FASTA export button should be available and the label for that button;
+(vi)~the URL and label for a button to allow selected sequences to be
+submitted to another web site; (vii)~a JavaScript function name and
+label for a button to allow selected sequences to be processed by code
+written by the web site developer; (viii)~whether plain tool tips
+should be used rather than those provided by JQuery --- more
+attractive tooltips available with the `tooltipster' package are also
+supported. Options that control how the end-user can manipulate the
+display include: (i)~whether the alignment should be sortable and, if
+so, the width and height of the slider used to select a region for
+sorting (ii)~whether selection checkboxes should be displayed next to
+each sequence (iii)~whether sequences can be deleted from the
+alignment (iv)~whether the user should be able to toggle the dotifying
+of the alignment (v)~whether the user should be able to toggle not
+colouring dotified residues (vi)~whether a pull-down should be
+displayed to select colour schemes.
+
+The sequence alignment is rendered as a table and all display of
+colours and layout is achieved through Cascading Style Sheets (CSS).
+Consequently a web-site developer can easily add a new colour scheme
+by modifying the CSS file and setting an option to specify available
+colour scheme names.  The number and size of sequences in the MSA is
+limited only by the memory available to the web browser.  A brief
+extract of sample code is shown in Figure~\ref{fig:code} with the
+results shown in Figure~\ref{fig:demo}.
+
+JSAV deliberately avoids making use of HTML5 to maximize browser
+compatibility. It is known to work with modern browsers including
+Firefox~V32.0, Chrome~V37, Konqueror~V4.13.3, Safari~V5.1.7 and
+Explorer~V10.0 on Linux, Mac and Windows platforms and is known to
+work on versions of Firefox as old as V9.0.1. JSAV has been developed
+and tested using JQuery V1.10.2 and JQuery-UI V1.10.4, but it only
+uses the JQuery HTML element selection mechanism and tool tips and the
+two-handled slider component from JQuery-UI and consequently would be
+expected to work with much earlier versions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+Viewing multiple sequence alignments is a fundamental requirement of
+protein sequence analysis. With that large amounts of Bioinformatics
+work being performed over the web, there is a clear need to be able to
+embed MSA viewers within web pages. The recent move away from Java in
+favour of JavaScript has driven a need for MSA viewing tools written
+in JavaScript. While four other tools have been made available, two do
+not appear to be available as simple components that can be used by a
+web developer to provide sequence alignments (MODalign and
+Alignment-Editor). Of the other two, SnipViz has only very limited
+facilities and is designed for viewing SNPs in alignments of very
+similar sequences while Sequence is only designed for diplaying single
+sequences not MSA.
+
+Consequently JSAV fills this gap, providing a very simple-to-use
+component that can just be passed an array or pre-aligned sequences,
+but which also has the flexibility to allow manipulation of the way in
+which the MSA is displayed. JSAV provides a number of features that
+appear to be absent from any of the other tools including dotifying
+alignments, automatic sorting of sequences (including limiting the
+sort to a region within the MSA), and submission of selected sequences
+to other web sites or to other JavaScript code.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Availability}
-The software may be downloaded from
+The software is licensed under the GPL and may be downloaded from
 \url{http://www.bioinf.org.uk/software/jsav/} where demonstrations,
 including the ability to upload your own MSA, are available together
 with full documentation implemented with JSDOC.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Acknowledgements}
+ACRM acknowledges the support of a BBSRC Follow-On grant
+(BB/K015443/1) for development of abYsis and thanks the UCL Research
+Software Development team (in particular, Jens Nielsen) for their
+contributions to JSAV.
 
 \bibliography{jsav}
 
