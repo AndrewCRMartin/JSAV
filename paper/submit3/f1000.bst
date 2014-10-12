@@ -233,7 +233,7 @@ FUNCTION {format.names}
    { nameptr #4 < }
    {
       namesleft #0 >
-      {  s nameptr "{vv~}{ll}{, jj~}{ f}" format.name$ 't :=
+      {  s nameptr "{vv~}{ll}{, jj~}{ f{}}" format.name$ 't :=
          nameptr #1 >
          {  namesleft #1 >
             { ", " * t * }
