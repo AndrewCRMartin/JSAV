@@ -1,0 +1,15 @@
+> Software Tool, para 2:
+   pre-aligned.  Secondly a set of options can be provided. Options fall
+   into two classes - those that control the (initial) display and those
+   that control facilities available to the end user of a web site to
+
+The dash between 'classes' and 'those' which should be an em-dash is
+missing. 
+
+> Introduction, final para:
+colouring -> coloring for consistency with other Americanisms
+
+> Software Tool, para 2:
+This paragraph has two numbered lists. Items in the first list are
+separated with semi-colons, but these are missing in the second list -
+should be present for consistency
