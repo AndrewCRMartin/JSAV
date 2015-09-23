@@ -930,7 +930,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
     var tableLine = "";
     if(isConsensus)
     {
-        tableLine = "<tr class='tooltip' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
+        tableLine = "<tr class='tooltip, consensusCell' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
     }
     else
     {
@@ -1067,6 +1067,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 @author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
+- 23.09.15  Changed "Sort from: xx to: xx" to "Region: positions xx to yy"
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -1080,7 +1081,7 @@ function JSAV_showRange(eventOrId, ui)
 
       // Display the range currently selected
       tag = "#" + eventOrId + "_showrange";
-      var html = "Sort from: " + gStartPos[eventOrId] + " to: " + gStopPos[eventOrId];
+      var html = "Region: positions " + gStartPos[eventOrId] + " to " + gStopPos[eventOrId];
       $(tag).text(html);
       JSAV_markRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
    }
@@ -1094,7 +1095,7 @@ function JSAV_showRange(eventOrId, ui)
       gStopPos[id]  = ui.values[1];
 
       // Display the range currently selected
-      var html = "Sort from: " + gStartPos[id] + " to: " + gStopPos[id];
+      var html = "Region: positions " + gStartPos[id] + " to " + gStopPos[id];
       $(tag).text(html);
       JSAV_markRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
    }

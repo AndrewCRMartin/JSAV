@@ -21,7 +21,7 @@
 .JSAV .markerrow {border-right: 1px solid black; height:10px}
 .JSAV .idCell  {color: #333399;}
 .JSAV .selectCell {border-right: 1px solid black;}
-.JSAV .consensusSelectCell {border-right: 1px solid black;}
+.JSAV .consensusSelectCell {border-right: 1px solid black; border-top: 2px solid black}
 .JSAV .consensusCell {border-top: 2px solid black; }
 
 .JSAV .unmarked {background-color: #FFFFFF;}
@@ -43,8 +43,7 @@
   -moz-transform: scale(0.8); /* FF */
   -webkit-transform: scale(0.8); /* Safari and Chrome */
   -o-transform: scale(0.8); /* Opera */
-  padding: 0px;
-  margin: -3px;
+  margin: -3px 5px -3px -3px;
 }
 
 .JSAVControls {margin: 1em 0 0 0;}
