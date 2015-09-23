@@ -1,18 +1,18 @@
 /** @preserve 
     @file
-    JSAV V1.6 17.09.14
-    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
+    JSAV V1.7 23.09.15
+    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
 /** ***********************************************************************
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.6
-   Date:       17.09.14
+   Version:    V1.7
+   Date:       23.09.15
    Function:   JavaScript Sequence Alignment Viewier
    
-   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014
+   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
    Author:     Dr. Andrew C.R. Martin
    Address:    Institute of Structural and Molecular Biology
                Division of Biosciences
@@ -65,6 +65,10 @@
    V1.5.1  19.06.14   Added callback option
    V1.6    17.09.14   Changed to manipulate the DOM rather than writing
                       to the document  By: JHN
+   V1.7    23.09.15   Added options.toggleDotifyLabel
+                      Added options.toggleNocolourLabel and options.toggleNocolorLabel
+                      Added options.deleteLabel
+                      By: ACRM
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -78,6 +82,10 @@ sequence objects and displays them as a coloured sortable table
 optionally with a slider and sort button, delete button, etc
 
 @example 
+var Seqs = [];
+Seqs.push({id :"id1b1.L", sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+Seqs.push({id :"id1a.L",  sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+
 var options = Array();
 options.width = '400px';
 options.sortable = true;
@@ -94,49 +102,51 @@ Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
       options        is an object describing options - see below
 
-@param {object[]}  sequences -  Array of sequence objects
-@param {string}    divId     - ID of div to print in
-@param {Object}    options   - Options that can be provided - see Properties
-@property {bool}      options.sortable       - Should the sorting options be displayed
-                                    (default: false)
-@property {string}    options.width          - The width of the selection slider with
-                                    units (default: '400px')
-@property {string}    options.height         - The height of the selection slider with
-                                    units (default: '6pt')
-@property {bool}      options.selectable     - Should selection checkboxes be displayed
-                                    for each sequence
-@property {bool}      options.deletable      - Makes it possible to delete sequences
-@property {int[]}     options.highlight      - Array of ranges to highlight
-@property {string}    options.submit         - URL for submitting selected sequences
-@property {string}    options.submitLabel    - Label for submit button
-@property {string}    options.action         - Function to call using selected sequences.
-                                               This is passed the seqId and array of
-                                               currently selected sequence objects
-@property {string}    options.actionLabel    - Label for action button
-@property {bool}      options.dotify         - Repeated amino acids in the sequence are
-                             replaced by a dot
-@property {bool}      options.nocolour       - Dotified amino acids are not coloured
-                             (except deletions)
-@property {bool}      options.toggleDotify   - Create a check box for toggling dotify
-@property {bool}      options.toggleNocolour - Create a check box for toggling nocolour
-@property {bool}      options.fasta          - Create a FASTA export button 
-@property {string}    options.fastaLabel     - Label for FASTA export button
-@property {bool}      options.consensus      - Display consensus sequence
-@property {string}    options.colourScheme   - Default colour scheme - valid options 
-                             depend on the css, but are currently
-                             taylor, clustal, zappo, hphob, helix, 
-                             strand, turn, buried. Note that this must be
-                             specified in lower case
-@property {bool}      options.selectColour   - Display a pull-down to choose the colour 
-                             scheme.
-@property {string[]}  options.colourChoices  - Array of colour scheme names - only used
-                                    if the user has added to the CSS. This
-                                    can be in mixed case.
-
-@property {bool}      options.plainTooltips    - Don't use JQuery tooltips
-@property {callback}  options.callback       - Specify the name of a function to be
-                                               called whenever the display is refreshed.
-                                               This is passed the seqId
+@param {object[]}  sequences                      - Array of sequence objects
+@param {string}    divId                          - ID of div to print in
+@param {Object}    options                        - Options that can be provided - see Properties
+@property {bool}      options.sortable            - Should the sorting options be displayed
+                                                    (default: false)
+@property {string}    options.width               - The width of the selection slider with
+                                                    units (default: '400px')
+@property {string}    options.height              - The height of the selection slider with
+                                                    units (default: '6pt')
+@property {bool}      options.selectable          - Should selection checkboxes be displayed
+                                                    for each sequence
+@property {bool}      options.deletable           - Makes it possible to delete sequences
+@property {string}    options.deleteLabel         - Label for delete button
+@property {int[]}     options.highlight           - Array of ranges to highlight
+@property {string}    options.submit              - URL for submitting selected sequences
+@property {string}    options.submitLabel         - Label for submit button
+@property {string}    options.action              - Function to call using selected sequences.
+                                                    This is passed the seqId and array of
+                                                    currently selected sequence objects
+@property {string}    options.actionLabel         - Label for action button
+@property {bool}      options.dotify              - Repeated amino acids in the sequence are
+                                                    replaced by a dot
+@property {bool}      options.nocolour            - Dotified amino acids are not coloured
+                                                    (except deletions)
+@property {bool}      options.toggleDotify        - Create a check box for toggling dotify
+@property {string}    options.toggleDotifyLabel   - Label for dotify checkbox toggle
+@property {bool}      options.toggleNocolour      - Create a check box for toggling nocolour
+@property {string}    options.toggleNocolourLabel - Label for nocolout checkbox toggle
+@property {bool}      options.fasta               - Create a FASTA export button 
+@property {string}    options.fastaLabel          - Label for FASTA export button
+@property {bool}      options.consensus           - Display consensus sequence
+@property {string}    options.colourScheme        - Default colour scheme - valid options 
+                                                    depend on the css, but are currently
+                                                    taylor, clustal, zappo, hphob, helix, 
+                                                    strand, turn, buried. Note that this must be
+                                                    specified in lower case
+@property {bool}      options.selectColour        - Display a pull-down to choose the colour 
+                                                    scheme.
+@property {string[]}  options.colourChoices       - Array of colour scheme names - only used
+                                                    if the user has added to the CSS. This
+                                                    can be in mixed case.
+@property {bool}      options.plainTooltips       - Don't use JQuery tooltips
+@property {callback}  options.callback            - Specify the name of a function to be
+                                                    called whenever the display is refreshed.
+                                                    This is passed the seqId
 
 @author 
 - 29.05.14 Original  By: ACRM
@@ -160,23 +170,32 @@ Where 'mySeqDisplay' is the name of a div that will be created
 - 19.06.14 Added callback
 - 02.09.14 Avoid using write and writeln. Rather use jQuery to insert into DOM.
            Fixes overwrite issues with using after page closure. By: JHN
+- 23.09.15 Added toggleDotifyLabel 
+           Added toggleNocolourLabel/toggleNocolorLabel
+           Added deleteLabel
+           By: ACRM
 */
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
-   if(options              == undefined) { options = Array();                            }
-   if(options.width        == undefined) { options.width          = "400px";             }
-   if(options.height       == undefined) { options.height         = "6pt";               }
-   if(options.submitLabel  == undefined) { options.submitLabel    = "Submit Sequences";  }
-   if(options.actionLabel  == undefined) { options.actionLabel    = "Process Sequences"; }
-   if(options.nocolor)                   { options.nocolour       = true;                }
-   if(options.toggleNocolor)             { options.toggleNocolour = true;                }
-   if(options.fastaLabel   == undefined) { options.fastaLabel     = "Export Selected";   }
-   if(options.colorScheme)               { options.colourScheme   = options.colorScheme; }
-   if(options.colourScheme == undefined) { options.colourScheme   = "taylor";            }
-   if(options.selectColor)               { options.selectColour   = true;                }
-   if(options.colorChoices != undefined) { options.colourChoices  = options.colorChoices;}
-   if(options.deletable)                 { options.selectable     = true;                }
+   if(options                     == undefined) { options                     = Array();                   }
+   if(options.width               == undefined) { options.width               = "400px";                   }
+   if(options.height              == undefined) { options.height              = "6pt";                     }
+   if(options.submitLabel         == undefined) { options.submitLabel         = "Submit Sequences";        }
+   if(options.actionLabel         == undefined) { options.actionLabel         = "Process Sequences";       }
+   if(options.nocolor)                          { options.nocolour            = true;                      }
+   if(options.toggleNocolor)                    { options.toggleNocolour      = true;                      }
+   if(options.fastaLabel          == undefined) { options.fastaLabel          = "Export Selected";         }
+   if(options.colorScheme)                      { options.colourScheme        = options.colorScheme;       }
+   if(options.colourScheme        == undefined) { options.colourScheme        = "taylor";                  }
+   if(options.selectColor)                      { options.selectColour        = true;                      }
+   if(options.colorChoices        != undefined) { options.colourChoices       = options.colorChoices;      }
+   if(options.deletable)                        { options.selectable          = true;                      }
+
+   if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = "Dotify";                  }
+   if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = "Do not colour dots";      }
+   if(options.toggleNocolorLabel  != undefined) { options.toggleNocolourLabel = options.toggleNocolorLabel;}
+   if(options.deleteLabel         == undefined) { options.deleteLabel         = "Delete Selected";         }
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -231,9 +250,10 @@ function printJSAV(divId, sequences, options)
 
    }
 
+   // 23.09.15 Pass label into JSAV_printDelete()
    if(options.deletable)
    {
-      JSAV_printDelete(divId);
+      JSAV_printDelete(divId, options.deleteLabel);
    }
 
    if(options.submit != undefined)
@@ -446,6 +466,7 @@ Print a checkbox for toggling dotify mode
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Dotify label now comes from options  By: ACRM
 */
 function JSAV_printToggleDotify(divId, options)
 {
@@ -457,7 +478,7 @@ function JSAV_printToggleDotify(divId, options)
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
     var tooltip = "Replace repeated residues with dots";
 
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Dotify</label></span>";
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>" + options.toggleDotifyLabel + "</label></span>";
 
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
@@ -474,6 +495,7 @@ Print a checkbox for toggling nocolour-dotify mode
 - 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM
 */
 function JSAV_printToggleNocolour(divId, options)
 {
@@ -485,7 +507,7 @@ function JSAV_printToggleNocolour(divId, options)
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
     var tooltip = "Do not colour repeated residues";
 
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>Do not colour dots</label></span>";
+    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>" + options.toggleNocolourLabel + "</label></span>";
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
 }
@@ -574,11 +596,12 @@ Prints the delete button
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Added label parameter and use of this label  By: ACRM
 */
-function JSAV_printDelete(divId)
+function JSAV_printDelete(divId, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>Delete Selected</button>";
+   var html = "<button type='button' class='tooltip' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -913,7 +936,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
     {
         tableLine = "<tr id='" + id + "'>";
     }
-    tableLine += "<th class='titleCell'>" + id + "</th>";
+    tableLine += "<th class='idCell'>" + id + "</th>";
 
     if(selectable)
     {
@@ -1186,7 +1209,7 @@ function JSAV_buildSelectAllHTML(divId, seqLen)
    var html;
    var id = divId + "_AllNone";
 
-   html = "<tr><th>All/None</th><th><input class='tooltip' title='Select or deselect all sequences' id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
+   html = "<tr><th class='idCell'>All/None</th><th><input class='tooltip' title='Select or deselect all sequences' id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
    for(var i=0; i<seqLen; i++)
    {
       html += "<td></td>";
@@ -1207,6 +1230,7 @@ residues to be used for sorting
 @author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Added 'selectable'
+- 23.09.15  Added &nbsp; into 'Sort Region' to stop it breaking the line
 */
 function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
@@ -1214,12 +1238,12 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 
     if(selectable)
     {
-        html += "<tr class='markerrow'><th>Sort Region:</th>";
+        html += "<tr class='markerrow'><th class='idCell'>Sort&nbsp;Region:</th>";
         html += "<th class='selectCell'></th>";
     }
     else
     {
-        html += "<tr class='markerrow'><td class='titleCell'>Sort Region:</td>";
+        html += "<tr class='markerrow'><th class='idCell'>Sort&nbsp;Region:</th>";
     }
 
     for(var i=0; i<seqLen; i++)
