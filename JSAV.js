@@ -173,6 +173,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
 - 23.09.15 Added toggleDotifyLabel 
            Added toggleNocolourLabel/toggleNocolorLabel
            Added deleteLabel
+           Move FASTA before submit and action buttons
            By: ACRM
 */
 function printJSAV(divId, sequences, options)
@@ -245,7 +246,7 @@ function printJSAV(divId, sequences, options)
 
       JSAV_printSlider(divId, stop, options.width, options.height);
 
-      var html = "<button type='button' class='tooltip' title='Sort the sequences based on the range specified with the slider' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
+      var html = "<button type='button' class='tooltip sortbutton' title='Sort the sequences based on the range specified with the slider' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
       div_controls.append(html);
 
    }
@@ -256,6 +257,12 @@ function printJSAV(divId, sequences, options)
       JSAV_printDelete(divId, options.deleteLabel);
    }
 
+   // 23.09.15 Move FASTA before submit and action buttons
+   if(options.fasta)
+   {
+      JSAV_printFASTA(divId);
+   }
+
    if(options.submit != undefined)
    {
       JSAV_printSubmit(divId, options.submit, options.submitLabel);
@@ -264,11 +271,6 @@ function printJSAV(divId, sequences, options)
    if(options.action != undefined)
    {
       JSAV_printAction(divId, options.action, options.actionLabel);
-   }
-
-   if(options.fasta)
-   {
-      JSAV_printFASTA(divId);
    }
 
    // Colour related - on a new line
@@ -435,7 +437,7 @@ function JSAV_printFASTA(divId)
 {
    var parrenttag = '#' + divId + '_controls';
    var label = gOptions[divId].fastaLabel;
-   var html = "<button type='button' class='tooltip' title='Export the selected sequences, or all sequences if none selected' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
+   var html = "<button type='button' class='tooltip exportbutton' title='Export the selected sequences, or all sequences if none selected' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
    $(parrenttag).append(html);
 }
 
@@ -591,6 +593,7 @@ function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
 Prints the delete button
 
 @param {string}  divId   - The ID of the div to print in
+@param {string}  label   - The label to print in the delete button
 
 @author 
 - 12.06.14 Original   By: ACRM
@@ -601,7 +604,7 @@ Prints the delete button
 function JSAV_printDelete(divId, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip delete' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -621,7 +624,7 @@ Prints the submit button
 function JSAV_printSubmit(divId, url, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip' title='Submit the selected sequences, or all sequences if none selected' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip submitbutton' title='Submit the selected sequences, or all sequences if none selected' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 
    // Build a hidden sequences text box in the form to contain
@@ -648,7 +651,7 @@ Prints the action button
 function JSAV_printAction(divId, action, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip actionbutton' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -930,7 +933,7 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
     var tableLine = "";
     if(isConsensus)
     {
-        tableLine = "<tr class='tooltip, consensusCell' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
+        tableLine = "<tr class='tooltip consensusCell' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
     }
     else
     {
