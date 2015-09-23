@@ -69,7 +69,7 @@
 /*** Things the user is LIKELY to want to change                     ***/
 /***********************************************************************/
 /* Text colour for the sequence ID labels                              */
-.JSAV .idCell  {color: #333399;}
+.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #333399; }
 /* Colour for the region marked for sorting                            */
 .JSAV .marked {background-color: #AAAAAA;}
 /* Colour for regions marked as highlighted with options.highlight     */

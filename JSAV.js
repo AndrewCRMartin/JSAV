@@ -68,6 +68,7 @@
    V1.7    23.09.15   Added options.toggleDotifyLabel
                       Added options.toggleNocolourLabel and options.toggleNocolorLabel
                       Added options.deleteLabel
+                      Added options.idSubmit
                       By: ACRM
 
 TODO: 
@@ -118,6 +119,10 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @property {int[]}     options.highlight           - Array of ranges to highlight
 @property {string}    options.submit              - URL for submitting selected sequences
 @property {string}    options.submitLabel         - Label for submit button
+@property {string}    options.idSubmit            - URL for submitting a single sequence where its
+                                                    id/label has been clicked
+@property {bool}      options.idSubmitClean       - Remove non-alpha characters from sequence
+                                                    before submitting
 @property {string}    options.action              - Function to call using selected sequences.
                                                     This is passed the seqId and array of
                                                     currently selected sequence objects
@@ -174,6 +179,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Added toggleNocolourLabel/toggleNocolorLabel
            Added deleteLabel
            Move FASTA before submit and action buttons
+           Added idSubmit and idSubmitClean
            By: ACRM
 */
 function printJSAV(divId, sequences, options)
@@ -296,13 +302,13 @@ function printJSAV(divId, sequences, options)
        JSAV_modifyCSS(divId);
    }
 
-    // Ensure buttons etc match the data
-    window.onload = function(){JSAV_refreshSettings(divId);};
+   // Ensure buttons etc match the data
+   window.onload = function(){JSAV_refreshSettings(divId);};
 
-    if(options.callback != undefined)
-    {
-        window[options.callback](divId);
-    }
+   if(options.callback != undefined)
+   {
+       window[options.callback](divId);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -911,6 +917,9 @@ separate <td> tag with a class to indicate the amino acid type
 @param {bool}     dotify        Dotify the sequence
 @param {bool}     nocolour      Don't colour dotified residues
 @param {bool}     isConsensus   This is the consensus sequence
+@param {string}   idSubmit      URL to visit when sequence label clicked
+@param {bool}     idSubmitClean Remove non-alpha characters from sequence
+                                before submitting it
 @returns {string} text          HTML snippet
 
 @author 
@@ -918,9 +927,10 @@ separate <td> tag with a class to indicate the amino acid type
 - 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
 - 17.06.14 Added isConsensus and colourScheme
 - 18.06.14 Added tooltip
+- 23.09.15 Added idSubmit/idSubmitClean
 */
 function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour,
-                                isConsensus, colourScheme)
+                                 isConsensus, colourScheme, idSubmit, idSubmitClean)
 {
     var seqArray = sequence.split("");
     var prevSeqArray = undefined;
@@ -939,7 +949,23 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
     {
         tableLine = "<tr id='" + id + "'>";
     }
-    tableLine += "<th class='idCell'>" + id + "</th>";
+
+    if(idSubmit == null)
+    {
+       tableLine += "<th class='idCell'>" + id + "</th>";
+    }
+    else
+    {
+       var url       = idSubmit;
+       var submitSeq;
+       if(idSubmitClean)
+       {
+          submitSeq = sequence.replace(/[^A-Za-z]/g, '');
+       }
+       
+       url += submitSeq;
+       tableLine += "<th class='idCell'><a href='" + url + "'>" + id + "</a></th>";
+    }
 
     if(selectable)
     {
@@ -1024,8 +1050,8 @@ i.e. the whole sequence length
 @param {string}   height  The height of the slider (text size)
 
 @author 
-- 06.06.14  Original   By: ACRM
-- 10.06.14  Removed redundant variable and changed divs to spans
+- 06.06.14 Original   By: ACRM
+- 10.06.14 Removed redundant variable and changed divs to spans
 - 15.06.14 Added height
 */
 function JSAV_printSlider(divId, seqLen, width, height)
@@ -1170,13 +1196,18 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
       if(i>0) { prevSequence = sequences[i-1].sequence; }
       html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, prevSequence, 
                                       selectable, dotify, nocolour, false, 
-                                      gOptions[divId].colourScheme) + "\n";
+                                      gOptions[divId].colourScheme,
+                                      gOptions[divId].idSubmit,
+                                      gOptions[divId].idSubmitClean) + "\n";
    }
 
    if(consensus != undefined)
    {
-       html += JSAV_buildASequenceHTML('Consensus', gConsensus[divId], undefined, selectable,
-                                       dotify, nocolour, true, gOptions[divId].colourScheme) + "\n";
+       html += JSAV_buildASequenceHTML('Consensus', gConsensus[divId], undefined,
+                                       selectable, dotify, nocolour, true,
+                                       gOptions[divId].colourScheme, 
+                                       null,
+                                       false) + "\n";
    }
 
    if(highlight != undefined)
