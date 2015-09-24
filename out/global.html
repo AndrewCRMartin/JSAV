@@ -211,7 +211,7 @@ simple JavaScript alert() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1856">line 1856</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1942">line 1942</a>
     </li></ul></dd>
     
     
@@ -336,7 +336,7 @@ simple JavaScript alert() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1793">line 1793</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1879">line 1879</a>
     </li></ul></dd>
     
     
@@ -539,7 +539,7 @@ simple JavaScript confirm() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1823">line 1823</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1909">line 1909</a>
     </li></ul></dd>
     
     
@@ -711,7 +711,7 @@ where the object contains the specified key:value pair.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1763">line 1763</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1849">line 1849</a>
     </li></ul></dd>
     
     
@@ -904,7 +904,7 @@ where the object contains the specified key:value pair.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1884">line 1884</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1970">line 1970</a>
     </li></ul></dd>
     
     
@@ -932,7 +932,7 @@ where the object contains the specified key:value pair.
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(id, sequence, prevSequence, selectable, dotify, nocolour, isConsensus)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(id, sequence, prevSequence, selectable, dotify, nocolour, isConsensus, idSubmit, idSubmitClean)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
 </dt>
@@ -1135,6 +1135,53 @@ separate <td> tag with a class to indicate the amino acid type
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>idSubmit</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">URL to visit when sequence label clicked</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>idSubmitClean</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Remove non-alpha characters from sequence
+                                before submitting it</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -1158,7 +1205,8 @@ separate <td> tag with a class to indicate the amino acid type
             <li>- 30.05.14 Original  By: ACRM
 - 16.06.14 Added dotify and nocolour - now takes prevSequence parameter
 - 17.06.14 Added isConsensus and colourScheme
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 23.09.15 Added idSubmit/idSubmitClean</li>
         </ul>
     </dd>
     
@@ -1172,7 +1220,7 @@ separate <td> tag with a class to indicate the amino acid type
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line872">line 872</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line932">line 932</a>
     </li></ul></dd>
     
     
@@ -1318,7 +1366,7 @@ separate <td> tag with a class to indicate the amino acid type
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1694">line 1694</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1780">line 1780</a>
     </li></ul></dd>
     
     
@@ -1465,7 +1513,7 @@ sequences if none are selected
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line685">line 685</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line741">line 741</a>
     </li></ul></dd>
     
     
@@ -1660,7 +1708,7 @@ count from zero.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line515">line 515</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line564">line 564</a>
     </li></ul></dd>
     
     
@@ -1818,7 +1866,8 @@ residues to be used for sorting
     <dd class="tag-author">
         <ul>
             <li>- 06.06.14  Original   By: ACRM
-- 10.06.14  Added 'selectable'</li>
+- 10.06.14  Added 'selectable'
+- 23.09.15  Added &nbsp; into 'Sort Region' to stop it breaking the line</li>
         </ul>
     </dd>
     
@@ -1832,7 +1881,7 @@ residues to be used for sorting
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1185">line 1185</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1271">line 1271</a>
     </li></ul></dd>
     
     
@@ -1981,7 +2030,7 @@ for selecting/deselecting all sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1158">line 1158</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1243">line 1243</a>
     </li></ul></dd>
     
     
@@ -2250,7 +2299,7 @@ them as a coloured table
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1094">line 1094</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1174">line 1174</a>
     </li></ul></dd>
     
     
@@ -2494,7 +2543,7 @@ the ends of the sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1479">line 1479</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1565">line 1565</a>
     </li></ul></dd>
     
     
@@ -2714,7 +2763,7 @@ of sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1442">line 1442</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1528">line 1528</a>
     </li></ul></dd>
     
     
@@ -2843,7 +2892,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1260">line 1260</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1346">line 1346</a>
     </li></ul></dd>
     
     
@@ -2970,7 +3019,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line727">line 727</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line783">line 783</a>
     </li></ul></dd>
     
     
@@ -3094,7 +3143,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line416">line 416</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line459">line 459</a>
     </li></ul></dd>
     
     
@@ -3267,7 +3316,7 @@ reference sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1307">line 1307</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1393">line 1393</a>
     </li></ul></dd>
     
     
@@ -3395,7 +3444,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1223">line 1223</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1309">line 1309</a>
     </li></ul></dd>
     
     
@@ -3542,7 +3591,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1064">line 1064</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1144">line 1144</a>
     </li></ul></dd>
     
     
@@ -3642,7 +3691,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1646">line 1646</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1732">line 1732</a>
     </li></ul></dd>
     
     
@@ -3719,7 +3768,7 @@ file
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1678">line 1678</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1764">line 1764</a>
     </li></ul></dd>
     
     
@@ -3939,7 +3988,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1620">line 1620</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1706">line 1706</a>
     </li></ul></dd>
     
     
@@ -4063,7 +4112,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line844">line 844</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line900">line 900</a>
     </li></ul></dd>
     
     
@@ -4234,7 +4283,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line602">line 602</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line657">line 657</a>
     </li></ul></dd>
     
     
@@ -4368,7 +4417,8 @@ class to pick up the appropriate colour for the cells from CSS
     <dd class="tag-author">
         <ul>
             <li>- 17.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than writing to document  By: JHN</li>
         </ul>
     </dd>
     
@@ -4382,7 +4432,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line338">line 338</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line379">line 379</a>
     </li></ul></dd>
     
     
@@ -4410,7 +4460,7 @@ class to pick up the appropriate colour for the cells from CSS
         
             
 <dt>
-    <h4 class="name" id="JSAV_printDelete"><span class="type-signature"></span>JSAV_printDelete<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="JSAV_printDelete"><span class="type-signature"></span>JSAV_printDelete<span class="signature">(divId, label)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -4472,6 +4522,29 @@ class to pick up the appropriate colour for the cells from CSS
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>label</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The label to print in the delete button</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -4493,7 +4566,9 @@ class to pick up the appropriate colour for the cells from CSS
     <dd class="tag-author">
         <ul>
             <li>- 12.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Added label parameter and use of this label  By: ACRM</li>
         </ul>
     </dd>
     
@@ -4507,7 +4582,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line558">line 558</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line610">line 610</a>
     </li></ul></dd>
     
     
@@ -4618,7 +4693,8 @@ class to pick up the appropriate colour for the cells from CSS
     <dd class="tag-author">
         <ul>
             <li>- 17.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN</li>
         </ul>
     </dd>
     
@@ -4632,7 +4708,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line400">line 400</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line442">line 442</a>
     </li></ul></dd>
     
     
@@ -4813,8 +4889,8 @@ i.e. the whole sequence length
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 06.06.14  Original   By: ACRM
-- 10.06.14  Removed redundant variable and changed divs to spans
+            <li>- 06.06.14 Original   By: ACRM
+- 10.06.14 Removed redundant variable and changed divs to spans
 - 15.06.14 Added height</li>
         </ul>
     </dd>
@@ -4829,7 +4905,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line981">line 981</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1057">line 1057</a>
     </li></ul></dd>
     
     
@@ -4986,7 +5062,8 @@ i.e. the whole sequence length
     <dd class="tag-author">
         <ul>
             <li>- 12.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN</li>
         </ul>
     </dd>
     
@@ -5000,7 +5077,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line576">line 576</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line630">line 630</a>
     </li></ul></dd>
     
     
@@ -5134,7 +5211,9 @@ i.e. the whole sequence length
     <dd class="tag-author">
         <ul>
             <li>- 16.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Dotify label now comes from options  By: ACRM</li>
         </ul>
     </dd>
     
@@ -5148,7 +5227,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line434">line 434</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line479">line 479</a>
     </li></ul></dd>
     
     
@@ -5282,7 +5361,9 @@ i.e. the whole sequence length
     <dd class="tag-author">
         <ul>
             <li>- 16.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM</li>
         </ul>
     </dd>
     
@@ -5296,7 +5377,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line460">line 460</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line508">line 508</a>
     </li></ul></dd>
     
     
@@ -5631,7 +5712,7 @@ Also updates the marked range and the CSS if the border option is set
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1583">line 1583</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1669">line 1669</a>
     </li></ul></dd>
     
     
@@ -5756,7 +5837,7 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line284">line 284</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line324">line 324</a>
     </li></ul></dd>
     
     
@@ -5880,7 +5961,7 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line814">line 814</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line870">line 870</a>
     </li></ul></dd>
     
     
@@ -6004,7 +6085,7 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line790">line 790</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line846">line 846</a>
     </li></ul></dd>
     
     
@@ -6152,7 +6233,7 @@ colour scheme and refreshes the display
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line375">line 375</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line416">line 416</a>
     </li></ul></dd>
     
     
@@ -6336,7 +6417,9 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
     <dd class="tag-author">
         <ul>
             <li>- 06.06.14  Original   By: ACRM
-- 10.06.14  Removed redundant .closest() from finding parent</li>
+- 10.06.14  Removed redundant .closest() from finding parent
+- 23.09.15  Changed "Sort from: xx to: xx" to "Region: positions xx to yy"
+- 24.09.15  Changed to using .html() instead of .text()</li>
         </ul>
     </dd>
     
@@ -6350,7 +6433,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1022">line 1022</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1102">line 1102</a>
     </li></ul></dd>
     
     
@@ -6550,7 +6633,7 @@ that sorts and refreshes the display.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1542">line 1542</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1628">line 1628</a>
     </li></ul></dd>
     
     
@@ -6728,7 +6811,7 @@ sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1353">line 1353</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1439">line 1439</a>
     </li></ul></dd>
     
     
@@ -6877,7 +6960,7 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line664">line 664</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line720">line 720</a>
     </li></ul></dd>
     
     
@@ -7048,7 +7131,7 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line486">line 486</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line535">line 535</a>
     </li></ul></dd>
     
     
@@ -7172,7 +7255,7 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line829">line 829</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line885">line 885</a>
     </li></ul></dd>
     
     
@@ -7321,7 +7404,7 @@ function, passing the divId and an array of sequence objects
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line620">line 620</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line676">line 676</a>
     </li></ul></dd>
     
     
@@ -7510,7 +7593,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Should the sorting options be displayed
-                                    (default: false)</td>
+                                                    (default: false)</td>
         </tr>
 	
 	
@@ -7534,7 +7617,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">The width of the selection slider with
-                                    units (default: '400px')</td>
+                                                    units (default: '400px')</td>
         </tr>
 	
 	
@@ -7558,7 +7641,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">The height of the selection slider with
-                                    units (default: '6pt')</td>
+                                                    units (default: '6pt')</td>
         </tr>
 	
 	
@@ -7582,7 +7665,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Should selection checkboxes be displayed
-                                    for each sequence</td>
+                                                    for each sequence</td>
         </tr>
 	
 	
@@ -7606,6 +7689,29 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Makes it possible to delete sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.deleteLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for delete button</td>
         </tr>
 	
 	
@@ -7681,6 +7787,54 @@ optionally with a slider and sort button, delete button, etc
 	
         <tr>
             
+                <td class="name"><code>options.idSubmit</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">URL for submitting a single sequence where its
+                                                    id/label has been clicked</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.idSubmitClean</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Remove non-alpha characters from sequence
+                                                    before submitting</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
                 <td class="name"><code>options.action</code></td>
             
             
@@ -7698,8 +7852,8 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Function to call using selected sequences.
-                                               This is passed the seqId and array of
-                                               currently selected sequence objects</td>
+                                                    This is passed the seqId and array of
+                                                    currently selected sequence objects</td>
         </tr>
 	
 	
@@ -7746,7 +7900,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Repeated amino acids in the sequence are
-                             replaced by a dot</td>
+                                                    replaced by a dot</td>
         </tr>
 	
 	
@@ -7770,7 +7924,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Dotified amino acids are not coloured
-                             (except deletions)</td>
+                                                    (except deletions)</td>
         </tr>
 	
 	
@@ -7800,6 +7954,29 @@ optionally with a slider and sort button, delete button, etc
 	
         <tr>
             
+                <td class="name"><code>options.toggleDotifyLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for dotify checkbox toggle</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
                 <td class="name"><code>options.toggleNocolour</code></td>
             
             
@@ -7817,6 +7994,29 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Create a check box for toggling nocolour</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.toggleNocolourLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for nocolout checkbox toggle</td>
         </tr>
 	
 	
@@ -7909,10 +8109,10 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Default colour scheme - valid options 
-                             depend on the css, but are currently
-                             taylor, clustal, zappo, hphob, helix, 
-                             strand, turn, buried. Note that this must be
-                             specified in lower case</td>
+                                                    depend on the css, but are currently
+                                                    taylor, clustal, zappo, hphob, helix, 
+                                                    strand, turn, buried. Note that this must be
+                                                    specified in lower case</td>
         </tr>
 	
 	
@@ -7936,7 +8136,7 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Display a pull-down to choose the colour 
-                             scheme.</td>
+                                                    scheme.</td>
         </tr>
 	
 	
@@ -7960,8 +8160,8 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Array of colour scheme names - only used
-                                    if the user has added to the CSS. This
-                                    can be in mixed case.</td>
+                                                    if the user has added to the CSS. This
+                                                    can be in mixed case.</td>
         </tr>
 	
 	
@@ -8008,8 +8208,8 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Specify the name of a function to be
-                                               called whenever the display is refreshed.
-                                               This is passed the seqId</td>
+                                                    called whenever the display is refreshed.
+                                                    This is passed the seqId</td>
         </tr>
 	
 	
@@ -8048,7 +8248,15 @@ optionally with a slider and sort button, delete button, etc
            Added colourScheme/colorScheme
            Added selectColour/selectColor and colourChoices/colorChoices
 - 18.06.14 Added tooltips and plainTooltips option
-- 19.06.14 Added callback</li>
+- 19.06.14 Added callback
+- 02.09.14 Avoid using write and writeln. Rather use jQuery to insert into DOM.
+           Fixes overwrite issues with using after page closure. By: JHN
+- 23.09.15 Added toggleDotifyLabel 
+           Added toggleNocolourLabel/toggleNocolorLabel
+           Added deleteLabel
+           Move FASTA before submit and action buttons
+           Added idSubmit and idSubmitClean
+           By: ACRM</li>
         </ul>
     </dd>
     
@@ -8062,7 +8270,7 @@ optionally with a slider and sort button, delete button, etc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line160">line 160</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line185">line 185</a>
     </li></ul></dd>
     
     
@@ -8088,6 +8296,10 @@ optionally with a slider and sort button, delete button, etc
         <h5>Example</h5>
         
     <pre class="prettyprint"><code> 
+var Seqs = [];
+Seqs.push({id :"id1b1.L", sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+Seqs.push({id :"id1a.L",  sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+
 var options = Array();
 options.width = '400px';
 options.sortable = true;
@@ -8129,7 +8341,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jun 19 2014 11:35:03 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Sep 24 2015 09:10:43 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

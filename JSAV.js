@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.7 23.09.15
+    JSAV V1.7.1 24.09.15
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.7
-   Date:       23.09.15
+   Version:    V1.7.1
+   Date:       24.09.15
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
@@ -1097,6 +1097,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
 - 23.09.15  Changed "Sort from: xx to: xx" to "Region: positions xx to yy"
+- 24.09.15  Changed to using .html() instead of .text()
 */
 function JSAV_showRange(eventOrId, ui)
 {
@@ -1110,8 +1111,8 @@ function JSAV_showRange(eventOrId, ui)
 
       // Display the range currently selected
       tag = "#" + eventOrId + "_showrange";
-      var html = "Region: positions " + gStartPos[eventOrId] + " to " + gStopPos[eventOrId];
-      $(tag).text(html);
+      var html = "<p>Region: positions " + gStartPos[eventOrId] + " to " + gStopPos[eventOrId] + "</p>";
+      $(tag).html(html);
       JSAV_markRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
    }
    else
@@ -1124,8 +1125,8 @@ function JSAV_showRange(eventOrId, ui)
       gStopPos[id]  = ui.values[1];
 
       // Display the range currently selected
-      var html = "Region: positions " + gStartPos[id] + " to " + gStopPos[id];
-      $(tag).text(html);
+      var html = "<p>Region: positions " + gStartPos[id] + " to " + gStopPos[id] + "</p>";
+      $(tag).html(html);
       JSAV_markRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
    }
 }
