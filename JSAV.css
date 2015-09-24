@@ -62,14 +62,19 @@
    V1.7    23.09.15   Added options.toggleDotifyLabel
                       Added options.toggleNocolourLabel and options.toggleNocolorLabel
                       Added options.deleteLabel
+                      Added options.idSubmit
                       Various CSS improvements  By: ACRM
+   V1.8    24.09.15   Added options.scrollX and options.scrollY
 */
 
 /***********************************************************************/
 /*** Things the user is LIKELY to want to change                     ***/
 /***********************************************************************/
 /* Text colour for the sequence ID labels                              */
-.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #333399; }
+/* .JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #333399; } */
+/* Text colour for other text                                          */
+/* .JSAV p, .JSAV label {color: #333399; }                             */
+
 /* Colour for the region marked for sorting                            */
 .JSAV .marked {background-color: #AAAAAA;}
 /* Colour for regions marked as highlighted with options.highlight     */

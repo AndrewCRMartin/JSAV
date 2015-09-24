@@ -1,5 +1,5 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.7.1
-==================================================
+JavaScript Sequence Alignment Viewer (JSAV) V1.8
+================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
 
@@ -53,6 +53,12 @@ the divId and array of sequence objects
 - `plainTooltips` - disable JQuery tool-tips
 - `callback`      - name of a function to be called whenever the display is
                     refreshed. The divId is passed into this function.
+- `scrollX`       - Specify a width for the sequence display
+                    div and make it scrollable (e.g. "500px")
+                    Use "100%" to make it the width of the
+                    screen (or containing div)
+- `scrollY`       - Specify a height for the sequence display
+                    div and make it scrollable (e.g. "500px")
 
 
 CSS Control

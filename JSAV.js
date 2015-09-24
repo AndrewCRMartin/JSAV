@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.7.1 24.09.15
+    JSAV V1.8 24.09.15
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.7.1
+   Version:    V1.8
    Date:       24.09.15
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -70,6 +70,7 @@
                       Added options.deleteLabel
                       Added options.idSubmit
                       By: ACRM
+   V1.8    24.09.15   Added options.scrollX and options.scrollY
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -152,6 +153,12 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @property {callback}  options.callback            - Specify the name of a function to be
                                                     called whenever the display is refreshed.
                                                     This is passed the seqId
+@property {string}    options.scrollX             - Specify a width for the sequence display
+                                                    div and make it scrollable (e.g. "500px")
+                                                    Use "100%" to make it the width of the
+                                                    screen (or containing div)
+@property {string}    options.scrollY             - Specify a height for the sequence display
+                                                    div and make it scrollable (e.g. "500px")
 
 @author 
 - 29.05.14 Original  By: ACRM
@@ -181,6 +188,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Move FASTA before submit and action buttons
            Added idSubmit and idSubmitClean
            By: ACRM
+- 24.09.15 Added scrollX and scrollY
 */
 function printJSAV(divId, sequences, options)
 {
@@ -234,6 +242,22 @@ function printJSAV(divId, sequences, options)
    var div_sortable = $('<div />').appendTo(div);
    div_sortable.attr('id', divId + '_sortable');
    div_sortable.attr('class', 'JSAVDisplay');
+
+   // 24.09.15
+   if(options.scrollX != null)
+   {
+      div_sortable.css('overflow-x', 'scroll');
+      div_sortable.css('white-space', 'nowrap');
+      div_sortable.css('width', options.scrollX);
+   }
+   
+   // 24.09.15
+   if(options.scrollY != null)
+   {
+      div_sortable.css('overflow-y', 'scroll');
+      div_sortable.css('white-space', 'nowrap');
+      div_sortable.css('height', options.scrollY);
+   }
 
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
                                       options.selectable, options.highlight,
