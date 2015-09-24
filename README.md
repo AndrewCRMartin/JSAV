@@ -1,5 +1,5 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.6
-================================================
+JavaScript Sequence Alignment Viewer (JSAV) V1.7.1
+==================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
 
@@ -23,17 +23,22 @@ The options for controlling the display are:
 and the actualy slider height is relative to this (default: '6pt')
 - `selectable`  - Should selection checkboxes be displayed for each sequence
 - `deletable`   - Makes it possible to delete sequences
+- `deleteLabel` - Label for the delete button
 - `highlight`   - Array of ranges to highlight (e.g. [24,34,50,56] would highlight
 positions 24-34 and 50-56)
 - `submit`      - URL for submitting selected sequences
 - `submitLabel` - Label for submit button
+- `idSubmit`    - URL for submitting a single sequence where its id/label has been clicked
+- `idSubmitClean` - Remove non-alpha characters from sequence before submitting
 - `action`      - Function to call using selected sequences - the function will be passed 
 the divId and array of sequence objects
 - `actionLabel` - Label for action button
 - `dotify`      - Repeated residues in the alignment are replaced with dots
 - `nocolour` or `nocolor` - Repeated residues are not coloured
 - `toggleDotify` - Display a checkbox to toggle the dotify mode
+- `toggleDotifyLabel` - Label for dotify checkbox toggle
 - `toggleNocolour` or `toggleNocolor` - Display a checkbox to toggle the nocolour-dotify mode
+- `toggleNocolourLabel` or `toggleNocolorLabel` - Label for nocolour checkbox toggle
 - `fasta`          - Create a FASTA export button 
 - `fastaLabel`     - Label for FASTA export button
 - `consensus`      - Display consensus sequence

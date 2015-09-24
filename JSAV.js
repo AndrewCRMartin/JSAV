@@ -134,7 +134,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
 @property {bool}      options.toggleDotify        - Create a check box for toggling dotify
 @property {string}    options.toggleDotifyLabel   - Label for dotify checkbox toggle
 @property {bool}      options.toggleNocolour      - Create a check box for toggling nocolour
-@property {string}    options.toggleNocolourLabel - Label for nocolout checkbox toggle
+@property {string}    options.toggleNocolourLabel - Label for nocolour checkbox toggle
 @property {bool}      options.fasta               - Create a FASTA export button 
 @property {string}    options.fastaLabel          - Label for FASTA export button
 @property {bool}      options.consensus           - Display consensus sequence
