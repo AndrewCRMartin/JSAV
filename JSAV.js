@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.8 24.09.15
+    JSAV V1.9 16.12.15
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.8
-   Date:       24.09.15
+   Version:    V1.9
+   Date:       16.12.15
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
@@ -71,6 +71,7 @@
                       Added options.idSubmit
                       By: ACRM
    V1.8    24.09.15   Added options.scrollX and options.scrollY
+   V1.9    16.12.15   Added options.labels array and label printing
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -261,7 +262,8 @@ function printJSAV(divId, sequences, options)
 
    var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
                                       options.selectable, options.highlight,
-                                      options.dotify, options.nocolour, options.consensus);
+                                      options.dotify, options.nocolour, options.consensus,
+                                      options.labels);
    div_sortable.append(html);
 
 
@@ -1184,7 +1186,9 @@ them as a coloured table
 @param   {bool}       selectable  Should check marks be displayed
 @param   {int[]}      highlight   Ranges to be highlighted
 @param   {bool}       dotify      Dotify the sequence alignment
-@param   {bool}       nocolour    Don't colout dotified residues
+@param   {bool}       nocolour    Don't colour dotified residues
+@param   {bool}       consensus   Display the consensus sequence
+@param   {array}      labels      Labels to display over sequence     
 @returns {string}                 HTML
 
 @author 
@@ -1194,9 +1198,10 @@ them as a coloured table
 - 13.06.14 Added highlight
 - 16.06.14 Added dotify
 - 17.06.14 Added consensus
+- 16.12.15 Added labels
 */
 function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight,
-                                 dotify, nocolour, consensus)
+                                 dotify, nocolour, consensus, labels)
 {
    var html = "";
    html += "<div class='JSAV'>\n";
@@ -1212,6 +1217,11 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
    {
        // If we are highlighting regions in the sequence, do so
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
+   }
+
+   if(labels != undefined)
+   {
+       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], selectable, labels);
    }
 
    // Build the actual sequence entries
@@ -1588,8 +1598,9 @@ the ends of the sequences
 */
 function JSAV_calcDifference(seq1, seq2, regionStart, regionStop, ignoreEnds)
 {
-   var seqArray1   = [];seq1.substring(regionStart, regionStop+1).split("");
+   var seqArray1   = [];
    var seqArray2   = [];
+// seq1.substring(regionStart, regionStop+1).split("");
 
    if((regionStart < 0) || (regionStop < 0))
    {
@@ -2016,4 +2027,39 @@ function ACRM_dialog(title, msg, width, pre)
     });
 };
 
+// Model this on JSAV_buildHighlightHTML
+function JSAV_buildLabelsHTML(divId,  seqLen, selectable, labels)
+{
+    var html = "";
+    if(selectable)
+    {
+        html += "<tr class='highlightrow'><th></th>";
+        html += "<td></td>";
+    }
+    else
+    {
+        html += "<tr class='highlightrow'><td></td>";
+    }
 
+    for(var i=0; i<labels.length; i++)
+    {
+        var labelText = labels[i];
+        labelText.replace(/^[A-Za-z]/g, '');
+        var lastChar = labelText.substring(labelText.length-1,labelText.length);
+        if(lastChar == "0")
+        {
+            html += "<td>|</td>";
+        }
+//        else if lastChar.regex(/[A-Za-z]/)
+//        {
+//            html += "<td>" + lastChar + "</td>";
+//        }
+        else
+        {
+            html += "<td>.</td>";
+        }
+    }
+    html += "</tr>\n";
+
+    return html;
+}

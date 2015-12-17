@@ -1,0 +1,141 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>JSAV</title>
+
+<!-- JQuery and JQuery-UI -->
+<link href="external/jquery.css" rel="stylesheet" />
+<script type='text/javascript' src='external/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='external/jquery-ui-1.10.4.custom.min.js'></script>
+
+<!-- JSAV -->
+<link href="JSAV.css" rel="stylesheet" />
+<script type='text/javascript' src='JSAV.js'></script>
+
+<!-- If using tooltipster -->
+<link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
+<script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
+<script>
+function enableTooltipster()
+{
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
+    });
+}
+enableTooltipster();
+</script>
+<!-- END -->
+
+</head>
+
+<body>
+<script type='text/javascript'>
+var MySeqs = [];
+
+MySeqs.push({ id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"});
+MySeqs.push({ id :"id1a.L",   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2b1.L",  sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2a.L",   sequence :"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2a1.L",  sequence :"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY"});
+MySeqs.push({ id :"id1.L",    sequence :"SASSSVNYMYACDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id1b.L",   sequence :"SASSSVNYMYACREFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id1a1.L",  sequence :"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY"});
+MySeqs.push({ id :"id2.L",    sequence :"SASSSCNYMTACDEHGHIKLMNP-RSTCWY"});
+MySeqs.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
+</script>
+
+<h1>JavaScript Sequence Alignment Viewer (JSAV)</h1>
+<p>JSAV is a JavaScript program to display and sort a sequence
+  alignment. The sorting method chooses a representative sequence (one
+  which is most similar to all the other sequences) placing that first
+  in the list. To add to the sorted list, it iteratively chooses the
+  sequences that are most similar to the last one in the list and, of
+  those chooses the sequence most similar to the representative
+  sequence.</p>
+
+<p>Sequences are:</p>
+<script type='text/javascript'>
+function myAction(divId, sequences)
+{
+   var seqString = "";
+   for(var i=0; i<sequences.length; i++)
+   {
+       seqString += ">" + sequences[i].id + "\n";
+       seqString += sequences[i].sequence + "\n";
+   }
+   alert(seqString);
+}
+
+var MyOptions = Array();
+MyOptions.sortable = true;
+MyOptions.selectable = true;
+MyOptions.deletable = true;
+MyOptions.border = false;
+MyOptions.highlight = [3,5,10,14];
+MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.action = "myAction";
+MyOptions.actionLabel = "My Action";
+MyOptions.toggleDotify = true;
+MyOptions.toggleNocolour = true;
+MyOptions.fasta = true;
+MyOptions.consensus = true;
+MyOptions.colourScheme = "zappo";
+MyOptions.selectColour = true;
+MyOptions.callback = "enableTooltipster";
+MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl?seq=";
+MyOptions.idSubmitClean = true;
+
+var labels = Array();
+labels.push("L1");
+labels.push("L2");
+labels.push("L3");
+labels.push("L4");
+labels.push("L5");
+labels.push("L6");
+labels.push("L7");
+labels.push("L8");
+labels.push("L9");
+labels.push("L10");
+labels.push("L11");
+labels.push("L12");
+labels.push("L13");
+labels.push("L13A");
+labels.push("L13B");
+labels.push("L14");
+labels.push("L15");
+labels.push("L16");
+labels.push("L17");
+labels.push("L18");
+labels.push("L19");
+labels.push("L20");
+labels.push("L21");
+labels.push("L22");
+labels.push("L23");
+labels.push("L24");
+labels.push("L25");
+labels.push("L28");
+labels.push("L29");
+labels.push("L30");
+MyOptions.labels = labels;
+
+printJSAV('sequenceDisplay', MySeqs, MyOptions);
+</script>
+
+<p>Input to the JavaScript is simply an array of sequences in
+  the form:</p>
+<pre>
+sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"};
+</pre>
+<p>and the display and sorter is created with</p>
+<pre>
+printJSAV('sequenceDisplay', sequences, options);
+sequenceDisplay - div in which to display the viewer
+sequences       - array of sequence objects
+options         - an object describing options
+</pre>
+
+
+
+
+</body>
+</html>
