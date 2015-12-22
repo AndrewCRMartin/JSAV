@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.9 16.12.15
+    JSAV V1.9 22.12.15
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -9,7 +9,7 @@
    File:       JSAV.js
    
    Version:    V1.9
-   Date:       16.12.15
+   Date:       22.12.15
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
@@ -71,7 +71,7 @@
                       Added options.idSubmit
                       By: ACRM
    V1.8    24.09.15   Added options.scrollX and options.scrollY
-   V1.9    16.12.15   Added options.labels array and label printing
+   V1.9    22.12.15   Added options.labels array and label printing
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -160,6 +160,9 @@ Where 'mySeqDisplay' is the name of a div that will be created
                                                     screen (or containing div)
 @property {string}    options.scrollY             - Specify a height for the sequence display
                                                     div and make it scrollable (e.g. "500px")
+@property {string[]}  options.labels              - Array of residue label strings
+@property {bool}      options.autolabels          - Automatically generate label strings
+                                                    (overrides options.labels)
 
 @author 
 - 29.05.14 Original  By: ACRM
@@ -190,6 +193,7 @@ Where 'mySeqDisplay' is the name of a div that will be created
            Added idSubmit and idSubmitClean
            By: ACRM
 - 24.09.15 Added scrollX and scrollY
+- 22.12.15 Added labels and autolabels
 */
 function printJSAV(divId, sequences, options)
 {
@@ -212,6 +216,7 @@ function printJSAV(divId, sequences, options)
    if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = "Do not colour dots";      }
    if(options.toggleNocolorLabel  != undefined) { options.toggleNocolourLabel = options.toggleNocolorLabel;}
    if(options.deleteLabel         == undefined) { options.deleteLabel         = "Delete Selected";         }
+   if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);}
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -433,11 +438,12 @@ function JSAV_printColourSelector(divId, options)
 Called when the colour scheme selector is changed. Sets the selected
 colour scheme and refreshes the display
 
-@param {object}  select   - The select pull-down
 @param {string}  divId    - The ID of the div we are working in
+@param {object}  select   - The select pull-down
 
 @author 
 - 17.06.14  Original   By: ACRM
+- 22.12.15  Added passing of labels
 */
 function JSAV_setColourScheme(divId, select)
 {
@@ -450,7 +456,7 @@ function JSAV_setColourScheme(divId, select)
     }
     else
     {
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus);
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus, options.labels);
     }
 }
 
@@ -579,10 +585,11 @@ Builds HTML for table rows that highlight a region in the alignment as
 being important (e.g. CDRs of antibodies). Note that ranges for highlighting
 count from zero.
 
-@param {string}  divId      - The div we are working in
-@param {int}     seqLen     - The length of the alignment
-@param {bool}    selectable - Are there sequences selection boxes
-@param {int[]}   highlight  - Array of residue ranges to highlight
+@param   {string}  divId      - The div we are working in
+@param   {int}     seqLen     - The length of the alignment
+@param   {bool}    selectable - Are there sequences selection boxes
+@param   {int[]}   highlight  - Array of residue ranges to highlight
+@returns {string}             - HTML
 
 @author 
 - 13.06.14   Original   By: ACRM
@@ -759,7 +766,8 @@ function JSAV_submitSequences(divId)
 Builds a FASTA version of the sequences that are currently selected, or all
 sequences if none are selected
 
-@param {string} divId   - The ID of the div we are printing in
+@param   {string} divId   - The ID of the div we are printing in
+@returns {string}         - FASTA sequence
 
 @author 
 - 17.06.14 Split out from JSAV_submitSequences()  By: ACRM
@@ -805,6 +813,7 @@ Deletes a set of sequences that have been clicked
 - 15.06.14 Changed from alert() to ACRM_alert()
 - 16.06.14 Changed from confirm() to ACRM_confirm()
 - 17.06.14 Added consensus
+- 22.12.15 Added passing of labels
 */
 function JSAV_deleteSelectedSequences(divId)
 {
@@ -853,7 +862,8 @@ function JSAV_deleteSelectedSequences(divId)
                 JSAV_refresh(divId, gSequences[divId], options.sortable, 
                              options.selectable, options.border, 
                              gStartPos[divId]-1, gStopPos[divId]-1, options.highlight,
-                             options.dotify, options.nocolour, options.consensus);
+                             options.dotify, options.nocolour, options.consensus,
+                             options.labels);
                 options.sorted = false;
             }
         });
@@ -943,6 +953,8 @@ separate <td> tag with a class to indicate the amino acid type
 @param {bool}     dotify        Dotify the sequence
 @param {bool}     nocolour      Don't colour dotified residues
 @param {bool}     isConsensus   This is the consensus sequence
+@param {string}   colourScheme  Name of colour scheme - maps to CSS - 
+                                see JSAV_initColourChoices()
 @param {string}   idSubmit      URL to visit when sequence label clicked
 @param {bool}     idSubmitClean Remove non-alpha characters from sequence
                                 before submitting it
@@ -1116,7 +1128,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 @param {JQEvent}   eventOrId    JQuery Event
 @param {JQ-UI}     ui           JQuery UI object
 --OR--
-@param {text}      ebentOrId    Identifier of the display div
+@param {text}      eventOrId    Identifier of the display div
 @param {null}      ui           Must be set to null
 
 @author 
@@ -1198,7 +1210,7 @@ them as a coloured table
 - 13.06.14 Added highlight
 - 16.06.14 Added dotify
 - 17.06.14 Added consensus
-- 16.12.15 Added labels
+- 22.12.15 Added labels
 */
 function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight,
                                  dotify, nocolour, consensus, labels)
@@ -1213,15 +1225,15 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
        html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
    }
 
+   if(labels != undefined)
+   {
+       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], selectable, labels);
+   }
+
    if(highlight != undefined)
    {
        // If we are highlighting regions in the sequence, do so
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
-   }
-
-   if(labels != undefined)
-   {
-       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], selectable, labels);
    }
 
    // Build the actual sequence entries
@@ -1262,13 +1274,15 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
    return(html);
 }
 
+
 // ---------------------------------------------------------------------
 /**
 Build the HTML for creating a row in the table that contains a checkbox
 for selecting/deselecting all sequences
 
-@param {string}  divId  - ID of the div we are working in
-@param {int}     seqLen - sequence length
+@param   {string}  divId  - ID of the div we are working in
+@param   {int}     seqLen - sequence length
+@returns {string}         - HTML
 
 @author 
 - 09.06.14 Original   By: ACRM
@@ -1293,9 +1307,10 @@ function JSAV_buildSelectAllHTML(divId, seqLen)
 Creates the HTML to display the marker row that indicates the selected
 residues to be used for sorting
 
-@param {string}   divId      - Identifier of display div
-@param {int}      seqLen     - Length of sequences alignement
-@param {int}      selectable - Do we have select boxes?
+@param   {string}   divId      - Identifier of display div
+@param   {int}      seqLen     - Length of sequences alignement
+@param   {int}      selectable - Do we have select boxes?
+@returns {string}              - HTML
 
 @author 
 - 06.06.14  Original   By: ACRM
@@ -1369,10 +1384,10 @@ sequences. This routine simply totals up the number of differences
 for each sequence compared with all the other sequences and then
 chooses the one with fewest differences
 
-@param {int-2DArray}  differenceMatrix  Differences between each pair
-                                    of sequences
-@eturns {int}                        Index of the representative
-                                    sequence
+@param   {int-2DArray}  differenceMatrix  - Differences between each pair
+                                            of sequences
+@returns {int}                            - Index of the representative
+                                            sequence
 
 @author 
 - 29.05.14 Original   By: ACRM
@@ -1418,7 +1433,7 @@ reference sequence
 @param  {int[]}       sequenceIndexes   Indexes of a set of sequences to search
 @param  {int}         refSeq            Index of the sequence to compare with
 @param  {int-2DArray} differenceMatrix  differences between sequences
-@eturns {int[]}                         Indexes of the sequences closest to
+@returns {int[]}                        Indexes of the sequences closest to
                                         the reference sequence
 
 @author 
@@ -1551,7 +1566,7 @@ of sequences
 @param  {int}       stop         Offset of end of region to sort
 @param  {BOOL}      ignoreEnds   Ignore insert characters at
                                  ends of sequences
-@eturns {int-2DArray}                Differences between each pair
+@returns {int-2DArray}           Differences between each pair
                                  of sequences
 
 @author 
@@ -1652,6 +1667,7 @@ that sorts and refreshes the display.
 @param {bool}  sortable     Is the display sortable
 @param {bool}  selectable   Are checkboxes shown next to sequences
 @param {bool}  border       Should CSS be updated to show a border
+@returns {bool}             FALSE - (not sure why!)
 
 @author 
 - 29.05.14 Original   By: ACRM
@@ -1659,6 +1675,7 @@ that sorts and refreshes the display.
 - 12.06.14 split out the JSAV_refresh() part
 - 16.06.14 Added dotify and nocolour options to refresh call
 - 17.06.14 Added consensus
+- 22.12.15 Added passing of labels
 */
 function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
 {
@@ -1670,7 +1687,7 @@ function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
    JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
                 range[0], range[1], gOptions[divId].highlight, 
                 gOptions[divId].dotify, gOptions[divId].nocolour, 
-                gOptions[divId].consensus);
+                gOptions[divId].consensus, gOptions[divId].labels);
 
    // Record the fact that the display has been sorted
    gOptions[divId].sorted = true;
@@ -1692,20 +1709,25 @@ Also updates the marked range and the CSS if the border option is set
 @param {int}      start        start of selected region
 @param {int}      stop         end of selected region
 @param {int[]}    highlight    regions to be highlighted
-@param {bool}     dotify        Dotify the sequence
-@param {bool}     nocolour      Don't colour dotified residues
+@param {bool}     dotify       Dotify the sequence
+@param {bool}     nocolour     Don't colour dotified residues
+@param {bool}     consensus    Should we display a consensus sequence
+@param {string[]} labels       Array of labels (or undefined) 
 
 @author 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
 - 16.06.14  Added dotify and nocolour
 - 17.06.14  Added consensus
 - 19.06.14  Added callback
+- 22.12.15  Added labels
 */
 function JSAV_refresh(divId, sequences, sortable, selectable, border, 
-                      start, stop, highlight, dotify, nocolour, consensus)
+                      start, stop, highlight, dotify, nocolour, consensus, 
+                      labels)
 {
    var html = JSAV_buildSequencesHTML(divId, sequences, sortable, 
-                                      selectable, highlight, dotify, nocolour, consensus);
+                                      selectable, highlight, dotify, nocolour, 
+                                      consensus, labels);
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    if(border)
@@ -1898,7 +1920,7 @@ function ACRM_deleteItemByLabel(key, value, array)
 General purpose function to create a multi-dimensional array
 
 @param   {int/int[]}  length   Size of each dimension
-@returns {array}                  (multi-dimensional) Array
+@returns {array}               (multi-dimensional) Array
 
 Usage:
 ACRM_array();     // [] or new Array()
@@ -1914,7 +1936,7 @@ ACRM_array(3, 2); // [new Array(2),
 function ACRM_array(length) 
 {
     var arr = new Array(length || 0),
-        i = length;
+        i   = length;
 
     if (arguments.length > 1) 
     {
@@ -2027,7 +2049,20 @@ function ACRM_dialog(title, msg, width, pre)
     });
 };
 
-// Model this on JSAV_buildHighlightHTML
+
+// ---------------------------------------------------------------------
+/**
+Create the HTML for a label row in the sequence display
+
+@param   {string}   divId      - The div we are working in
+@param   {int}      seqLen     - The length of the alignment
+@param   {bool}     selectable - Are there sequences selection boxes
+@param   {string[]} labels     - Array of labels
+@returns {string}              - HTML
+
+@author 
+- 22.12.15 Original   By: ACRM
+*/
 function JSAV_buildLabelsHTML(divId,  seqLen, selectable, labels)
 {
     var html = "";
@@ -2043,23 +2078,58 @@ function JSAV_buildLabelsHTML(divId,  seqLen, selectable, labels)
 
     for(var i=0; i<labels.length; i++)
     {
+        // Make a copy of the label and remove the chain label
         var labelText = labels[i];
         labelText.replace(/^[A-Za-z]/g, '');
+
+        // Find the last character
         var lastChar = labelText.substring(labelText.length-1,labelText.length);
-        if(lastChar == "0")
+
+        // Open a table cell with the label as a tooltip
+        html += "<td class='tooltip' title='" + labels[i] + "'>";
+
+        // Insert the appropriate character
+        if(lastChar == "0")                   // 0 - do a '|'
         {
-            html += "<td>|</td>";
+            html += "|";
         }
-//        else if lastChar.regex(/[A-Za-z]/)
-//        {
-//            html += "<td>" + lastChar + "</td>";
-//        }
-        else
+        else if (lastChar.match(/[A-Za-z]/))  // Insert code - show the code
         {
-            html += "<td>.</td>";
+            html += lastChar;
         }
+        else                                  // Otherwise do a '.'
+        {
+            html += ".";
+        }
+
+        // And finish the table cell
+        html += "</td>";
     }
+
+    // Finish the table row
     html += "</tr>\n";
 
     return html;
+}
+
+
+// ---------------------------------------------------------------------
+/**
+Create an array of labels
+
+@param   {object[]} sequences  - Array of sequence objects
+@returns {string[]}            - Array of labels
+
+@author 
+- 22.12.15 Original   By: ACRM
+*/
+function JSAV_autoLabels(sequences)
+{
+    var seqLen = sequences[0].sequence.length;
+    var labels = Array();
+    for(var i=1; i<=seqLen; i++)
+    {
+        labels.push(i.toString());
+    }
+    return labels;
 }
