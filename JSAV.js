@@ -563,6 +563,7 @@ Read a checkbox and toggle the associated option, refreshing the display
 @author 
 - 16.06.14 Original   By: ACRM
 - 17.06.14 Added consensus
+- 22.12.15 Added labels
 */
 function JSAV_toggleOption(divId, theButton, theOption)
 {
@@ -575,7 +576,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
     }
     else
     {
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus);
+        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus, options.labels);
     }
 }
 
@@ -1798,11 +1799,11 @@ function JSAV_init()
    }
    catch(err)
    {
-       gSequences = Array();
-       gOptions   = Array();
-       gStartPos  = Array();
-       gStopPos   = Array();
-       gConsensus = Array();
+       gSequences       = Array();
+       gOptions         = Array();
+       gStartPos        = Array();
+       gStopPos         = Array();
+       gConsensus       = Array();
        gSequenceLengths = Array();
    }
 }
