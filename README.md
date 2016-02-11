@@ -1,9 +1,9 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.8
-================================================
+JavaScript Sequence Alignment Viewer (JSAV) V1.10
+=================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
 
-Look at index.html amd index2.html for example usage information
+Look at index.html and index2.html for example usage information
 
 The main user entry point is:
 ```javascript
@@ -60,6 +60,20 @@ the divId and array of sequence objects
 - `scrollY`       - Specify a height for the sequence display
                     div and make it scrollable (e.g. "500px")
 
+
+The Sequence Object
+-------------------
+
+The sequence object must contain two fields: 
+
+- `id` which contains an identifier that is displayed along side the
+  sequence
+- `sequence` which is the 1-letter code sequence (with dashes as
+  necessary for the alignment)
+
+In addition it may contain any other required fields that will be
+passed around but are not used by JSAV itself. For example some sort
+of accession code that might be required by an 'action' run from JSAV.
 
 CSS Control
 -----------

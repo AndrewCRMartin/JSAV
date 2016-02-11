@@ -1,18 +1,18 @@
 /** @preserve 
     @file
-    JSAV V1.8 24.09.15
-    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
+    JSAV V1.10 24.09.16
+    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
 /** ***********************************************************************
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.8
-   Date:       24.09.15
+   Version:    V1.10
+   Date:       11.02.16
    Function:   JavaScript Sequence Alignment Viewier
    
-   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2015
+   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
    Author:     Dr. Andrew C.R. Martin
    Address:    Institute of Structural and Molecular Biology
                Division of Biosciences
@@ -71,6 +71,8 @@
                       Added options.idSubmit
                       By: ACRM
    V1.8    24.09.15   Added options.scrollX and options.scrollY
+   V1.10   11.02.16   Modified JSAV_wrapAction() to add whole sequence 
+                      object to output array rather than just the ID and sequence
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -103,6 +105,11 @@ printJSAV('mySeqDisplay', sequenceArray, options);
 Where 'mySeqDisplay' is the name of a div that will be created
       sequenceArray  is an array of sequence objects
       options        is an object describing options - see below
+
+Note that the sequence object can contain additional fields that mean nothing to
+JSAV itself but may be used by 'actions' that are called from JSAV (e.g. an
+accession code).
+
 
 @param {object[]}  sequences                      - Array of sequence objects
 @param {string}    divId                          - ID of div to print in
@@ -696,6 +703,9 @@ function, passing the divId and an array of sequence objects
 
 @author 
 - 13.06.14  Original   By: ACRM
+- 11.02.16  Modified the push so that it pushes the whole object rather than
+            just the selected fields. This allows additional information fields
+            to be passed around associated with a sequence but not displayed
 */
 function JSAV_wrapAction(divId, action)
 {
@@ -722,7 +732,7 @@ function JSAV_wrapAction(divId, action)
    {
       if((count == 0) || (count == sequences.length) || (toSubmit[sequences[i].id] == 1))
       {
-         selectedSequences.push({ id: sequences[i].id, sequence: sequences[i].sequence});
+         selectedSequences.push(sequences[i]);
       }
    }
 
