@@ -28,8 +28,11 @@ and the actualy slider height is relative to this (default: '6pt')
 positions 24-34 and 50-56)
 - `submit`      - URL for submitting selected sequences
 - `submitLabel` - Label for submit button
-- `idSubmit`    - URL for submitting a single sequence where its id/label has been clicked
+- `idSubmit`    - URL for submitting a single sequence where its id/label has been clicked.
+See also `idSubmitAttribute` which allows other attributes to be passed 
 - `idSubmitClean` - Remove non-alpha characters from sequence before submitting
+- `idSubmitAttribute` - Specifies which attribute of the sequence
+object should be passed to a URL specified with idSubmit. Default is 'sequence'
 - `action`      - Function to call using selected sequences - the function will be passed 
 the divId and array of sequence objects
 - `actionLabel` - Label for action button

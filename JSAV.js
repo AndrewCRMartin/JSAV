@@ -74,6 +74,8 @@
    V1.9    22.12.15   Added options.labels array and label printing
    V1.10   11.02.16   Modified JSAV_wrapAction() to add whole sequence 
                       object to output array rather than just the ID and sequence
+                      Added options.idSubmitAttribute so that clicking on an
+                      ID can now call a URL with things other than the sequence
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -129,9 +131,13 @@ accession code).
 @property {string}    options.submit              - URL for submitting selected sequences
 @property {string}    options.submitLabel         - Label for submit button
 @property {string}    options.idSubmit            - URL for submitting a single sequence where its
-                                                    id/label has been clicked
+                                                    id/label has been clicked. 
+                                                    See also options.idSubmitAttribute
 @property {bool}      options.idSubmitClean       - Remove non-alpha characters from sequence
                                                     before submitting
+@property {string}    options.idSubmitAttribute   - Specifies which attribute of the sequence
+                                                    object should be passed to a URL specified
+                                                    with options.idSubmit. Default is 'sequence'
 @property {string}    options.action              - Function to call using selected sequences.
                                                     This is passed the seqId and array of
                                                     currently selected sequence objects
@@ -201,6 +207,7 @@ accession code).
            By: ACRM
 - 24.09.15 Added scrollX and scrollY
 - 22.12.15 Added labels and autolabels
+- 11.02.16 Added idSubmitAttribute
 */
 function printJSAV(divId, sequences, options)
 {
@@ -218,7 +225,7 @@ function printJSAV(divId, sequences, options)
    if(options.selectColor)                      { options.selectColour        = true;                      }
    if(options.colorChoices        != undefined) { options.colourChoices       = options.colorChoices;      }
    if(options.deletable)                        { options.selectable          = true;                      }
-
+   if(options.idSubmitAttribute   == undefined) { options.idSubmitAttribute   = "sequence";                }
    if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = "Dotify";                  }
    if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = "Do not colour dots";      }
    if(options.toggleNocolorLabel  != undefined) { options.toggleNocolourLabel = options.toggleNocolorLabel;}
@@ -977,11 +984,14 @@ separate <td> tag with a class to indicate the amino acid type
 - 17.06.14 Added isConsensus and colourScheme
 - 18.06.14 Added tooltip
 - 23.09.15 Added idSubmit/idSubmitClean
+- 11.02.16 Added idSubmitAttribute, now takes a sequence object rather than
+           the sequence and the id
 */
-function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify, nocolour,
-                                 isConsensus, colourScheme, idSubmit, idSubmitClean)
+function JSAV_buildASequenceHTML(sequenceObject, id, sequence, prevSequence, selectable, dotify, nocolour,
+                                 isConsensus, colourScheme, idSubmit, idSubmitClean,
+                                 idSubmitAttribute)
 {
-    var seqArray = sequence.split("");
+    var seqArray     = sequence.split("");
     var prevSeqArray = undefined;
 
     if(dotify && (prevSequence != undefined))
@@ -1005,14 +1015,16 @@ function JSAV_buildASequenceHTML(id, sequence, prevSequence, selectable, dotify,
     }
     else
     {
-       var url       = idSubmit;
-       var submitSeq;
+       var url         = idSubmit;
+       var submitParam = sequenceObject[idSubmitAttribute];
        if(idSubmitClean)
        {
-          submitSeq = sequence.replace(/[^A-Za-z]/g, '');
+          // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+          // It probably wouldn't make sense for IDs etc
+          submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
        }
        
-       url += submitSeq;
+       url += submitParam;
        tableLine += "<th class='idCell'><a href='" + url + "'>" + id + "</a></th>";
     }
 
@@ -1252,20 +1264,21 @@ function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlig
    {
       var prevSequence = undefined;
       if(i>0) { prevSequence = sequences[i-1].sequence; }
-      html += JSAV_buildASequenceHTML(sequences[i].id, sequences[i].sequence, prevSequence, 
+      html += JSAV_buildASequenceHTML(sequences[i], sequences[i].id, sequences[i].sequence, prevSequence, 
                                       selectable, dotify, nocolour, false, 
                                       gOptions[divId].colourScheme,
                                       gOptions[divId].idSubmit,
-                                      gOptions[divId].idSubmitClean) + "\n";
+                                      gOptions[divId].idSubmitClean,
+                                      gOptions[divId].idSubmitAttribute) + "\n";
    }
 
    if(consensus != undefined)
    {
-       html += JSAV_buildASequenceHTML('Consensus', gConsensus[divId], undefined,
-                                       selectable, dotify, nocolour, true,
-                                       gOptions[divId].colourScheme, 
-                                       null,
-                                       false) + "\n";
+      html += JSAV_buildASequenceHTML(null, 'Consensus', gConsensus[divId], undefined,
+                                      selectable, dotify, nocolour, true,
+                                      gOptions[divId].colourScheme, 
+                                      null,
+                                      false) + "\n";
    }
 
    if(highlight != undefined)
