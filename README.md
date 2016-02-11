@@ -59,7 +59,8 @@ the divId and array of sequence objects
                     screen (or containing div)
 - `scrollY`       - Specify a height for the sequence display
                     div and make it scrollable (e.g. "500px")
-
+- `labels`        - Array of residue labels 
+- `autoLabels`    - Generate sequential labels automatically
 
 The Sequence Object
 -------------------
