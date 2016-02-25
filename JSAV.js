@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.10 24.09.16
+    JSAV V1.10.1 25.02.16
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.10
-   Date:       11.02.16
+   Version:    V1.10.1
+   Date:       25.02.16
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
@@ -76,6 +76,8 @@
                       object to output array rather than just the ID and sequence
                       Added options.idSubmitAttribute so that clicking on an
                       ID can now call a URL with things other than the sequence
+   V1.10.1 25.02.16   Delete button is now correctly 'deletebutton' class
+                      instead of 'delete' class
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -654,11 +656,12 @@ Prints the delete button
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 - 23.09.15 Added label parameter and use of this label  By: ACRM
+- 25.02.16 Corrected class from delete to deletebutton
 */
 function JSAV_printDelete(divId, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip delete' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
+   var html = "<button type='button' class='tooltip deletebutton' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
