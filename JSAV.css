@@ -78,9 +78,10 @@
 /* Colour for the region marked for sorting                            */
 .JSAV .marked {background-color: #AAAAAA;}
 /* Colour for regions marked as highlighted with options.highlight     */
-.JSAV .highlighted {background-color: #00FF00;}
-/* Size of the highlighting row                                        */
-.JSAV .highlightrow {height: 5px;}
+/* JSAV .highlighted {background-color: #00FF00; height: 10px;}
+   Size of the highlighting row                                        
+.JSAV .highlightrow {height: 5px;}					*/
+.JSAV .tr_highlightrow {width: 12px; padding:0; margin: 0;}
 /* Padding and border around the JSAV sequence display                 */
 /* .JSAV {padding: 2ex 1in; border: 2px solid green;}                  */
 
@@ -95,9 +96,33 @@
 }
 
 /* Spacing of controls from the sequence display                       */
-.JSAVControls {margin: 1em 0 0 0;}
+.JSAVControls { margin: 1em 0 0 0; }
+.JSAVControls .controlbuttons {
+				}
 /* Spacing around the buttons in the controls section                  */
-.JSAVControls button {margin: 1px 4px 1px 0px;} 
+.JSAVControls button { margin: 1px 4px 1px 0px;
+			display:inline-block;
+			padding:1px 5px;
+			margin-bottom:0;
+			font-size:12px;
+			font-weight:400;
+			line-height:1.42857143;
+			text-align:center;
+			white-space:nowrap;
+			vertical-align:middle;
+			-ms-touch-action:manipulation;
+			touch-action:manipulation;
+			cursor:pointer;
+			-webkit-user-select:none;
+			-moz-user-select:none;
+			-ms-user-select:none;
+			user-select:none;
+			background-image:none;
+			border:1px solid transparent;
+			border-radius:3px;
+			color:#fff;
+			border-color:#2e6da4;} 
+.JSAVControls button.active		{color:#fcd3a5;}
 /* Background colour for the residue range slider                      */
 .JSAVControls .ui-slider-range { background: #AAAAAA; }
 /* Handle colour for the residue range slider                          */
@@ -109,15 +134,43 @@
      See http://stackoverflow.com/questions/4391588/changing-color-of-jquery-ui-buttons
 ***/
 /* Any styling to apply to the sort button                             */
-.JSAVControls .sortbutton { }
+.JSAVControls .sortbutton {	background-color:#337ab7; }
+/* Any styling to apply to the hide button                             */
+.JSAVControls .hidebutton {	background-color:#8fafd8; } 
+/* Any styling to apply to the show all button                           */
+.JSAVControls .showallbutton {	background-color:#8fafd8; } 
 /* Any styling to apply to the export button                           */
-.JSAVControls .exportbutton { }
+.JSAVControls .exportbutton { background-color:#8fafd8; }
 /* Any styling to apply to the delete button                           */
 .JSAVControls .deletebutton { }
 /* Any styling to apply to the submit button                           */
 .JSAVControls .submitbutton { }
 /* Any styling to apply to the action button                           */
 .JSAVControls .actionbutton { }
+/* Any styling to apply to the colour selector                         */
+.JSAVControls .colourselect {	margin: 1px 4px 1px 0px;
+				display:inline-block;
+				padding:1px 5px;
+				margin-bottom:0;
+				font-size:12px;
+				font-weight:400;
+				line-height:1.42857143;
+				text-align:center;
+				white-space:nowrap;
+				vertical-align:middle;
+				background-image:none;
+				border:1px solid transparent;
+				border-radius:3px;
+				color:#fff;
+				background-color:#669acc;
+				border-color:#2e6da4; }
+/* Any styling to apply to the no colour button                        */
+.JSAVControls .nocolourbutton { background-color:#669acc;	}
+/* Any styling to apply to the dotify button                           */
+.JSAVControls .dotifybutton { background-color:#669acc; }
+/* Any styling to apply to the tranpose button                           */
+.JSAVControls .transposebutton { background-color:#669acc; }
+
 /* For example:
 .JSAVControls .actionbutton { background: #FF4444; 
                               border-color: #666666; 
@@ -127,29 +180,106 @@
 /***********************************************************************/
 /*** Things the user is NOT likely to want to change                 ***/
 /***********************************************************************/
-.JSAV table {border-collapse: collapse;}
+
+.JSAVControls .actionbutton { background: #8eb4e3; border-radius: 4px; border-color: #666666; }
+.JSAVControls input { margin-left: 8pt; }
+.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px;}
+.JSAV p, .JSAV label {color: #274c7b;}
+.JSAV .highlightrow  {height: 18px;}
+.JSAV .typeLabelRow {height: 2px;}
+.JSAV .highlighted   {background-color: #ff8888;}
+.JSAV .unhighlighted {background-color: #aaffaa;}
+
+.JSAV .seqids {float: left; width: 100px; overflow-x: scroll;}
+.JSAV .seltable {float: left; width: 15px; }
+.JSAV .seqtable {overflow-x: scroll;}
+.JSAV .tr_seqids {overflow-y: scroll; height: 100px; position: relative;}
+.JSAV .tr_seltable {height:15px;}
+.JSAV .tr_seqtable {overflow-y: scroll; height: 1000px; position: relative;}
+
+.JSAV table {border-collapse: collapse;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;}
 .JSAV tr    {padding: 0;
              margin: 0}
 .JSAV td    {padding: 1px;
              margin: 0;
-             font: 10pt courier,monospaced;}
+             font: 10pt courier,monospaced;
+             text-align: center;}
 .JSAV th    {padding: 1px;
              margin: 0;
              text-align: left;
              font: bold 10pt courier,monospaced;}
+.JSAV tr.topline { border-bottom: 2px solid black; padding-bottom: 5px;}
 .JSAV .toprow td {border-bottom: 1px solid #AAAAAA;
                   margin: 0 0 1px 0;}
 .JSAV .bottomrow td {border-top: 1px solid black;
                      border-bottom: 1px solid black;
                      margin: 0 0 1px 0;}
-.JSAV .markerrow {border-right: 1px solid black; height:10px}
-.JSAV .selectCell {border-right: 1px solid black;}
+.JSAV .markerrow {height:10px;}
+.JSAV .labelrow {height: 16px;}
+.JSAV .seqrow {height: 18px;}
+.JSAV .leftCol {border-left: 1px solid black;}
+.JSAV .tr_selectCell {text-align: left; width: 15px;} 
+.JSAV .tr_seqCell {width: 20px;} 
+.JSAV .tr_labels {width: 50px;}
+.JSAV .selectCell {padding-left: 5px; padding-top: 0px;}
+.JSAV .seqCell {padding: 0; margin: 0; }	
 .JSAV .consensusSelectCell {border-right: 1px solid black; 
                             border-top: 2px solid black}
 .JSAV .consensusCell {border-top: 2px solid black; }
+.JSAV .tr_consensusCell {border-left: 2px solid black; }
 
 .JSAV .unmarked {background-color: #FFFFFF;}
-.JSAV .unhighlighted {background-color: #FFFFFF;}
+.JSAV .rotate {
+  height: 100px;
+  white-space: nowrap;
+}
+
+.JSAV .rotate > div {
+  	transform: 
+    		translate(2px, 40px)
+    		rotate(270deg);
+  	width: 5px;
+  	padding: 5px 5px;
+}
+
+.light-col {background-color:#669acc;}
+.heavy-col {background-color:#337ab7;}
+td.light-txt {color:#669acc;font-weight: normal; font: 9pt sans-serif; height: 10px;}
+td.heavy-txt {color:#337ab7;font-weight: normal; font: 9pt sans-serif; height: 10px;}
+button.toggle-col { margin: 0px 4px 0px 0px;
+		display:inline-block;
+		padding:1px 5px;
+		margin-bottom:0;
+		font-size:10px;
+		font-weight:400;
+		line-height:1.42857143;
+		text-align:center;
+		white-space:nowrap;
+		vertical-align:top;
+		-ms-touch-action:manipulation;
+		touch-action:manipulation;
+		cursor:pointer;
+		-webkit-user-select:none;
+		-moz-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
+		background-image:none;
+		border:1px solid transparent;
+		border-radius:3px;
+		color:#fff;
+		border-color:#2e6da4;} 
+					
+.toggle-col-list { margin-bottom: 5px; }
+.toggle-col-text { font-weight: bold; }
+
+.table_yscroll { overflow-y: scroll; }
+.table_xscroll { width: 100%; overflow-y: scroll; }
 
 .JSAV a:link {color:#000000; text-decoration:none;}
 .JSAV a:visited {color:#000000; text-decoration:none;}
@@ -157,8 +287,8 @@
 .JSAV a:active {color:#000000; text-decoration:none;}
 
 /* Delete and dot colours */
-.JSAV .aaDel {background-color: #000000; color: #FFFFFF}
-.JSAV .aaDot {background-color: #FFFFFF; color: #000000}
+.JSAV .aaDel {background-color: #000000; color: #FFFFFF;}
+.JSAV .aaDot {background-color: #FFFFFF; color: #000000;}
 
 /* Willie Taylor scheme */
 .JSAV .clustalA {background-color: #80a0f0; color: #000000;}
