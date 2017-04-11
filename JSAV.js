@@ -1599,21 +1599,22 @@ Builds the label for the sequence row
 @param 		{string}	divId		ID of the div we're dealing with
 @param 		{string}	attributeValue 	value of idSubmitAttribute for the id
 @param 		{string}	id		sequence's id
-@param 		{string}	idSubmit	text for label link	
-@returns	{string}	tableLine	HTML for the label
+@param 		{string}	idSubmit	text for label link
+@param		{number}	colspan		number of table columns to span	
+@returns	{string}	html		HTML for the label
 
 @author
 - 23.03.17 Original By: JH
 */
 
-function JSAV_buildId(divId, attributeValue, id, idSubmit) {
+function JSAV_buildId(divId, attributeValue, id, idSubmit, colspan) {
 
     var options = gOptions[divId];
-    var tableLine = "<tr class='seqrow' id='" + id + "'>";
+    var html = "";
 
     if (idSubmit == null)
     {
-       tableLine += "<th class='idCell'>" + id + "</th>";
+       html += "<th colspan='" + colspan + "'class='idCell'>" + id + "</th>";
     }
     else
     {
@@ -1627,12 +1628,10 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit) {
        }
        
        url += submitParam;
-       tableLine += "<th class='idCell'><a href='" + url + "'>" + id + "</a></th>";
+       html += "<th colspan='" + colspan + "'class='idCell'><a href='" + url + "'>" + id + "</a></th>";
     }
 
-
-    tableLine += "</tr>";
-return(tableLine);
+return(html);
 }
 
 // ---------------------------------------------------------------------
@@ -1680,7 +1679,9 @@ function JSAV_buildSequencesHTML(divId, sequences)
    for(var i=0; i<sequences.length; i++) 
 	if (sequences[dispOrder[i]].displayrow)					
   	 {
-     	 html += JSAV_buildId(divId, sequences[dispOrder[i]][options.idSubmitAttribute], sequences[dispOrder[i]].id, options.idSubmit) + "\n";
+	 html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
+     	 html += JSAV_buildId(divId, sequences[dispOrder[i]][options.idSubmitAttribute], sequences[dispOrder[i]].id, options.idSubmit, 1) + "\n";
+	 html += "</tr>";
    	 }
    if(options.consensus != undefined)
        {
@@ -3040,6 +3041,7 @@ Displays a single row of the data table, where displayrow is true
 
 function printDataRow(divId, sequence) {
 
+var options = gOptions[divId];
 var html = "";
 if (sequence.displayrow) {
 	html += "<tr id = 'table_" + sequence.id + "'>";
@@ -3048,6 +3050,9 @@ if (sequence.displayrow) {
 		{
 			if (typeof(sequence[key]) == 'undefined') {
                            	html += "<td colspan=3></td>";
+			} else if (key.includes('Accession')) {
+
+				html += JSAV_buildId(divId, sequence[options.idSubmitAttribute], sequence.id, options.idSubmit, 3)
  			} else {
 				html += "<td colspan=3>" + sequence[key] + "</td>";
 			}
