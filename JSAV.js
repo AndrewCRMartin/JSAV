@@ -1619,7 +1619,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, colspan, bgcol) {
 
     if (idSubmit == null)
     {
-       html += "<th colspan='" + colspan + "'class='idCell'>" + id + "</th>";
+       html += "<td colspan='" + colspan + "'class='idCell'>" + id + "</td>";
     }
     else
     {
@@ -1633,7 +1633,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, colspan, bgcol) {
        }
        
        url += submitParam;
-       html += "<th colspan='" + colspan + "' " + bgcol + " class='idCell'><a href='" + url + "'>" + id + "</a></th>";
+       html += "<td colspan='" + colspan + "' " + bgcol + " class='idCell'><a href='" + url + "'>" + id + "</a></td>";
     }
 
 return(html);
