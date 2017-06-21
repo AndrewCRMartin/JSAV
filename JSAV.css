@@ -488,14 +488,15 @@ button.toggle-col { margin: 2px 4px 2px 2px;
 		color:#fff;
 		border-color:#2e6da4;} 
 					
-.toggle-col-list { margin-bottom: 5px; }
-.toggle-col-text { font-weight: bold; }
+.toggle-col-list { margin: 5px 0px 5px 25px; padding: 2px 0px 2px 5px; width: 75%; border: 0.5px solid var(--heavy-blue);}
+.outertable {overflow-y: auto; padding-top: 0.2em}
+.innertable {overflow-y: hidden; direction: ltr;}
+.table_xscroll { width: 1600px; margin-left: 0.5em}
 
 /* GLOBAL FORMATTING */
 
-.innertable {overflow-y: hidden; direction: ltr; position: relative;}
 .notshown {display: none;}
-.table_yscroll { overflow-y: scroll; }
-.table_xscroll { width: 1600px; overflow-y: scroll; }
+
+
 
 

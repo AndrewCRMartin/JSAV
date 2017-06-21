@@ -308,7 +308,7 @@ function printJSAV(divId, sequences, options)
       div_sortable.css('overflow-x', 'hidden');
       div_sortable.css('white-space', 'nowrap');
       div_sortable.css('width', options.scrollX);
-      document.getElementById(divId+"_Table").classList.add('table_xscroll');
+      //document.getElementById(divId+"_Table").classList.add('table_xscroll');
    }
    
    if(options.scrollY != null)
@@ -316,7 +316,7 @@ function printJSAV(divId, sequences, options)
       div_sortable.css('overflow-y', 'auto');
       div_sortable.css('direction', 'rtl');
       div_sortable.css('white-space', 'nowrap');
-      document.getElementById(divId+"_Table").classList.add('table_yscroll');
+      //document.getElementById(divId+"_Table").classList.add('table_yscroll');
    }
    
 
@@ -2386,6 +2386,7 @@ Calculates a consensus sequence
 function JSAV_buildConsensus(sequences)
 {
     var nSeqs    = sequences.length;
+    var nDispSeqs = 0;
     var seqLen   = sequences[0].sequence.length;
     // Initialize array
     var aaCounts = Array(seqLen);
@@ -2398,6 +2399,7 @@ function JSAV_buildConsensus(sequences)
     for(var seq=0; seq<nSeqs; seq++)
 	if (sequences[seq].displayrow)					
     {
+        nDispSeqs++;
         var seqArray = sequences[seq].sequence.split('');
 
         // Step through the positions
@@ -2430,7 +2432,7 @@ function JSAV_buildConsensus(sequences)
                 maxAA = aaCounts[pos][validAAs[aaCount]];
             }
         }
-        if(maxAA <= (nSeqs / 2))
+        if(maxAA <= (nDispSeqs / 2))
         {
             mostCommon = mostCommon.toLowerCase();
         }
@@ -2706,24 +2708,26 @@ Main function for printing the data table
 
 function printDataTable(divId, sequences) {
 var options = gOptions[divId];
-$('#' + divId + '_Table').css('height', DT_calculateTableHeight(sequences, options.scrollY));
-$('#' + divId + '_Table').css('direction', 'rtl');
-$('#' + divId + '_Table').css('overflow-y', 'auto');
-$('#' + divId + '_Table').css('margin-left', '0.5em');
-
-var html = "<div id='" + divId + "_InnerTable' class='innertable'>";
 var dispOrder = gDisplayOrder[divId];
 var tableDiv = divId + '_Table';
 var tableTag = "#" + tableDiv;
+var html = '';
 html += printToggleList(divId);
+html += "<div id='" + tableDiv + "_Outer' class='outertable'>";
+html += "<div id='" + tableDiv + "_Inner' class='innertable'>";
 html += printTableHeader(divId);
 html += "<tbody id='" + divId + "_table'>";
 for (var s=0;s<sequences.length;s++)
 	html += printDataRow(divId, sequences[dispOrder[s]]);
 html += '</tbody></table>';
-html == "</div>";
+html += "</div></div>";
+html += "<div id='" + tableDiv + "_Controls'>";
 html += "<button class='generalbutton' onclick='JSON2CSV(\""+divId+"\");'> Export to CSV </button>";
+html += "</div>";
 $("#" + tableDiv).html(html);
+$("#" + tableDiv).addClass("table_xscroll");
+$(tableTag + '_Outer').css('direction', 'rtl');
+$(tableTag + '_Outer').css('height', DT_calculateTableHeight(sequences, options.scrollY));
 }
 
 /**
@@ -2764,7 +2768,7 @@ for (var stype in stypes) {
  for (var s=0; s<=sequences.length; s++) {
    for (var key in sequences[s]) {
       //if (gOptions[divId].defaultColumns.indexOf(key.substring(6)) >= 0) {
-	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id')) {
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
            if (key.substr(0,5) == stypes[stype]) {
 		if (gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0)
 		{ 
@@ -2813,8 +2817,8 @@ Calculates optimum table height based on number of sequences
 
 function DT_calculateTableHeight(sequences, scrollY) {
 	var rowcount = 0;
-	var rowheight = 18;
-	var headerheight = 80;
+	var rowheight = 17;
+	var headerheight = 20;
 
 	for (var s=0; s<sequences.length; s++)
 		if (sequences[s].displayrow) rowcount++;
@@ -2997,14 +3001,25 @@ Prints the toggle list - the buttons for redisplaying columns where display is t
 - 09.01.17 Original By: JH
 */
 
+function truncateLabel(lbl, num) {
+
+var lblarr = lbl.split(' ');
+if (lblarr.length <= num) {
+   var lblsht = lbl;
+   } else {
+   var lblsht = lblarr.slice(lblarr.length-(num+2)).join(" ");
+   }
+return lblsht;
+}
+
 function printToggleList(divId) {
 
-var html = "<div class='toggle-col-list'><span class='toggle-col-text'>Show hidden columns: </span><br />";
+var html = "<div class='toggle-col-list'>Unhide columns: <br />";
 for (var key in gDisplayColumn[divId]) {
 	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
  	if (gDisplayColumn[divId][key] == false) {
         	var seqtype = key.substring(0,5);
-		html += "<button class='"+seqtype+"-col toggle-col' onclick='"+onclick+"'>"+key.substring(6).replace(/_/g, " ")+"</button>";
+		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Unhide column: "+key.substring(6).replace(/_/g, " ")+"' onclick='"+onclick+"'>"+truncateLabel(key.substring(6).replace(/_/g, " "), 4)+"</button>";
         }
 } 
 html += '</div>';
