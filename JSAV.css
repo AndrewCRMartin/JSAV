@@ -69,8 +69,8 @@
 
 /* Declare global colours */
 :root {
-   --JSAVlight-blue: #8EB4E3;
-   --JSAVheavy-blue: #27A1CB;
+   --JSAVlight-blue: #1496BB;
+   --JSAVheavy-blue: #3C6478;
 }
 
 /***********************************************************************/
@@ -193,6 +193,7 @@
 .JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px;}
 .JSAV p, .JSAV label {color: #274c7b;}
 .JSAV .highlightrow  {height: 18px;}
+.JSAV .br_highlightrow  {height: 18px; border-right: 3px solid black;}
 .JSAV .tr_highlightrow {width: 12px; padding:0; margin: 0;} /* Transposed version */
 .JSAV .typeLabelRow {height: 2px;}
 .JSAV .highlighted   {background-color: #ff8888;}
@@ -203,9 +204,12 @@
 .JSAV .seltable {float: left; width: 15px; }
 .JSAV .seqtable {overflow-x: scroll; direction: ltr;}
 /* Transposed version of above */
-.JSAV .tr_seqids {overflow-y: scroll; height: 100px; direction: ltr; position: relative;}
-.JSAV .tr_seltable {height:15px; direction: ltr;}
-.JSAV .tr_seqtable {overflow-y: scroll; height: 865px; direction: ltr; position: relative;}
+.JSAV .tr_seqids {overflow-y: hidden; direction: ltr;}
+.JSAV .tr_seltable {height:15px; direction: ltr; padding-left: 16px;}
+.JSAV .tr_seqtable {overflow-y: hidden; direction: ltr;}
+.JSAV .tr_outerseqids {overflow-y: auto; height: 100px;}
+.JSAV .tr_outerseqtable {overflow-y: auto; height: 880px;}
+.JSAV .spacer {height: 20px;}
 
 .JSAV table {border-collapse: collapse;
 		-webkit-touch-callout: none;
@@ -237,10 +241,12 @@
 .JSAV .leftCol {border-left: 1px solid black;}
 .JSAV .selectCell {padding-left: 5px; padding-top: 0px;}
 .JSAV .seqCell {padding: 0; margin: 0; }	
+.JSAV .br_seqCell {padding: 0; margin: 0; border-right: 3px solid black;}	
 .JSAV .tr_seqCell {width: 20px;} 			/* Transposed version 	*/
 .JSAV .consensusSelectCell {border-right: 1px solid black; 
                             border-top: 2px solid black}
 .JSAV .consensusCell {border-top: 2px solid black; }
+.JSAV .br_consensusCell {border-top: 2px solid black; border-right: 3px solid black;}
 .JSAV .tr_consensusCell {border-left: 2px solid black; } /* Transposed version 	*/
 
 .JSAV .unmarked {background-color: #FFFFFF;}
@@ -264,8 +270,10 @@
 .heavy-col {background-color:var(--JSAVheavy-blue);}
 
 /* Colouring and formatting of text in label row */
-td.light-txt {color:var(--JSAVlight-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
-td.heavy-txt {color:var(--JSAVheavy-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
+.JSAV .light-txt {color:var(--JSAVlight-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
+.JSAV .heavy-txt {color:var(--JSAVheavy-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
+.JSAV .br_light-txt {color:var(--JSAVlight-blue);font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
+.JSAV .br_heavy-txt {color:var(--JSAVheavy-blue);font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
 
 
 

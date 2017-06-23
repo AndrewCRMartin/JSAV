@@ -308,7 +308,6 @@ function printJSAV(divId, sequences, options)
       div_sortable.css('overflow-x', 'hidden');
       div_sortable.css('white-space', 'nowrap');
       div_sortable.css('width', options.scrollX);
-      //document.getElementById(divId+"_Table").classList.add('table_xscroll');
    }
    
    if(options.scrollY != null)
@@ -316,7 +315,6 @@ function printJSAV(divId, sequences, options)
       div_sortable.css('overflow-y', 'auto');
       div_sortable.css('direction', 'rtl');
       div_sortable.css('white-space', 'nowrap');
-      //document.getElementById(divId+"_Table").classList.add('table_yscroll');
    }
    
 
@@ -326,7 +324,6 @@ function printJSAV(divId, sequences, options)
 	   var html = JSAV_buildSequencesHTML(divId, sequences);
 	}
    div_sortable.append(html);
-
 
    var div_controls = $('<div />').appendTo(div);
    div_controls.attr('id', divId + '_controls');
@@ -435,7 +432,7 @@ Returns optimum height of the display areas based on number of sequences
  */
 
 function calculateTableHeight(sequences, consensus, highlight, sortable, scrollY) {
-	var height = 60; 		//Two label rows + two typeLabel rows + scroll bar
+	var height = 65; 		//Two label rows + two typeLabel rows + scroll bar
 	var rowheight = 18;
 	var highlightheight = 18;
         var sortheight = 10;
@@ -715,7 +712,7 @@ function JSAV_toggleTranspose(divId, theButton, theOption, activeText, inactiveT
       } 
     else 
       { 
-        div_sortable.css('overflow-x', 'scroll');
+        div_sortable.css('overflow-x', 'auto');
         div_sortable.css('overflow-y', 'hidden'); 
         div_sortable.css('height', '1000'); 
       } ;
@@ -811,17 +808,21 @@ count from zero.
 
 @author 
 - 13.06.14   Original   By: ACRM
-- 09.01.17	 Now calls printHighlightCell to display each cell based on highlight  By: JH
+- 09.01.17	 Now calls calculate
+printHighlightCell to display each cell based on highlight  By: JH
 */
-function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
+function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight, cc)
 {
     var html = "";
+    var pref;
 
     html += "<tr class='highlightrow'><td class='leftCol'></td>";
 
     for(var i=0; i<seqLen; i++)
     {
-		html += printHighlightCell(highlight, i, '');
+         pref = '';
+         if (i == cc) { pref = 'br_highlightrow'; }
+	 html += printHighlightCell(highlight, i, pref);
     }
     html += "</tr>\n";
     return(html);
@@ -1299,6 +1300,7 @@ function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dot
 	
 var colourClass = colourScheme + aa.toUpperCase();
 
+
 if((dotify || nocolour) && !isConsensus)
 	{
 	if(nocolour)
@@ -1360,7 +1362,7 @@ separate <td> tag with a class to indicate the amino acid type
 - 09.01.17 Changed first if statement to allow independent dotify or nocolour display
 		   Individual cell display now carried out by printResidueCell By: JH
 */
-function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit)
+function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit, cc)
 {
 	var options = gOptions[divId];
 	var seqArray     = sequence.split("");
@@ -1379,10 +1381,13 @@ function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequen
         consensusClass = " consensusCell";
     }
 
+    var pref;
     var nResidues = seqArray.length;
     for(var i=0; i<nResidues; i++) {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
 	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
-        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, options.nocolour, options.dotify, options.colourScheme, '');
+        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, options.nocolour, options.dotify, options.colourScheme, pref);
 	}
   
     tableLine += "</tr>";
@@ -1511,9 +1516,9 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 	var options = gOptions[divId]
 	var html = "";
 	html += "<div class='JSAV'>\n";
-        
         // Create id line
 
+	html += "<div id='"+divId+"tr_outerseqids' class='tr_outerseqids'>";
 	html += "<div class='tr_seqids'><table border='0'>\n";
 	html += "<tr><th class='tr_labels idCell rotate'><div>All/None</div></th>";
 	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
@@ -1542,7 +1547,7 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 		html += "<th class='idCell rotate tr_consensusCell'><div>Consensus</div></th>";
 	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
 	html += '</tr>';
-        html += "</table></div>";
+        html += "</table></div></div>";
 
 
 	// Create the selection button line
@@ -1565,6 +1570,7 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 	}
 	
 	// Create transposed sequences
+	html += "<div id='"+divId+"tr_outerseqtable' class='tr_outerseqtable'>";
         html += "<div class='tr_seqtable'><table border='0'>";
         html += "<tr class='topline'><td></td></tr>";
         for (var i=0;i<gSequenceLengths[divId];i++)
@@ -1594,7 +1600,10 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 		}
 	html += "</table>\n";
         html += "</div>\n";
+        html += "</div>\n";
 	html += "</div>\n";
+        $('#'+divId+'tr_outerseqids').css('direction','rtl');
+        $('#'+divId+'tr_outerseqtable').css('direction','rtl');
 	return(html);
 }
 // ----------------------------------------------------------------
@@ -1729,18 +1738,19 @@ function JSAV_buildSequencesHTML(divId, sequences)
    // -----------------------------------------------------
    html += "<div class='seqtable'><table border='0'>\n";
 
+  var cc = chainChange(options.labels);
   if(options.labels != undefined)
    {
        html += "<tr class='labelrow'><td class='leftCol'></td>";
-       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels);
-   }
-   html += '</tr>';											
+       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels, cc);
+       html += '</tr>';									
+   }		
   if(options.labels != undefined)
     html += JSAV_buildTypeLabel(options.labels);
 
   if(options.highlight != undefined)
    {
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight);
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
    }						
    // Build the actual sequence entries
    for(var i=0; i<sequences.length; i++) 
@@ -1749,18 +1759,18 @@ function JSAV_buildSequencesHTML(divId, sequences)
         html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'><td class='leftCol'></td>";
         var prevSequence = undefined;
         if(i>0) { prevSequence = sequences[dispOrder[i-1]].sequence; }
-        html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit) + "\n";
+        html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit, cc) + "\n";
         }
    if(options.consensus != undefined)
       {
       html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'><td class='leftCol'></td>";
-      html += JSAV_buildASequenceHTML(divId, null, 'Consensus', gConsensus[divId], undefined, true, null) + "\n";
+      html += JSAV_buildASequenceHTML(divId, null, 'Consensus', gConsensus[divId], undefined, true, null, cc) + "\n";
       }
 
    if(options.highlight != undefined)
    {
        // If we are highlighting regions in the sequence, do so again at the bottom of the table
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight);
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
    }
   if(options.labels != undefined)
     html += JSAV_buildTypeLabel(options.labels);
@@ -2261,14 +2271,15 @@ function JSAV_refresh(divId, sequences, start, stop)
 {
 	var options = gOptions[divId];
 	if (options.transpose) {
-		var html = JSAV_transposeSequencesHTML(divId, sequences);
+		var html = JSAV_transposeSequencesHTML(divId, sequences)
 	} else {
 		var html = JSAV_buildSequencesHTML(divId, sequences);
 	}
 									  
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
-   if(options.border)
+
+ if(options.border)
    {
        JSAV_modifyCSS(divId);
    }
@@ -2602,6 +2613,16 @@ function ACRM_dialog(title, msg, width, pre)
 };
 
 
+function chainChange(labels) {
+
+var res = labels.length;
+for (var i=0; i < labels.length-1; i++)
+  if (labels[i].substring(0,1) != labels[i+1].substring(0,1)) {
+    res = i;
+  }
+return res;
+}
+
 // ---------------------------------------------------------------------
 /**
 Create the HTML for a label row in the sequence display
@@ -2616,17 +2637,21 @@ Create the HTML for a label row in the sequence display
 - 22.12.15 Original   By: ACRM
 - 09.01.17 Modified considerably for new label format	By: JH
 */
-function JSAV_buildLabelsHTML(divId,  seqLen, labels)
+
+function JSAV_buildLabelsHTML(divId,  seqLen, labels, cc)
 {
     var html = "";
+    var pref;
     var labelNumbers = "";
     for(var i=0; i<labels.length; i++)
     {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
         // Make a copy of the label and remove the chain label
         var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
         var labelText = labels[i].replace(/^[A-Za-z]/g, '');
         var lastChar = labelText.substring(labelText.length-1,labelText.length);
-		html += "<td class='"+cellCol+"'>";
+		html += "<td class='"+pref+cellCol+"'>";
  		if (lastChar == "0") {
 			labelNumbers = labels[i].replace(/[A-Za-z]/g, '');
 			}
@@ -2640,6 +2665,8 @@ function JSAV_buildLabelsHTML(divId,  seqLen, labels)
    html += "</tr><tr class='labelrow'><td class='leftCol'></td>";
    for(var i=0; i<labels.length; i++)
     {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
         var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
         var labelText = labels[i].replace(/^[A-Za-z]/g, '');
 
@@ -2647,10 +2674,10 @@ function JSAV_buildLabelsHTML(divId,  seqLen, labels)
         var lastChar = labelText.substring(labelText.length-1,labelText.length);
 
         // Open a table cell with the label as a tooltip
-        html += "<td class='tooltip "+cellCol+"' title='" + labels[i] + "'>";
+        html += "<td class='tooltip "+pref+cellCol+"' title='" + labels[i] + "'>";
 
         // Insert the appropriate character
-        if(lastChar == "0")                   // 0 - do a '|'
+        if (lastChar == "0")   // 0 - do a '|'
         {
 			html += "|";
         }
@@ -2693,6 +2720,77 @@ function JSAV_autoLabels(sequences)
 }
 
 // -----------------------------------------------------------------
+/**
+Initialises dispOrder to initial sequence ordering
+
+@param {object[]} sequences 	- array of sequence objects
+@returns {int[]} dispOrder	- array of sequence elements in order of display
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function initDisplayOrder(sequences) {
+
+var dispOrder = [];
+for (var r=0; r<sequences.length; r++) {
+	dispOrder[r] = r;
+	}
+return(dispOrder);
+}
+
+// -----------------------------------------------------------------
+/**
+Initialises dispColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
+
+@param {string} divId		- divId we're dealing with
+@param {object[]} sequences 	- array of sequence objects
+@returns {int[]} dispColumn	- array of codes for indicating column sort status
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function initDisplayColumn(divId, sequences) {
+	
+var stypes = ['heavy','light'];
+var dispColumn = {};
+for (var stype in stypes) {
+  for (var s=0; s<=sequences.length; s++) {
+    for (var key in sequences[s]) {
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
+           if (key.substr(0,5) == stypes[stype]) {
+		if ( gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0 )
+		  { 
+ 		  dispColumn[key] = 1; 
+		  } else {
+                  dispColumn[key] = 0;
+                  }
+                }
+            }
+	}
+    }
+  }
+if ( gOptions[divId].simpleSearch.length > 0 ) {
+  for (var stype in stypes) {
+    for (var s=0; s<=sequences.length; s++) {
+      for (var key in sequences[s]) {
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
+           if (key.substr(0,5) == stypes[stype]) {
+	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].simpleSearch.toLowerCase()) >= 0 ) 
+		{ 
+ 		  dispColumn[key] = 1; 
+                }
+              }
+           }
+         }
+      }
+    }
+  }   
+return(dispColumn);
+}
+
+// -----------------------------------------------------------------
 // ------------------ Data Table Functions -------------------------
 // -----------------------------------------------------------------
 // -----------------------------------------------------------------
@@ -2730,64 +2828,10 @@ $(tableTag + '_Outer').css('direction', 'rtl');
 $(tableTag + '_Outer').css('height', DT_calculateTableHeight(sequences, options.scrollY));
 }
 
-/**
-Initialises dispOrder to initial sequence ordering
-
-@param {object[]} sequences 	- array of sequence objects
-@returns {int[]} dispOrder	- array of sequence elements in order of display
-
-@author
-- 09.01.17 Original By: JH
-*/
-
-function initDisplayOrder(sequences) {
-
-var dispOrder = [];
-for (var r=0; r<sequences.length; r++) {
-	dispOrder[r] = r;
-	}
-return(dispOrder);
-}
 
 // -----------------------------------------------------------------
 /**
-Initialises dispColumn to default code 1 (unsorted) for each data table column (except sequence and displayrow)
-
-@param {object[]} sequences 	- array of sequence objects
-@returns {int[]} dispColumn		- array of codes for indicating column sort status
-
-@author
-- 09.01.17 Original By: JH
-*/
-
-function initDisplayColumn(divId, sequences) {
-	
-var stypes = ['heavy','light'];
-var dispColumn = {};
-for (var stype in stypes) {
- for (var s=0; s<=sequences.length; s++) {
-   for (var key in sequences[s]) {
-      //if (gOptions[divId].defaultColumns.indexOf(key.substring(6)) >= 0) {
-	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
-           if (key.substr(0,5) == stypes[stype]) {
-		if (gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0)
-		{ 
-		  dispColumn[key] = 1; 
-		} else {
-                  dispColumn[key] = 0;
-                }
-           }
-	}
-     //}
-   }
- }
-}   
-return(dispColumn);
-}
-
-// -----------------------------------------------------------------
-/**
-resets displayColumn to default code 1 (unsorted) for each data table column (except sequence)
+resets displayColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
 
 @param {object[]} sequences 		- array of sequence objects
 @param {int[]} displayColumn		- array of codes for indicating column sort status
@@ -2798,7 +2842,7 @@ resets displayColumn to default code 1 (unsorted) for each data table column (ex
 
 function resetDisplayColumn(displayColumn, sequences) {
 for (var key in displayColumn) 
-	if ((key != 'sequence') && (key != 'id'))
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id'))
 		if (displayColumn[key] >0)
 			displayColumn[key] = 1;
 }
