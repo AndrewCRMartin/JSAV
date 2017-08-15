@@ -67,11 +67,6 @@
    V1.8    24.09.15   Added options.scrollX and options.scrollY
 */
 
-/* Declare global colours */
-:root {
-   --JSAVlight-blue: #1496BB;
-   --JSAVheavy-blue: #3C6478;
-}
 
 /***********************************************************************/
 /*** Things the user is LIKELY to want to change                     ***/
@@ -141,13 +136,13 @@
      See http://stackoverflow.com/questions/4391588/changing-color-of-jquery-ui-buttons
 ***/
 /* Any styling to apply to the sort button                             */
-.JSAVControls .sortbutton {	background-color:var(--JSAVheavy-blue); }
+.JSAVControls .sortbutton {	background-color:#3C6478; }
 /* Any styling to apply to the hide button                             */
-.JSAVControls .hidebutton {	background-color:var(--JSAVlight-blue); } 
+.JSAVControls .hidebutton {	background-color:#89A2FF; } 
 /* Any styling to apply to the show all button                           */
-.JSAVControls .showallbutton {	background-color:var(--JSAVlight-blue); } 
+.JSAVControls .showallbutton {	background-color:#89A2FF; } 
 /* Any styling to apply to the export button                           */
-.JSAVControls .exportbutton { background-color:var(--JSAVlight-blue); }
+.JSAVControls .exportbutton { background-color:#89A2FF; }
 /* Any styling to apply to the delete button                           */
 .JSAVControls .deletebutton { }
 /* Any styling to apply to the submit button                           */
@@ -169,14 +164,14 @@
 				border:1px solid transparent;
 				border-radius:3px;
 				color:#fff;
-				background-color:var(--JSAVheavy-blue);
+				background-color:#3C6478;
 				border-color:#2e6da4; }
 /* Any styling to apply to the no colour button                        */
-.JSAVControls .nocolourbutton { background-color:var(--JSAVheavy-blue);	}
+.JSAVControls .nocolourbutton { background-color:#3C6478;	}
 /* Any styling to apply to the dotify button                           */
-.JSAVControls .dotifybutton { background-color:var(--JSAVheavy-blue); }
+.JSAVControls .dotifybutton { background-color:#3C6478; }
 /* Any styling to apply to the tranpose button                           */
-.JSAVControls .transposebutton { background-color:var(--JSAVheavy-blue); }
+.JSAVControls .transposebutton { background-color:#3C6478; }
 
 /* For example:
 .JSAVControls .actionbutton { background: #FF4444; 
@@ -188,7 +183,7 @@
 /*** Things the user is NOT likely to want to change                 ***/
 /***********************************************************************/
 
-.JSAVControls .actionbutton { background: var(--JSAVlight-blue); border-radius: 4px; border-color: #666666; }
+.JSAVControls .actionbutton { background: #89A2FF; border-radius: 4px; border-color: #666666; }
 .JSAVControls input { margin-left: 8pt; }
 .JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px;}
 .JSAV p, .JSAV label {color: #274c7b;}
@@ -196,8 +191,8 @@
 .JSAV .br_highlightrow  {height: 18px; border-right: 3px solid black;}
 .JSAV .tr_highlightrow {width: 12px; padding:0; margin: 0;} /* Transposed version */
 .JSAV .typeLabelRow {height: 2px;}
-.JSAV .highlighted   {background-color: #ff8888;}
-.JSAV .unhighlighted {background-color: #aaffaa;}
+.JSAV .highlighted   {background-color: #3C6478;}
+.JSAV .unhighlighted {background-color: #89A2FF;}
 
 /* Three section sequence table - ids, checkboxes, sequences */
 .JSAV .seqids {float: left; width: 100px; overflow-x: scroll;}
@@ -266,14 +261,14 @@
 }
 
 /* Colouring for chain type row (under label row) */
-.light-col {background-color:var(--JSAVlight-blue);}
-.heavy-col {background-color:var(--JSAVheavy-blue);}
+.light-col {background-color:#89A2FF;}
+.heavy-col {background-color:#3C6478;}
 
 /* Colouring and formatting of text in label row */
-.JSAV .light-txt {color:var(--JSAVlight-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
-.JSAV .heavy-txt {color:var(--JSAVheavy-blue);font-weight: normal; font: 9pt sans-serif; height: 10px;}
-.JSAV .br_light-txt {color:var(--JSAVlight-blue);font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
-.JSAV .br_heavy-txt {color:var(--JSAVheavy-blue);font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
+.JSAV .light-txt {color:#89A2FF;font-weight: normal; font: 9pt sans-serif; height: 10px;}
+.JSAV .heavy-txt {color:#3C6478;font-weight: normal; font: 9pt sans-serif; height: 10px;}
+.JSAV .br_light-txt {color:#89A2FF;font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
+.JSAV .br_heavy-txt {color:#3C6478;font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid black;}
 
 
 
@@ -286,7 +281,7 @@
 .JSAV .aaDel {background-color: #000000; color: #FFFFFF;}
 .JSAV .aaDot {background-color: #FFFFFF; color: #000000;}
 
-/* Willie Taylor scheme */
+/* Residue colour schemes */
 .JSAV .clustalA {background-color: #80a0f0; color: #000000;}
 .JSAV .clustalR {background-color: #f01505; color: #000000;}
 .JSAV .clustalN {background-color: #00ff00; color: #000000;}
@@ -496,8 +491,8 @@ button.toggle-col { margin: 2px 4px 2px 2px;
 		color:#fff;
 		border-color:#2e6da4;} 
 					
-.toggle-col-list { margin: 5px 0px 5px 25px; padding: 2px 0px 2px 5px; width: 75%; border: 0.5px solid var(--heavy-blue);}
-.outertable {overflow-y: auto; padding-top: 0.2em}
+.toggle-col-list { margin: 5px 0px 5px 5px; padding: 2px 0px 2px 5px; width: 75%; border: 0.5px solid black;);}
+.outertable {overflow-y: auto; padding-top: 0.5em}
 .innertable {overflow-y: hidden; direction: ltr;}
 .table_xscroll { width: 1600px; margin-left: 0.5em}
 

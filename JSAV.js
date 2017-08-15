@@ -1685,10 +1685,11 @@ function JSAV_buildSequencesHTML(divId, sequences)
         { html += "<tr class='labelrow'><th>&nbsp;</th></tr>"; }
    html += "<tr class='labelrow'><td>&nbsp;</td></tr>";
 
-   html += "<tr class='typeLabelRow'><td></td></tr>";
+   if(options.labeltypecol != undefined)
+      html += "<tr class='typeLabelRow'><td></td></tr>";
 
-  if(options.highlight != undefined)
-    html += "<tr class='highlightrow'><th class='idCell'>CDRs</th></tr>";
+   if(options.highlight != undefined)
+      html += "<tr class='highlightrow'><th class='idCell'>CDRs</th></tr>";
 
    for(var i=0; i<sequences.length; i++) 
 	if (sequences[dispOrder[i]].displayrow)					
@@ -1701,10 +1702,11 @@ function JSAV_buildSequencesHTML(divId, sequences)
        {
        html += "<tr class='seqrow'><th class='idCell'>Consensus</th></tr>";
        }
-  if(options.highlight != undefined)
-      html += "<tr class='highlightrow'><th class='idCell'>CDRs</th></tr>";
+   if(options.highlight != undefined)
+       html += "<tr class='highlightrow'><th class='idCell'>CDRs</th></tr>";
 
-   html += "<tr class='typeLabelRow'><td></td></tr>";
+   if(options.labeltypecol != undefined)
+      html += "<tr class='typeLabelRow'><td></td></tr>";
 
    if(options.sortable) {
        html += "<tr class='tooltip markerrow' title='Select region for sorting'><th class='idCell'>Sort Region</th></tr>";
@@ -1714,8 +1716,9 @@ function JSAV_buildSequencesHTML(divId, sequences)
    if (options.selectable)  {
       html += "<div class='seltable'><table border='0'>";
       html += JSAV_buildSelectAllHTML(divId, options.selectable);
-      html += "<tr class='labelrow'><td>&nbsp;</td><tr>";
-      html += "<tr class='typeLabelRow'><td></td></tr>";
+         html += "<tr class='labelrow'><td>&nbsp;</td><tr>";
+      if(options.labeltypecol != undefined)
+         html += "<tr class='typeLabelRow'><td></td></tr>";
       if(options.highlight != undefined)
          html += "<tr class='highlightrow'><th></th></tr>";
       for(var i=0; i<sequences.length; i++) 
@@ -1728,7 +1731,8 @@ function JSAV_buildSequencesHTML(divId, sequences)
          html += "<tr class='seqrow'><td></td></tr>";
       if(options.highlight != undefined)
          html += "<tr class='highlightrow'><th></th></tr>";
-      html += "<tr class='typeLabelRow'><td></td></tr>";
+      if(options.labeltypecol != undefined)
+         html += "<tr class='typeLabelRow'><td></td></tr>";
       if(options.sortable) {
          html += "<tr class='tooltip markerrow' title='Select region for sorting'><th></th></tr>";
       }
@@ -1745,8 +1749,8 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels, cc);
        html += '</tr>';									
    }		
-  if(options.labels != undefined)
-    html += JSAV_buildTypeLabel(options.labels);
+  if(options.labeltypecol != undefined)
+     html += JSAV_buildTypeLabel(options.labels);
 
   if(options.highlight != undefined)
    {
@@ -1772,8 +1776,8 @@ function JSAV_buildSequencesHTML(divId, sequences)
        // If we are highlighting regions in the sequence, do so again at the bottom of the table
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
    }
-  if(options.labels != undefined)
-    html += JSAV_buildTypeLabel(options.labels);
+   if(options.labeltypecol != undefined)
+      html += JSAV_buildTypeLabel(options.labels);
    if(options.sortable)
    {
       // The marker section which shows the range selected for sorting
@@ -2771,13 +2775,13 @@ for (var stype in stypes) {
 	}
     }
   }
-if ( gOptions[divId].simpleSearch.length > 0 ) {
+for (var term in gOptions[divId].searchTerms) {
   for (var stype in stypes) {
     for (var s=0; s<=sequences.length; s++) {
       for (var key in sequences[s]) {
-	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
+	if ((key.substr(6).toLowerCase() == term) || (term == 'simple')) {
            if (key.substr(0,5) == stypes[stype]) {
-	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].simpleSearch.toLowerCase()) >= 0 ) 
+	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
 		{ 
  		  dispColumn[key] = 1; 
                 }
@@ -2786,7 +2790,7 @@ if ( gOptions[divId].simpleSearch.length > 0 ) {
          }
       }
     }
-  }   
+  }
 return(dispColumn);
 }
 
@@ -2821,6 +2825,7 @@ html += '</tbody></table>';
 html += "</div></div>";
 html += "<div id='" + tableDiv + "_Controls'>";
 html += "<button class='generalbutton' onclick='JSON2CSV(\""+divId+"\");'> Export to CSV </button>";
+html += "<button class='generalbutton' onclick='JSON2XML(\""+divId+"\");'> Export to XML </button>";
 html += "</div>";
 $("#" + tableDiv).html(html);
 $("#" + tableDiv).addClass("table_xscroll");
@@ -3005,7 +3010,8 @@ for (var s in sequence[0]) {
 	row += s + ',';
 	}
     }
-CSV += row.substr(0,row.length-1) + '\r\n';
+row += 'Sequence';
+CSV += row + '\r\n';
 for (var i=0; i<sequence.length; i++) {
     if (sequence[i].displayrow) {
         row = '';
@@ -3014,7 +3020,10 @@ for (var i=0; i<sequence.length; i++) {
 		row += '"' + sequence[i][s] + '",';
 		}
 	   }
-	CSV += row.substr(0,row.length-1) + '\r\n';
+        for (var s=0; s<sequence[i].sequence.length; s++) {
+           row += sequence[i].sequence[s];
+           }
+	CSV += row + '\r\n';
 	}
     }
 if (CSV == '') {
@@ -3032,6 +3041,111 @@ link.click();
 document.body.removeChild(link);
 }
 
+// -----------------------------------------------------------------
+/**
+Export sequences to XML file
+@param {string} divId	- divId we're dealing with
+
+@author
+- 2.08.17 Original By : JH
+*/
+
+function JSON2XML(divId) {
+
+var aaColours = { "clustal":{"A":"#80a0f0","R":"#f01505","N":"#00ff00","D":"#c048c0","C":"#f08080","Q":"#00ff00","E":"#c048c0","G":"#f09048",
+			     "H":"#15a4a4","I":"#80a0f0","L":"#80a0f0","K":"#f01505","M":"#80a0f0","F":"#80a0f0","P":"#ffff00","S":"#00ff00",
+			     "T":"#00ff00","W":"#80a0f0","Y":"#15a4a4","V":"#80a0f0","-":"#ffffff"},
+		  "taylor": {"A":"#ccff00","R":"#0000ff","N":"#cc00ff","D":"#ff0000","C":"#ffff00","Q":"#ff00cc","E":"#ff0066","G":"#ff9900",
+                             "H":"#0066ff","I":"#66ff00","L":"#33ff00","K":"#6600ff","M":"#00ff00","F":"#00ff66","P":"#ffcc00","S":"#ff3300",
+                             "T":"#ff6600","W":"#00ccff","Y":"#00ffcc","V":"#99ff00","-":"#ffffff"},
+                  "zappo":  {"A":"#ffafaf","R":"#6464ff","N":"#00ff00","D":"#ff0000","C":"#ffff00","Q":"#00ff00","E":"#ff0000","G":"#ff00ff",
+			     "H":"#6464ff","I":"#ffafaf","L":"#ffafaf","K":"#6464ff","M":"#ffafaf","F":"#ffc800","P":"#ff00ff","S":"#00ff00",
+			     "T":"#00ff00","W":"#ffc800","Y":"#ffc800","V":"#ffafaf","-":"#ffffff"},
+		  "hphob":  {"A":"#ad0052","R":"#0000ff","N":"#0c00f3","D":"#0c00f3","C":"#c2003d","Q":"#0c00f3","E":"#0c00f3","G":"#6a0095",
+			     "H":"#1500ea","I":"#ff0000","L":"#ea0015","K":"#0000ff","M":"#b0004f","F":"#cb0034","P":"#4600b9","S":"#5e00a1",
+			     "T":"#61009e","W":"#5b00a4","Y":"#4f00b0","V":"#f60009","B":"#0c00f3","X":"#680097","Z":"#0c00f3","-":"#ffffff"},
+		  "helix":  {"A":"#e718e7","R":"#6f906f","N":"#1be41b","D":"#778877","C":"#23dc23","Q":"#926d92","E":"#ff00ff","G":"#00ff00",
+		             "H":"#758a75","I":"#8a758a","L":"#ae51ae","K":"#a05fa0","M":"#ef10ef","F":"#986798","P":"#00ff00","S":"#36c936",
+			     "T":"#47b847","W":"#8a758a","Y":"#21de21","V":"#857a85","B":"#49b649","X":"#758a75","Z":"#c936c9","-":"#ffffff"},
+		  "strand": {"A":"#5858a7","R":"#6b6b94","N":"#64649b","D":"#2121de","C":"#9d9d62","Q":"#8c8c73","E":"#0000ff","G":"#4949b6",
+			     "H":"#60609f","I":"#ecec13","L":"#b2b24d","K":"#4747b8","M":"#82827d","F":"#c2c23d","P":"#2323dc","S":"#4949b6",
+			     "T":"#9d9d62","W":"#c0c03f","Y":"#d3d32c","V":"#ffff00","B":"#4343bc","X":"#797986","Z":"#4747b8","-":"#ffffff"},
+		  "turn":   {"A":"#2cd3d3","R":"#708f8f","N":"#ff0000","D":"#e81717","C":"#a85757","Q":"#3fc0c0","E":"#778888","G":"#ff0000",
+			     "H":"#708f8f","I":"#00ffff","L":"#1ce3e3","K":"#7e8181","M":"#1ee1e1","F":"#1ee1e1","P":"#f60909","S":"#e11e1e",
+			     "T":"#738c8c","W":"#738c8c","Y":"#9d6262","V":"#07f8f8","B":"#f30c0c","X":"#7c8383","Z":"#5ba4a4","-":"#ffffff"},
+		  "buried": {"A":"#00a35c","R":"#00fc03","N":"#00eb14","D":"#00eb14","C":"#0000ff","Q":"#00f10e","E":"#00f10e","G":"#009d62",
+			     "H":"#00d52a","I":"#0054ab","L":"#007b84","K":"#00ff00","M":"#009768","F":"#008778","P":"#00e01f","S":"#00d52a",
+			     "T":"#00db24","W":"#00a857","Y":"#00e619","V":"#005fa0","B":"#00eb14","X":"#00b649","Z":"#00f10e","-":"#ffffff"},
+           };
+
+var sequence = gSequences[divId];
+var options = gOptions[divId];
+var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
+XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
+XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
+XML += '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"></DocumentProperties>\r\n';
+XML += '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"></ExcelWorkbook>\r\n';
+XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
+XML += '  <Alignment ss:Horizontal="Center"/>\r\n';
+XML += '  <Font ss:Bold="1"/>\r\n';
+XML += ' </Style>\r\n';
+for (var c in aaColours[options.colourScheme]) {
+   XML += ' <Style ss:ID="'+ c + '">';
+   XML += '  <Interior ss:Color="' + aaColours[options.colourScheme][c] + '" ss:Pattern="Solid" />';
+   XML += ' </Style>\r\n';
+   }
+XML += '</Styles>\r\n';
+XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+for (var s in sequence[0]) {
+    if (gDisplayColumn[divId][s]) {
+	XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
+	}
+    }
+for (var s=0; s<sequence[0].sequence.length; s++) {
+    XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
+    }
+XML += '<Row ss:StyleID="columnHeader">\r\n';
+for (var s in sequence[0]) {
+    if (gDisplayColumn[divId][s]) {
+	XML += '  <Cell><Data ss:Type="String">' + s + '</Data></Cell>\r\n';
+	}
+    }
+for (var s=0; s<options.labels.length; s++) {
+    XML += '  <Cell><Data ss:Type="String">' + options.labels[s] + '</Data></Cell>\r\n';
+    }
+
+XML += '</Row>\r\n';
+var row = '';
+for (var i=0; i<sequence.length; i++) {
+    if (sequence[i].displayrow) {
+        row = '<Row>\r\n';
+        for (var s in sequence[i]) {
+           if (gDisplayColumn[divId][s]) {
+		row += '  <Cell><Data ss:Type="String">' + sequence[i][s] + '</Data></Cell>\r\n';
+		}
+	   }
+        for (var s=0; s<sequence[i].sequence.length; s++) {
+           row += '  <Cell ss:StyleID="' + sequence[i].sequence[s] + '"><Data ss:Type="String">' + sequence[i].sequence[s] + '</Data></Cell>\r\n';
+           }
+        row += '</Row>';
+	XML += row;
+	}
+    }
+XML += '</Table></Worksheet></Workbook>';
+if (XML == '') {
+	alert("Invalid data");
+	return;
+	}
+var fileName = "JSAV_Export.xml"
+var uri = 'data:text/xml;charset=utf-8, ' + escape(XML);
+var link = document.createElement("a");
+link.href = uri;
+link.style = "visibility:hidden";
+link.download = fileName;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
+}
 
 
 // -----------------------------------------------------------------
@@ -3178,15 +3292,19 @@ if (sequence.displayrow) {
  			if (typeof(sequence[key]) == 'undefined') {
                            	html += "<td colspan=3></td>";
 			} else if (key.includes('Accession')) {
-                            if (gOptions[divId].simpleSearch.length > 0) 
-                              if (sequence[key].toLowerCase().indexOf(gOptions[divId].simpleSearch.toLowerCase()) >= 0)
+                            if (options.searchTerms['accession']) 
+                              if (sequence[key].toLowerCase().indexOf(options.searchTerms['accession'].toLowerCase()) >= 0)
                                 bgcol = "class='highlight' ";                            
 			    html += JSAV_buildId(divId, sequence[options.idSubmitAttribute], sequence[key], options.idSubmit, 3, bgcol)
- 			} else {                       
-                            if (gOptions[divId].simpleSearch.length > 0) 
-                              if (sequence[key].toLowerCase().indexOf(gOptions[divId].simpleSearch.toLowerCase()) >= 0)
-                                bgcol = "class='highlight' ";
-                            html += "<td " + bgcol + "colspan=3><div class='" + key.substring(6).toLowerCase().replace(/ /g, "_") + "'>" + sequence[key] + "</div></td>";
+ 			} else { 
+			    var cellText = sequence[key];                      
+                            for (var term in options.searchTerms) {
+                              if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) {
+                                var re = new RegExp(options.searchTerms[term], 'gi');
+                                cellText = sequence[key].replace(re, "<span class='highlightmatch'>"+options.searchTerms[term].toUpperCase()+"</span>");
+                               }
+                              }
+		            html += "<td colspan=3><div class='" + key.substring(6).toLowerCase().replace(/ /g, "_") + "'>" + cellText + "</div></td>";
 			}
 		}
 	html += "</tr>";
