@@ -3137,7 +3137,7 @@ if (XML == '') {
 	return;
 	}
 var fileName = "JSAV_Export.xml"
-var uri = 'data:text/xml;charset=utf-8, ' + escape(XML);
+var uri = 'data:text/xml;charset=utf-8,' + escape(XML);
 var link = document.createElement("a");
 link.href = uri;
 link.style = "visibility:hidden";
