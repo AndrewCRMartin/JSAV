@@ -185,7 +185,7 @@
 
 .JSAVControls .actionbutton { background: #89A2FF; border-radius: 4px; border-color: #666666; }
 .JSAVControls input { margin-left: 8pt; }
-.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px;}
+.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {text-align: left; color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px;}
 .JSAV p, .JSAV label {color: #274c7b;}
 .JSAV .highlightrow  {height: 18px;}
 .JSAV .br_highlightrow  {height: 18px; border-right: 3px solid black;}
