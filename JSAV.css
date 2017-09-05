@@ -494,7 +494,7 @@ button.toggle-col { margin: 2px 4px 2px 2px;
 .toggle-col-list { margin: 5px 0px 5px 5px; padding: 2px 0px 2px 5px; width: 75%; border: 0.5px solid black;);}
 .outertable {overflow-y: auto; padding-top: 0.5em}
 .innertable {overflow-y: hidden; direction: ltr;}
-.table_xscroll { width: 1600px; margin-left: 0.5em}
+.table_xscroll { width: 1280px; margin-left: 0.5em}
 
 /* GLOBAL FORMATTING */
 

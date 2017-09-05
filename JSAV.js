@@ -1020,6 +1020,7 @@ function JSAV_buildFASTA(divId)
    // See if any checkboxes are set
    var count = 0;
    var toFASTA = Array();
+   var dispOrder = gDisplayOrder[divId];
    // Find the selected sequences
    var tag = "#" + divId + " .selectBox";
    $(tag).each(function(index) {
@@ -1035,11 +1036,14 @@ function JSAV_buildFASTA(divId)
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
+     if (sequences[dispOrder[i]].displayrow)
+     {
        if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
        {
            sequenceText += ">" + sequences[i].id + "\n";
            sequenceText += sequences[i].sequence + "\n";
        }
+     }
    }
 
    return(sequenceText);
@@ -1580,12 +1584,13 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 		if (options.selectable) {
 			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
 			}
+                var prevAa = '#';
 		for (var s=0; s<sequences.length; s++) 
 			if (sequences[dispOrder[s]].displayrow) 
 			{
-			var prevAa = (s!=0) ? sequences[dispOrder[s-1]].sequence[i] : '#';
 			var aa = sequences[dispOrder[s]].sequence[i];
 			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, options.colourScheme, 'tr_');
+                        prevAa = sequences[dispOrder[s]].sequence[i];
 			}
 		if(options.consensus != undefined) {
 			var aa = gConsensus[divId][i];
@@ -1757,13 +1762,13 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
    }						
    // Build the actual sequence entries
-   for(var i=0; i<sequences.length; i++) 
+   var prevSequence = undefined;
+   for (var i=0; i<sequences.length; i++) 
       if (sequences[dispOrder[i]].displayrow)					
         {
         html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'><td class='leftCol'></td>";
-        var prevSequence = undefined;
-        if(i>0) { prevSequence = sequences[dispOrder[i-1]].sequence; }
         html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit, cc) + "\n";
+        prevSequence = sequences[dispOrder[i]].sequence;
         }
    if(options.consensus != undefined)
       {
@@ -1884,7 +1889,6 @@ if (mouseState=="down") {
 	gStopPos[divId] = i+1;
 	JSAV_showRange(divId);
 	}
-
 }
 
 // ---------------------------------------------------------------------
@@ -2037,16 +2041,16 @@ sequence
 @param   {object[]}   sequences   Array of sequence objects
 @param   {int}        start       Offset of start of region to sort
 @param   {int}        stop        Offset of end of region to sort
-@returns {object[]}               Sorted array of sequence objects
+@param   {string}     divId       the divId we're dealing with
 
 @author 
 - 29.05.14 Original   By: ACRM
 - 04.06.14 Added ignoreEnds (true) to JSAV_calcDifferenceMatrix() call
          Range version
+- 04.09.17 Now writes new sort order to gDisplayOrder[divId]  By: JH
 */
-function JSAV_sortSequences(sequences, start, stop)
+function JSAV_sortSequences(sequences, start, stop, divId)
 {
-   var sortedSequences = [];
    var sortedIndexes   = [];
    var nSeqs           = sequences.length;
    var ignoreEnds      = false;
@@ -2107,10 +2111,8 @@ function JSAV_sortSequences(sequences, start, stop)
    // Finally copy across the sequences in sorted order
    for(var i=0; i<nSeqs; i++)
    {
-      sortedSequences[i] = sequences[sortedIndexes[i]];
+      gDisplayOrder[divId][i] = sortedIndexes[i];
    }
-
-   return(sortedSequences);
 }
 
 
@@ -2239,10 +2241,10 @@ function JSAV_sortAndRefreshSequences(divId)
    var id = divId + "_JSAVStart";
 
    var range=JSAV_getRange(divId);
-   var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
+   JSAV_sortSequences(gSequences[divId], range[0], range[1], divId);
    resetDisplayColumn(gDisplayColumn[divId], gSequences[divId]);
    
-   JSAV_refresh(divId, sortedSequences, range[0], range[1]);
+   JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
 
    // Record the fact that the display has been sorted
    gOptions[divId].sorted = true;
@@ -2830,7 +2832,7 @@ html += "</div>";
 $("#" + tableDiv).html(html);
 $("#" + tableDiv).addClass("table_xscroll");
 $(tableTag + '_Outer').css('direction', 'rtl');
-$(tableTag + '_Outer').css('height', DT_calculateTableHeight(sequences, options.scrollY));
+$(tableTag + '_Outer').css('height', DT_calculateTableHeight(sequences, options.scrollY, options.minScrollY));
 }
 
 
@@ -2864,7 +2866,7 @@ Calculates optimum table height based on number of sequences
 - 09.01.17 Original By: JH
 */
 
-function DT_calculateTableHeight(sequences, scrollY) {
+function DT_calculateTableHeight(sequences, maxScrollY, minScrollY) {
 	var rowcount = 0;
 	var rowheight = 17;
 	var headerheight = 20;
@@ -2873,10 +2875,14 @@ function DT_calculateTableHeight(sequences, scrollY) {
 		if (sequences[s].displayrow) rowcount++;
 	var height = (headerheight + (rowcount * rowheight));
 
-	if (height < scrollY ) 
-		{ var dispht = height + 'px'; }
-	else
-		{ var dispht = scrollY + 'px'; }
+	if (height > maxScrollY ) 
+		{ var dispht = maxScrollY + 'px'; }
+	else {
+            if (height < minScrollY )
+		{ var dispht = minScrollY + 'px'; }
+            else
+                { var dispht = height + 'px'; }
+             }
         return(dispht);
 }
 
@@ -3003,6 +3009,7 @@ Export sequences to CSV file
 function JSON2CSV(divId) {
 
 var sequence = gSequences[divId];
+var dispOrder = gDisplayOrder[divId];
 var CSV = '';
 var row = '';
 for (var s in sequence[0]) {
@@ -3010,20 +3017,23 @@ for (var s in sequence[0]) {
 	row += s + ',';
 	}
     }
-row += 'Sequence';
-CSV += row + '\r\n';
+for (var s=0; s<gOptions[divId].labels.length; s++) {
+    row += gOptions[divId].labels[s] + ',';
+    }
+
+CSV += row.slice(0,-1) + '\r\n';
 for (var i=0; i<sequence.length; i++) {
-    if (sequence[i].displayrow) {
+    if (sequence[dispOrder[i]].displayrow) {
         row = '';
         for (var s in sequence[i]) {
            if (gDisplayColumn[divId][s]) {
-		row += '"' + sequence[i][s] + '",';
+		row += '"' + sequence[dispOrder[i]][s] + '",';
 		}
 	   }
-        for (var s=0; s<sequence[i].sequence.length; s++) {
-           row += sequence[i].sequence[s];
+        for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
+           row += sequence[dispOrder[i]].sequence[s] + ',';
            }
-	CSV += row + '\r\n';
+	CSV += row.slice(0,-1) + '\r\n';
 	}
     }
 if (CSV == '') {
@@ -3031,7 +3041,7 @@ if (CSV == '') {
 	return;
 	}
 var fileName = "JSAV_Export.csv"
-var uri = 'data:text/csv;charset=utf-8, ' + escape(CSV);
+var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
 var link = document.createElement("a");
 link.href = uri;
 link.style = "visibility:hidden";
@@ -3079,6 +3089,7 @@ var aaColours = { "clustal":{"A":"#80a0f0","R":"#f01505","N":"#00ff00","D":"#c04
            };
 
 var sequence = gSequences[divId];
+var dispOrder = gDisplayOrder[divId];
 var options = gOptions[divId];
 var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
 XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
@@ -3117,15 +3128,15 @@ for (var s=0; s<options.labels.length; s++) {
 XML += '</Row>\r\n';
 var row = '';
 for (var i=0; i<sequence.length; i++) {
-    if (sequence[i].displayrow) {
+    if (sequence[dispOrder[i]].displayrow) {
         row = '<Row>\r\n';
-        for (var s in sequence[i]) {
+        for (var s in sequence[dispOrder[i]]) {
            if (gDisplayColumn[divId][s]) {
-		row += '  <Cell><Data ss:Type="String">' + sequence[i][s] + '</Data></Cell>\r\n';
+		row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]][s] + '</Data></Cell>\r\n';
 		}
 	   }
-        for (var s=0; s<sequence[i].sequence.length; s++) {
-           row += '  <Cell ss:StyleID="' + sequence[i].sequence[s] + '"><Data ss:Type="String">' + sequence[i].sequence[s] + '</Data></Cell>\r\n';
+        for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
+           row += '  <Cell ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';
            }
         row += '</Row>';
 	XML += row;
