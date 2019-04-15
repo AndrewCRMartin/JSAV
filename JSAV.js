@@ -128,6 +128,8 @@ accession code).
 @property {bool}      options.selectable          - Should selection checkboxes be displayed
                                                     for each sequence
 @property {bool}      options.deletable           - Makes it possible to delete sequences
+@property {bool}	  options.hideable			  - Makes it possible to hide sequences and respective
+													datatable rows
 @property {string}    options.deleteLabel         - Label for delete button
 @property {int[]}     options.highlight           - Array of ranges to highlight
 @property {string}    options.submit              - URL for submitting selected sequences
@@ -210,6 +212,20 @@ accession code).
 - 24.09.15 Added scrollX and scrollY
 - 22.12.15 Added labels and autolabels
 - 11.02.16 Added idSubmitAttribute
+- 09.01.17 Several modifications as follows By: JH 
+			- added global arrays gDisplayColumn for datatable column display status,
+			  gDisplayOrder for reordering sequence and datatable rows based on sort,
+			  displayRow (in sequence object) for indicating display status of sequences 
+			  and datatable rows
+			- datatable functions added, writing to tag divId_Table
+			- added mousehandler for handling sort region
+			- added call to JSAV_transposeSequencesHTML, based on status of options.transpose,
+			  for displaying transposed (vertical) sequence view
+			- reorganised button display order
+			- added options.iconButtons for option to display buttons as text or icons
+			- start and stop sort positions now global
+			- now uses Bootstrap tooltips instead of jQuery tooltips
+- 05.09.17 Removed scrollX - now 100% by default
 */
 function printJSAV(divId, sequences, options)
 {
@@ -217,145 +233,186 @@ function printJSAV(divId, sequences, options)
    if(options                     == undefined) { options                     = Array();                   }
    if(options.width               == undefined) { options.width               = "400px";                   }
    if(options.height              == undefined) { options.height              = "6pt";                     }
-   if(options.submitLabel         == undefined) { options.submitLabel         = "Submit Sequences";        }
-   if(options.actionLabel         == undefined) { options.actionLabel         = "Process Sequences";       }
+   if(options.submitLabel         == undefined) { options.sumbitLabel 	      = 'fa fa-check'; 		   }
+   if(options.actionLabel         == undefined) { options.actionLabel 	      = 'fa fa-cogs';       	   }
    if(options.nocolor)                          { options.nocolour            = true;                      }
    if(options.toggleNocolor)                    { options.toggleNocolour      = true;                      }
-   if(options.fastaLabel          == undefined) { options.fastaLabel          = "Export Selected";         }
+   if(options.transpose           == undefined) { options.transpose           = false;                     }
+   if(options.exportLabel         == undefined) { options.exportLabel 	      = 'fas fa-share-square';     }
+   if(options.sortLabel           == undefined) { options.sortLabel 	      = 'fa fa-sort-down';	   }
    if(options.colorScheme)                      { options.colourScheme        = options.colorScheme;       }
    if(options.colourScheme        == undefined) { options.colourScheme        = "taylor";                  }
    if(options.selectColor)                      { options.selectColour        = true;                      }
    if(options.colorChoices        != undefined) { options.colourChoices       = options.colorChoices;      }
    if(options.deletable)                        { options.selectable          = true;                      }
+   if(options.hideable)                         { options.selectable          = true;                      }	
+   if(options.exportable)                       { options.selectable          = true;                      }	
    if(options.idSubmitAttribute   == undefined) { options.idSubmitAttribute   = "sequence";                }
-   if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = "Dotify";                  }
-   if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = "Do not colour dots";      }
-   if(options.toggleNocolorLabel  != undefined) { options.toggleNocolourLabel = options.toggleNocolorLabel;}
-   if(options.deleteLabel         == undefined) { options.deleteLabel         = "Delete Selected";         }
-   if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);}
+   if(options.idSubmitKey         == undefined) { options.idSubmitKey         = "";                        }
+   if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
+   if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = 'fa fa-th'; 		   }
+   if(options.hideLabel        	  == undefined) { options.hideLabel 	      = 'fa fa-eye-slash';	   }
+   if(options.showallLabel        == undefined) { options.showallLabel	      = 'fa fa-eye';		   }
+   if(options.deleteLabel         == undefined) { options.deleteLabel 	      = 'fa fa-window-close';	   }
+   if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
 
    // Initialize globals if not yet done
    JSAV_init();
-
+   document.onmouseup = mouseUpHandler;				
    gOptions[divId]         = options;
    gSequences[divId]       = sequences;
-   gSequenceLengths[divId] = sequences[0].sequence.length;
+   initDisplayrow(gSequences[divId]);
+   if (!gDisplayColumn[options.chainType])				
+      gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences);
+   gDisplayOrder[divId] = initDisplayOrder(sequences);
 
-   // Enable JQuery tooltips
-   if(!options.plainTooltips)
-   {
-      $(function() {
-         $(document).tooltip();
-      });
-   }
+   // Sequence View
 
-   if(options.consensus)
-   {
-       gConsensus[divId] = JSAV_buildConsensus(sequences);
-   }
-   var div = '';
-   if($("#" + divId).length == 0) {
-       div = $('<div />').appendTo($('body'));
-       div.attr('id', divId);
-   }
-   else{
-       div = $("#" + divId);
-   }
-   var div_sortable = $('<div />').appendTo(div);
-   div_sortable.attr('id', divId + '_sortable');
-   div_sortable.attr('class', 'JSAVDisplay');
-
-   // 24.09.15
-   if(options.scrollX != null)
-   {
-      div_sortable.css('overflow-x', 'scroll');
-      div_sortable.css('white-space', 'nowrap');
-      div_sortable.css('width', options.scrollX);
-   }
-   
-   // 24.09.15
-   if(options.scrollY != null)
-   {
-      div_sortable.css('overflow-y', 'scroll');
-      div_sortable.css('white-space', 'nowrap');
-      div_sortable.css('height', options.scrollY);
-   }
-
-   var html = JSAV_buildSequencesHTML(divId, sequences, options.sortable, 
-                                      options.selectable, options.highlight,
-                                      options.dotify, options.nocolour, options.consensus,
-                                      options.labels);
-   div_sortable.append(html);
-
-
-   var div_controls = $('<div />').appendTo(div);
-   div_controls.attr('id', divId + '_controls');
-   div_controls.attr('class', 'JSAVControls');
-
-   if(options.sortable)
-   {
-      var start = 1;
-      var stop  = gSequenceLengths[divId];
-
-      JSAV_printSlider(divId, stop, options.width, options.height);
-
-      var html = "<button type='button' class='tooltip sortbutton' title='Sort the sequences based on the range specified with the slider' onclick='JSAV_sortAndRefreshSequences(\"" + divId + "\", true, " + options.selectable + ", " + options.border + ")'>Sort</button>";
-      div_controls.append(html);
-
-   }
-
-   // 23.09.15 Pass label into JSAV_printDelete()
-   if(options.deletable)
-   {
-      JSAV_printDelete(divId, options.deleteLabel);
-   }
-
-   // 23.09.15 Move FASTA before submit and action buttons
-   if(options.fasta)
-   {
-      JSAV_printFASTA(divId);
-   }
-
-   if(options.submit != undefined)
-   {
-      JSAV_printSubmit(divId, options.submit, options.submitLabel);
-   }
-
-   if(options.action != undefined)
-   {
-      JSAV_printAction(divId, options.action, options.actionLabel);
-   }
-
-   // Colour related - on a new line
-   if(options.selectColour || options.toggleDotify)
-   {
-       div_controls.append("<br />");
-   }
-   if(options.selectColour)
-   {
-       JSAV_printColourSelector(divId, options);
-   }
-   if(options.toggleDotify)
-   {
-       JSAV_printToggleDotify(divId, options);
-       if(options.toggleNocolour)
-       {
-           JSAV_printToggleNocolour(divId, options);
+   if (sequences.length > 0) {
+      gSequenceLengths[divId] = sequences[0].sequence.length;
+      if (gSequenceLengths[divId] > 0) {
+        if(options.consensus)
+        {
+          gConsensus[divId] = JSAV_buildConsensus(sequences);
+        }
+        var div = '';
+        if($("#" + divId).length == 0) {
+          div = $('<div />').appendTo($('body'));
+          div.attr('id', divId);
+        }
+        else{
+          div = $("#" + divId);
        }
-   }
+        var div_sortable = $('<div />').appendTo(div);
+        div_sortable.attr('id', divId + '_sortable');
+        div_sortable.css('margin-left', '0.5em');
+        div_sortable.css('overflow-x', 'auto');
+        div_sortable.css('white-space', 'nowrap');
+   
+        if(options.scrollY != null)
+        {
+           div_sortable.css('overflow-y', 'hidden');
+           div_sortable.css('white-space', 'nowrap');
+        }
+   
 
-   if(options.border)
-   {
-       JSAV_modifyCSS(divId);
-   }
+        if (options.transpose) {
+ 	   var html = JSAV_transposeSequencesHTML(divId, sequences);
+   	} else {
+	   var html = JSAV_buildSequencesHTML(divId, sequences);
+	}
 
-   // Ensure buttons etc match the data
-   window.onload = function(){JSAV_refreshSettings(divId);};
+        div_sortable.append(html);
+        $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+        $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+        $('#' + divId + ' .header').css('width', seqtabWidth);
+        $('#' + divId + ' .footer').css('width', seqtabWidth);
 
-   if(options.callback != undefined)
-   {
-       window[options.callback](divId);
+        var div_controls = $('<div />').appendTo(div);
+        div_controls.attr('id', divId + '_controls');
+        div_controls.attr('class', 'JSAVControls');
+        div_controls.css('margin-left', '0.5em');
+ 
+        if(options.sortable)
+        {
+           resetSortRegion(divId);
+	   JSAV_ControlButton(divId, divId + '_controls', 'Sort the sequences based on the range specified in the Sort Region', 
+                             options.sortLabel, '', 'Sort Sequences', 'JSAV_sortAndRefreshSequences("' + divId + '")');
+        }
+  
+        if(options.hideable)
+        {
+         JSAV_ControlButton(divId, divId + '_controls', 'Hide selected sequences', 
+                            options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
+         JSAV_ControlButton(divId, divId + '_controls', 'Show hidden sequences', 
+                            options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
+        }
+    
+        if(options.deletable)
+        {
+	  JSAV_ControlButton(divId, divId + '_controls', 'Delete the selected sequences', 
+                            options.deleteLabel, '', 'Delete Sequences', 'JSAV_deleteSelectedSequences("' + divId + '")');
+	}
+
+        if(options.submit != undefined)
+        {
+          JSAV_printSubmit(divId, options.submit, options.submitLabel);
+        }
+
+        if(options.action != undefined)
+        {
+	  JSAV_ControlButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
+                            options.actionLabel, '', 'Process Sequences', options.action);
+        }
+
+        if(options.selectColour)
+        {
+          JSAV_printColourSelector(divId, options);
+        }
+        if(options.toggleDotify)
+        {
+          JSAV_printToggleDotify(divId, options);
+        }
+        if(options.toggleNocolour)										
+        {
+          JSAV_printToggleNocolour(divId, options);
+        }
+
+        if(options.toggleTranspose)										
+        {
+         JSAV_printToggleTranspose(divId, options);
+        }
+
+        if(options.fasta)
+        {
+	  JSAV_ControlButton(divId, divId + '_controls', 'Export the selected sequences, or all sequences if none selected', 
+                             options.exportLabel, 'Fasta', 'Export Fasta', 'JSAV_exportFASTA("' + divId + '")');
+        }
+         
+        if (options.exportable)
+        {
+          JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to CSV', 
+                             options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
+          JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
+                              options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
+        }
+
+        if(options.border)
+        {
+         JSAV_modifyCSS(divId);
+        }
+      }
+  
+      if (options.displaydatatable != undefined)
+      {
+ 	printDataTable(divId, sequences);
+      }
+
+      // Ensure buttons etc match the data
+      window.onload = function(){JSAV_refreshSettings(divId);};
+
+      if(options.callback != undefined)
+      {
+        window[options.callback](divId);
+      }
+   $('#' + divId).css('width', '96vw');
+   
    }
+}
+
+// ---------------------------------------------------------------------  
+/**
+Initialise the displayrow elements for all sequences
+
+@param {object[]} sequences - the sequence array
+
+@author - 09.01.17 Original	By: JH
+*/
+
+function initDisplayrow(sequences)
+{
+	for (var s=0; s<sequences.length; s++)
+		sequences[s].displayrow = true;
 }
 
 // ---------------------------------------------------------------------
@@ -409,6 +466,7 @@ function JSAV_refreshSettings(divId)
         $(tag).prop('checked', false);
 //        JSAV_unselectAll(divId);
     }
+    $("#"+divId+"_seqids").scrollLeft(0);
 }
 
 // ---------------------------------------------------------------------
@@ -432,7 +490,8 @@ function JSAV_printColourSelector(divId, options)
    }
 
     var id   = divId + "_selectColour";
-    var html = "<select class='tooltip' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+    var ctype = options.chainType;
+    var html = "<select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
     for(var i=0; i<options.colourChoices.length; i++)
     {
         var lcChoice = options.colourChoices[i].toLowerCase();
@@ -460,38 +519,50 @@ colour scheme and refreshes the display
 @author 
 - 17.06.14  Original   By: ACRM
 - 22.12.15  Added passing of labels
+- 09.01.17	Added options.transpose to JSAV+refresh parameter list By: JH
 */
 function JSAV_setColourScheme(divId, select)
 {
-    gOptions[divId].colourScheme = select.value;
+	gOptions[divId].colourScheme = select.value;
 
     var options = gOptions[divId];
     if(options.sorted)
     {
-        JSAV_sortAndRefreshSequences(divId, options.sortable, options.selectable, options.border)
+        JSAV_sortAndRefreshSequences(divId)
     }
     else
     {
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus, options.labels);
+        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
     }
 }
 
 // ---------------------------------------------------------------------
 /**
-Prints the button to allow FASTA export
+Prints a control button with icons, action and tooltip
 
-@param {string} divId   - The ID of the div we are printing in
+@param 	{string} divId	- The divId we're dealing with
+	{string} tooltip- text for tooltip
+	{string} icon	- option item for icon class
+	{string} label	- extra text after icon
+	{string} textLabel - alternative text label
+	{string} action - button onclick action
 
-@author 
-- 17.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+@author
+- 24.09.17 Original	By: JH
 */
-function JSAV_printFASTA(divId)
+function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, action)
 {
-   var parrenttag = '#' + divId + '_controls';
-   var label = gOptions[divId].fastaLabel;
-   var html = "<button type='button' class='tooltip exportbutton' title='Export the selected sequences, or all sequences if none selected' onclick='JSAV_exportFASTA(\"" + divId + "\")'>"+label+"</button>";
+   var parrenttag = '#' + localDiv;
+   var options = gOptions[divId];
+   var ctype = options.chainType;
+   var tooltipText = "title='"+tooltip+"'";
+   var html = "<button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
+   if (options.iconButtons) {
+   html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+      } else {
+   html += textlabel;
+   }
+   html += "</button>";
    $(parrenttag).append(html);
 }
 
@@ -523,19 +594,24 @@ Print a checkbox for toggling dotify mode
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 - 23.09.15 Dotify label now comes from options  By: ACRM
+- 09.01.17 Now includes dotifybutton class, checked changed to active, label now taken from options.toggleDotifyLabel  By: JH
 */
 function JSAV_printToggleDotify(divId, options)
 {
-    var html = "";
-    var checked = "";
-    if(options.dotify) { checked = " checked='checked'"; };
+    var active = "";
+    var ctype = options.chainType;
+    if(options.dotify) { active = " active"; };
     var id = divId + "_toggleDotify";
+	var label = options.toggleDotifyLabel;
     var idText = " id='" + id + "'";
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
-    var tooltip = "Replace repeated residues with dots";
-
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>" + options.toggleDotifyLabel + "</label></span>";
-
+    var title = "title='Replace repeated residues with dots'";
+    var html = "<button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
+    if (gOptions[divId].iconButtons) {
+       html += "<i class='"+label+"'  "+title+"></i></button>";
+    } else {
+       html += "Dotify</button>";
+    }
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
 }
@@ -552,25 +628,128 @@ Print a checkbox for toggling nocolour-dotify mode
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 - 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM
+- 09.01.17 Now includes nocolourbutton class, checked changed to active, label now taken from options.toggleNocolourlabel  By: JH
 */
-function JSAV_printToggleNocolour(divId, options)
+function JSAV_printToggleNocolour(divId, options) 
 {
-    var html = "";
-    var checked = "";
-    if(options.nocolour) { checked = " checked='checked'"; };
+    var active = "";
+    var ctype = options.chainType;
+    if(options.nocolour) { active = " active"; };
     var id = divId + "_toggleNocolour";
     var idText = " id='" + id + "'";
+    var label = options.toggleNocolourLabel;
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
-    var tooltip = "Do not colour repeated residues";
-
-    html += "<span><input type='checkbox'" + idText + checked + onclick + "/><label for='"+id+"' class='tooltip' title='"+tooltip+"'>" + options.toggleNocolourLabel + "</label></span>";
+    var title = "title='Do not colour repeated residues'";
+    var html = "<button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
+    if (gOptions[divId].iconButtons) {
+       html += "<i class='"+label+"' "+title+"></i></button>";
+    } else {
+       html += "No Repeat Colour</button>";
+    }
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
 /** 
-Read a checkbox and toggle the associated option, refreshing the display
+Print a checkbox for toggling transposed sequence view
+
+@param {string}  divId    The div that we are working in
+@param {object}  options  The options
+
+@author 
+- 03.01.17 Original   By: JH
+
+*/
+function JSAV_printToggleTranspose(divId, options) 
+{
+    var options = gOptions[divId];
+    var ctype = options.chainType;
+    var html = "";
+    var activeText = "fas fa-reply";
+    var inactiveText = "fas fa-share";
+    var active = "";
+    if(options.transpose) 
+      { 
+        active = activeText; 
+      } 
+    else 
+      { 
+        active = inactiveText; 
+      } ;
+    var id = divId + "_toggleTranspose";
+    var idText = " id='" + id + "'";
+    var onclick = " onclick='JSAV_toggleTranspose(\"" + divId + "\", \"" + id + "\", \"transpose\", \"" +activeText+"\",  \"" +inactiveText+"\")'";
+    var tooltip = "Transpose sequence view";
+    if (options.iconButtons) {
+       html += "<button type='button' class='tooltip "+ctype+"button' title='"+tooltip+ "' "  + onclick + "><i " + idText + " class='"+active+"'></i></button>";
+    } else {
+       html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
+    }
+    var parrenttag = '#' + divId + '_controls';
+    $(parrenttag).append(html);
+}
+
+function JSAV_toggleTranspose(divId, theButton, theOption, activeText, inactiveText) {
+
+    var div_sortable = $('#' + divId + '_sortable');
+    var options = gOptions[divId];
+    if(options[theOption]) 
+      { 
+        div_sortable.css('max-height', '');
+        $('#' + divId).css('width', '96vw');
+       } 
+    else //transposed
+      {
+        div_sortable.css('max-height', '1000px');
+      } ;
+
+JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactiveText);
+}
+
+// ---------------------------------------------------------------------
+/**
+Read a button and toggle the button class between the two options activeText 
+and inactiveText, refreshing the display
+
+
+@param {string}  divId     		The div that we are working in
+@param {string}  theButton 		The ID of the checkbox we are looking at
+@param {string}  theOption 		The name of the option we are toggling
+@param {string}  activeText		Class for active button
+@param {string}  inactiveText	Class for inactive button
+
+@author 
+- 11.01.17 Original	By: JH 
+*/
+
+function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactiveText)
+{
+    var tag     = "#" + theButton;
+    var options = gOptions[divId];
+    options[theOption] = !options[theOption];
+	if (options[theOption]) {
+		$(tag).removeClass(inactiveText);
+		$(tag).addClass(activeText);
+	} else {
+		$(tag).removeClass(activeText);
+		$(tag).addClass(inactiveText);
+	}
+
+    if(options.sorted)
+    {
+
+        JSAV_sortAndRefreshSequences(divId)
+    }
+    else
+    { 
+        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+    }
+}
+
+// ---------------------------------------------------------------------
+/** 
+Read a button and toggle the associated option, refreshing the display
 
 @param {string}  divId     The div that we are working in
 @param {string}  theButton The ID of the checkbox we are looking at
@@ -580,19 +759,25 @@ Read a checkbox and toggle the associated option, refreshing the display
 - 16.06.14 Original   By: ACRM
 - 17.06.14 Added consensus
 - 22.12.15 Added labels
+- 09.01.17 Toggles options[theOption] and now uses class instead of checked
+           options.transpose added to JSAV_refresh parameter list By: JH
 */
 function JSAV_toggleOption(divId, theButton, theOption)
 {
     var tag     = "#" + theButton;
     var options = gOptions[divId];
-    options[theOption] = $(tag).prop('checked');
+    options[theOption] = !options[theOption];
+	if (options[theOption])
+		$(tag).addClass("active");
+	else
+		$(tag).removeClass("active");
     if(options.sorted)
     {
-        JSAV_sortAndRefreshSequences(divId, options.sortable, options.selectable, options.border)
+        JSAV_sortAndRefreshSequences(divId)
     }
     else
     {
-        JSAV_refresh(divId, gSequences[divId], options.sortable, options.selectable, options.border, gStartPos[divId]-1, gStopPos[divId]-1, options.highlight, options.dotify, options.nocolour, options.consensus, options.labels);
+        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
     }
 }
 
@@ -610,59 +795,24 @@ count from zero.
 
 @author 
 - 13.06.14   Original   By: ACRM
+- 09.01.17	 Now calls calculate
+printHighlightCell to display each cell based on highlight  By: JH
 */
-function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight)
+function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight, cc)
 {
     var html = "";
+    var pref;
 
-    if(selectable)
-    {
-        html += "<tr class='highlightrow'><th></th>";
-        html += "<td></td>";
-    }
-    else
-    {
-        html += "<tr class='highlightrow'><td></td>";
-    }
+//    html += "<tr class='highlightrow'></td>";
 
     for(var i=0; i<seqLen; i++)
     {
-        var displayClass = 'unhighlighted';
-        for(var j=0; j<highlight.length; j+=2)
-        {
-            var start = highlight[j];
-            var stop  = highlight[j+1];
-            if((i >= start) && (i <= stop))
-            {
-                displayClass = 'highlighted';
-                break;
-            }
-        }
-        html += "<td class='" + displayClass + "' /></td>";
+         pref = '';
+         if (i == cc) { pref = 'br_highlightrow'; }
+	 html += printHighlightCell(highlight, i, pref);
     }
-    html += "</tr>\n";
+    html += "<td class='rhcol'></td>\n";
     return(html);
-}
-
-// ---------------------------------------------------------------------
-/**
-Prints the delete button
-
-@param {string}  divId   - The ID of the div to print in
-@param {string}  label   - The label to print in the delete button
-
-@author 
-- 12.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
-- 23.09.15 Added label parameter and use of this label  By: ACRM
-- 25.02.16 Corrected class from delete to deletebutton
-*/
-function JSAV_printDelete(divId, label)
-{
-   var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip deletebutton' title='Delete the selected sequences' onclick='JSAV_deleteSelectedSequences(\"" + divId + "\")'>" + label + "</button>";
-   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -681,7 +831,16 @@ Prints the submit button
 function JSAV_printSubmit(divId, url, label)
 {
    var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip submitbutton' title='Submit the selected sequences, or all sequences if none selected' onclick='JSAV_submitSequences(\"" + divId + "\")'>" + label + "</button>";
+   var ctype = gOptions[divId].chainType;
+   var title = "title='Submit the selected sequences, or all sequences if none selected'";
+   var html = "<button type='button' class='tooltip "+ctype+"button' "+title+" onclick='JSAV_submitSequences(\"" + divId + "\")'>";
+   if (gOptions[divId].iconButtons) {
+      html += "<i class='"+label+"' "+title+"></i>";
+   } else {
+      html += "Submit Selected Sequences";
+   }
+   html += "</button>";
+
    $(parrenttag).append(html);
 
    // Build a hidden sequences text box in the form to contain
@@ -690,25 +849,6 @@ function JSAV_printSubmit(divId, url, label)
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
    html += "</form></div>";
-   $(parrenttag).append(html);
-}
-
-// ---------------------------------------------------------------------
-/**
-Prints the action button
-
-@param {string}  divId   - The ID of the div to print in
-@param {string}  action  - Function to call
-@param {string}  label   - Label for action button
-
-@author 
-- 13.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-*/
-function JSAV_printAction(divId, action, label)
-{
-   var parrenttag = '#' + divId + '_controls';
-   var html = "<button type='button' class='tooltip actionbutton' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -726,6 +866,7 @@ function, passing the divId and an array of sequence objects
 - 11.02.16  Modified the push so that it pushes the whole object rather than
             just the selected fields. This allows additional information fields
             to be passed around associated with a sequence but not displayed
+- 09.01.17  Removed 'input' frm tag as this is not required By : JH
 */
 function JSAV_wrapAction(divId, action)
 {
@@ -735,11 +876,11 @@ function JSAV_wrapAction(divId, action)
    var count = 0;
    var toSubmit = Array();
    // Find the selected sequences
-   var tag = "#" + divId + " .selectCell input";
+   var tag = "#" + divId + " .selectBox";
    $(tag).each(function(index) {
        if($(this).prop('checked'))
        {
-           var id = $(this).parent().parent().attr('id');
+           var id = $(this).attr('name').substr(7);
            toSubmit[id] = 1;
            count++;
        }
@@ -792,18 +933,20 @@ sequences if none are selected
 
 @author 
 - 17.06.14 Split out from JSAV_submitSequences()  By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH
 */
 function JSAV_buildFASTA(divId)
 {
    // See if any checkboxes are set
    var count = 0;
    var toFASTA = Array();
+   var dispOrder = gDisplayOrder[divId];
    // Find the selected sequences
-   var tag = "#" + divId + " .selectCell input";
+   var tag = "#" + divId + " .selectBox";
    $(tag).each(function(index) {
        if($(this).prop('checked'))
        {
-           var id = $(this).parent().parent().attr('id');
+	   var id = $(this).attr('name').substr(7);
            toFASTA[id] = 1;
            count++;
        }
@@ -813,11 +956,14 @@ function JSAV_buildFASTA(divId)
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
+     if (sequences[dispOrder[i]].displayrow)
+     {
        if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
        {
            sequenceText += ">" + sequences[i].id + "\n";
            sequenceText += sequences[i].sequence + "\n";
        }
+     }
    }
 
    return(sequenceText);
@@ -835,17 +981,18 @@ Deletes a set of sequences that have been clicked
 - 16.06.14 Changed from confirm() to ACRM_confirm()
 - 17.06.14 Added consensus
 - 22.12.15 Added passing of labels
+- 09.01.17 Removed 'input' from tag as this is not required By: JH
 */
 function JSAV_deleteSelectedSequences(divId)
 {
     var count = 0;
     var toDelete = Array();
     // Find the selected sequences
-    var tag = "#" + divId + " .selectCell input";
+    var tag = "#" + divId + " .selectBox";
     $(tag).each(function(index) {
         if($(this).prop('checked'))
         {
-            var id = $(this).parent().parent().attr('id');
+	    var id = $(this).attr('name').substr(7);
             toDelete.push(id);
             count++;
         }
@@ -880,15 +1027,111 @@ function JSAV_deleteSelectedSequences(divId)
                 }
 
                 // Refresh the display
-                JSAV_refresh(divId, gSequences[divId], options.sortable, 
-                             options.selectable, options.border, 
-                             gStartPos[divId]-1, gStopPos[divId]-1, options.highlight,
-                             options.dotify, options.nocolour, options.consensus,
-                             options.labels);
+                JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
                 options.sorted = false;
             }
         });
     }
+}
+
+// ---------------------------------------------------------------------
+/**
+Hides a set of sequences that have been clicked
+
+@param {string}  divId   - The ID of the div to work in
+
+@author 
+- 04.11.16 Original based on JSAV_deleteSelectedSequences By: JH
+*/
+function JSAV_hideSelectedSequences(divId)
+{
+    var count = 0;
+    var toHide = Array();
+    // Find the selected sequences
+    var tag = "#" + divId + " .selectBox";
+    $(tag).each(function(index) {
+        if($(this).prop('checked'))
+        {
+	    var id = $(this).attr('name').substr(7);
+	    toHide.push(id);
+            count++;
+        }
+    });
+
+    if(count == 0)
+    {
+        ACRM_alert("Error!","You must select some sequences!");
+    }
+    else
+    {
+		// Run through the global sequence array undisplaying the selected objects
+        for(var i=0; i<toHide.length; i++)
+           {
+           JSAV_unsetDisplayrow('id', toHide[i], gSequences[divId]);
+           }
+        var options = gOptions[divId];
+
+        // Update the consensus
+        if(options.consensus)
+            {
+            gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+            }
+
+        // Refresh the display
+        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+        options.sorted = false;
+    }
+}
+
+// ---------------------------------------------------------------------
+/**
+Sets displayrow to false for each sequence row
+
+@param {string}   key   - The key (item in an object or hash key) 
+                          to check
+@param {string}   value - The value to check
+@param {object[]} array - The array of objects to manipulate
+
+@author
+- 09.01.17 Original -  - based on ACRM_deleteItemByLabel
+*/
+
+function JSAV_unsetDisplayrow(key, value, array)
+
+{
+    for(var i=0; i<array.length; i++)
+    {
+       if(array[i][key] == value)
+       {
+           array[i].displayrow = false;
+	   }
+    }
+}
+
+// ---------------------------------------------------------------------
+/**
+Reinitialises displayrow for all sequences  to true. Recalculates consensus sequences and refreshes
+
+@param {string} divId	- the divId we're dealing with
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function JSAV_resetDisplayrow(divId)
+{
+	initDisplayrow(gSequences[divId]);
+    // Update the consensus
+    var options = gOptions[divId];
+
+    if(options.consensus)
+        {
+        gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+        }
+
+    // Refresh the display
+    JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+    options.sorted = false;
 }
 
 // ---------------------------------------------------------------------
@@ -900,20 +1143,36 @@ Toggle selection of all sequence selection buttons
 @author 
 - 09.06.14 Original   By: ACRM
 */
-function JSAV_selectAllOrNone(divId)
+function JSAV_selectAllOrNone(divId, status)
 {
-   var tag = "#" + divId + "_AllNone";
+   var tag = "." + divId + "_AllNone";
 
-   if($(tag).prop('checked'))
+   if (status)
    {
        JSAV_selectAll(divId);
+       $(tag).prop('checked', true);
    }
    else
    {
        JSAV_unselectAll(divId);
+       $(tag).prop('checked', false);   
    }
 }
 
+//----------------------------------------------------------------------
+/**
+*/
+function JSAV_resetAllNone(divId, cboxname, cboxstatus)
+{
+   var tag = "." + divId + "_AllNone";
+   $(tag).prop('checked', false);
+   tag = "." + cboxname;
+   if (cboxstatus) {
+     $(tag).prop('checked', true);
+   } else {
+     $(tag).prop('checked', false);
+   }
+}
 
 // ---------------------------------------------------------------------
 /**
@@ -923,10 +1182,13 @@ Select all sequence selection buttons
 
 @author 
 - 09.06.14 Original   By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH
 */
 function JSAV_selectAll(divId)
 {
-   var tag = "#" + divId + " .selectCell input";
+   var tag = "#" + divId + " .selectBox";
+   $(tag).prop('checked', true);
+   tag = "#" + divId + "_Table .selectBox";
    $(tag).prop('checked', true);
 }
 
@@ -938,10 +1200,13 @@ Unselect all sequence selection buttons
 
 @author 
 - 09.06.14 Original   By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH
 */
 function JSAV_unselectAll(divId)
 {
-   var tag = "#" + divId + " .selectCell input";
+   var tag = "#" + divId + " .selectBox";
+   $(tag).prop('checked', false);
+   tag = "#" + divId + "_Table .selectBox";
    $(tag).prop('checked', false);
 }
 
@@ -960,6 +1225,59 @@ function JSAV_modifyCSS(divId)
     $(selector).css("border", "1px solid white");
 }
 
+// ----------------------------------------------------------------
+/**
+Prints a single resudue cell based on previous cell, colourscheme, consensuscell, etc.
+
+@param {string} divId			- the divId we're dealing with
+@param {string} aa				- the residue code to print
+@param {string} prevAa			- the previous residue code
+param {string} consensusClass	- consensus class
+@param {bool} isConsensus		- status of global isConsensus property
+@returns {string} html			- HTML
+
+@author
+- 09.01.17 Original taken from JSAV_buildASequenceHTML By: JH
+*/
+
+function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref) {
+
+var colourClass = colourScheme + aa.toUpperCase();
+
+if((dotify || nocolour) && !isConsensus)
+	{
+	if(nocolour)
+		{
+		if(aa == "-") 
+			{ 
+			colourClass = "aaDel"; 
+			}
+		}
+	if(aa == prevAa)
+		{
+		if(nocolour)
+			{
+			if(aa == '-')
+				{
+				colourClass = "aaDel";	
+				}
+			else
+				{
+				colourClass = "aaDot";	
+				}
+			}
+		if(dotify)
+			if(aa != '-') {aa = '.';}
+		}
+	var html = "<td class='"+pref+"seqCell " + colourClass + "'>" + aa + "</td>";
+	}
+else 
+	{
+	var html = "<td class='"+pref+"seqCell " + colourClass + consensusClass + "'>" + aa + "</td>";
+	}
+return(html);
+}
+ 
 // ---------------------------------------------------------------------
 /**
 Builds the HTML for printing a sequence as a table row. The row 
@@ -967,19 +1285,13 @@ starts with the identifier and is followed by each amino acid in a
 separate <td> tag with a class to indicate the amino acid type 
 (e.g. taylorW for a tryptophan in Willie Taylor scheme). 
 
+@param {string}   divId         The divId we're dealing with
 @param {string}   id            The identifier
 @param {string}   sequence      A string containing the sequence
 @param {string}   prevSequence  A string containing the previous sequence
-@param {bool}     selectable    Display a selection checkbox
-@param {bool}     dotify        Dotify the sequence
-@param {bool}     nocolour      Don't colour dotified residues
 @param {bool}     isConsensus   This is the consensus sequence
-@param {string}   colourScheme  Name of colour scheme - maps to CSS - 
-                                see JSAV_initColourChoices()
 @param {string}   idSubmit      URL to visit when sequence label clicked
-@param {bool}     idSubmitClean Remove non-alpha characters from sequence
-                                before submitting it
-@returns {string} text          HTML snippet
+@returns {string} tableline     HTML snippet
 
 @author 
 - 30.05.14 Original  By: ACRM
@@ -989,60 +1301,21 @@ separate <td> tag with a class to indicate the amino acid type
 - 23.09.15 Added idSubmit/idSubmitClean
 - 11.02.16 Added idSubmitAttribute, now takes a sequence object rather than
            the sequence and the id
+- 09.01.17 Changed first if statement to allow independent dotify or nocolour display
+		   Individual cell display now carried out by printResidueCell By: JH
 */
-function JSAV_buildASequenceHTML(sequenceObject, id, sequence, prevSequence, selectable, dotify, nocolour,
-                                 isConsensus, colourScheme, idSubmit, idSubmitClean,
-                                 idSubmitAttribute)
+function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit, cc)
 {
-    var seqArray     = sequence.split("");
+	var options = gOptions[divId];
+	var seqArray     = sequence.split("");
     var prevSeqArray = undefined;
 
-    if(dotify && (prevSequence != undefined))
+    if((options.dotify || options.nocolour) && (prevSequence != undefined))
     {
         prevSeqArray = prevSequence.split("");
     }
 
     var tableLine = "";
-    if(isConsensus)
-    {
-        tableLine = "<tr class='tooltip consensusCell' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the sequences have that residue.' id='" + id + "'>";
-    }
-    else
-    {
-        tableLine = "<tr id='" + id + "'>";
-    }
-
-    if(idSubmit == null)
-    {
-       tableLine += "<th class='idCell'>" + id + "</th>";
-    }
-    else
-    {
-       var url         = idSubmit;
-       var submitParam = sequenceObject[idSubmitAttribute];
-       if(idSubmitClean)
-       {
-          // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
-          // It probably wouldn't make sense for IDs etc
-          submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
-       }
-       
-       url += submitParam;
-       tableLine += "<th class='idCell'><a href='" + url + "'>" + id + "</a></th>";
-    }
-
-    if(selectable)
-    {
-        if(isConsensus)
-        {
-            tableLine += "<th class='consensusSelectCell'></th>";
-        }
-        else
-        {
-            var name = "select_" + id;
-            tableLine += "<th class='selectCell'><input type='checkbox' name='" + name + "' /></th>";
-        }
-    }
 
     var consensusClass = "";
     if(isConsensus)
@@ -1050,148 +1323,71 @@ function JSAV_buildASequenceHTML(sequenceObject, id, sequence, prevSequence, sel
         consensusClass = " consensusCell";
     }
 
+    var pref;
     var nResidues = seqArray.length;
-    if(dotify && !isConsensus)
-    {
-        for(var i=0; i<nResidues; i++)
-        {
-            var aa     = seqArray[i];
-            var prevAa = '#';
-
-            var colourClass = colourScheme + aa.toUpperCase();
-            if(nocolour)
-            {
-                if(aa == "-") 
-                { 
-                    colourClass = "aaDel"; 
-                }
-            }
-
-            if(prevSeqArray != undefined)
-            {
-                prevAa = prevSeqArray[i];
-            }
-            if(aa == prevAa)
-            {
-                if(nocolour)
-                {
-                    if(aa == '-')
-                    {
-                        colourClass = "aaDel";
-                    }
-                    else
-                    {
-                        colourClass = "aaDot";
-                    }
-                }
-                if(aa != '-') {aa = '.';}
-            }
-            tableLine += "<td class='" + colourClass + "'>" + aa + "</td>";
-        }
-    }
-    else
-    {
-        for(var i=0; i<nResidues; i++)
-        {
-            var aa = seqArray[i];
-            tableLine += "<td class='" + colourScheme + aa.toUpperCase() + consensusClass + "'>" + aa + "</td>";
-        }
-    }
-    tableLine += "</td></tr>";
-
+    for(var i=0; i<nResidues; i++) {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
+	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
+        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, options.nocolour, options.dotify, options.colourScheme, pref);
+	}
+  
+    tableLine += "</td><td class='rhcol'></td></tr>";
     return(tableLine);
 }
 
-// ---------------------------------------------------------------------
+// --------------------------------------------------------------------
 /**
-Builds and prints the slider for selecting a maximum and minimum position for
-sorting. Also calls routine to display the currently selected range -
-i.e. the whole sequence length
+Displays thin row coloured by the label type (heavy or light)
 
-@param {string}   divId   The name of the div used for the display
-@param {int}      seqLen  The length of the sequence alignment
-@param {string}   width   The width of the slider
-@param {string}   height  The height of the slider (text size)
+@param {array}		labels		The label array
+@retuen {text}		tableLine	HTML
 
-@author 
-- 06.06.14 Original   By: ACRM
-- 10.06.14 Removed redundant variable and changed divs to spans
-- 15.06.14 Added height
+@author
+- 21.03.17  Original	By: JH
 */
-function JSAV_printSlider(divId, seqLen, width, height)
-{
 
-   var parrenttag = '#' + divId + '_controls';
-   var id = divId + "_slider";
-   var tag = "#" + id;
+function JSAV_buildTypeLabel(labels) {
 
-   var span_showrange = $("<span id='" + divId + "_showrange'></span>").appendTo(parrenttag);
-   var span_slider = $("<span id='" + divId + "_slider'></span>").appendTo(parrenttag);
-
-   $(tag).css('width',   width);
-   $(tag).css('margin',  '10px');
-   $(tag).css('display', 'block');
-
-   $(tag).slider({
-         range: true,
-         min: 1,
-         max: seqLen,
-         values: [1, seqLen],
-         slide: JSAV_showRange
-   });
-
-   // Initial display of the range
-   JSAV_showRange(divId);
+var tableLine = "";
+tableLine += "<tr class='typeLabelRow'></td>";
+for (var l=0; l<labels.length; l++) {
+    var cellCol = (labels[l].substring(0,1) == 'L') ? "light-col" : "heavy-col";
+    tableLine += "<td class='" + cellCol + "'></td>";
+}
+tableLine += "<td class='rhcol'></td></tr>";
+return(tableLine);
 }
 
 // ---------------------------------------------------------------------
 /**
-Displays the currently selected range as text and calls the routine
+Displays the currently selected range as text and calls the routine		
 to higlight that range in the alignment view.
 
-Called as JSAV_showRange(divID), or as a callback from a slider event
+Called as JSAV_showRange(divID)
 
-@param {JQEvent}   eventOrId    JQuery Event
-@param {JQ-UI}     ui           JQuery UI object
---OR--
-@param {text}      eventOrId    Identifier of the display div
-@param {null}      ui           Must be set to null
+@param {text}      divId    Identifier of the display div
 
 @author 
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
 - 23.09.15  Changed "Sort from: xx to: xx" to "Region: positions xx to yy"
 - 24.09.15  Changed to using .html() instead of .text()
+- 09.01.17	Now uses global start and stop instead of slider positions By: JH
 */
-function JSAV_showRange(eventOrId, ui)
+function JSAV_showRange(divId)
 {
-   // Here the eventOrId is the id of the div where we are working
-   if(ui == null)
-   {
-      // Get the values out of the slider
-      var tag = "#" + eventOrId + "_slider";
-      gStartPos[eventOrId] = $(tag).slider("values", 0);
-      gStopPos[eventOrId]  = $(tag).slider("values", 1);
-
-      // Display the range currently selected
-      tag = "#" + eventOrId + "_showrange";
-      var html = "<p>Region: positions " + gStartPos[eventOrId] + " to " + gStopPos[eventOrId] + "</p>";
+    
+    // Display the range currently selected
+   var parenttag = '#' + divId + '_controls';
+   var span_showrange = $("<span id='" + divId + "_showrange'></span>").appendTo(parenttag);
+   var tag = "#" + divId + "_showrange";
+   if (gOptions[divId].transpose) {
+      $(tag).html('');
+   } else {
+      var html = "<p>Region: positions " + gStartPos[divId] + " to " + gStopPos[divId] + "</p>";
       $(tag).html(html);
-      JSAV_markRange(eventOrId, gSequenceLengths[eventOrId], gStartPos[eventOrId]-1, gStopPos[eventOrId]-1);
-   }
-   else
-   {
-      var id = $(this).parent().parent().attr("id");
-      var tag = "#" + id + "_showrange";
-
-      // Get the values out of the slider
-      gStartPos[id] = ui.values[0];
-      gStopPos[id]  = ui.values[1];
-
-      // Display the range currently selected
-      var html = "<p>Region: positions " + gStartPos[id] + " to " + gStopPos[id] + "</p>";
-      $(tag).html(html);
-      JSAV_markRange(id, gSequenceLengths[id], gStartPos[id]-1, gStopPos[id]-1);
+      JSAV_markRange(divId, gSequenceLengths[divId], gStartPos[divId]-1, gStopPos[divId]-1);
    }
 }
 
@@ -1205,11 +1401,224 @@ Simple wrapper function to obtain the currently selected range
 @author 
 - 06.06.14  Original   By: ACRM
 */
+
 function JSAV_getRange(divId)
 {
    var start = gStartPos[divId]-1;
    var stop  = gStopPos[divId]-1;
    return([start, stop]);
+}
+
+// -------------------------------------------------------------------------
+/**
+Prints a single highlight cell base on the highlight array
+
+@param {int[]} highlight	- the highlight array
+@param {int} i				- the element id of the cell
+@param {string} pref		- class for display (different for transposed view)
+@returns {string}			- text for td tag and class
+
+@author
+- 09.01.17 Original By: JH (based on original section of JSAV_buildHighlightHTML)
+*/
+
+function printHighlightCell(highlight, i, pref) {
+
+var displayClass = 'unhighlighted';
+for(var j=0; j<highlight.length; j+=2)
+	{
+	var start = highlight[j];
+	var stop  = highlight[j+1];
+	if((i >= start) && (i <= stop))
+		{
+		displayClass = 'highlighted';
+		break;
+		}
+	}
+	return("<td class='"+displayClass+" "+pref+"' /></td>");
+}
+
+// ---------------------------------------------------------------------
+/**
+Takes an array of sequence objects and builds the HTML to display
+them as a coloured table in transposed (vertical) orientation
+
+@param   {string}     divId       ID of div in which to print
+@param   {object[]}   sequences   Array of sequence objects
+@returns {string}    		      HTML
+
+@author 
+- 02.12.16 Original  By: JH (based on original JSAV_buildSequencesHTML)
+*/
+
+function JSAV_transposeSequencesHTML(divId, sequences)
+
+{
+	var dispOrder = gDisplayOrder[divId];
+	var options = gOptions[divId]
+	var html = "";
+	html += "<div class='JSAV'>\n";
+        // Create id line
+
+   var calcwidth = (sequences.length * 20) + 250;
+   var tabwidth = calcwidth + 'px';
+   $('#' + divId).css('width', tabwidth);
+
+	html += "<div id='"+divId+"tr_outerseqtable' class='tr_outerseqtable'>";
+	html += "<div class='tr_seqtable'>";
+        html += "<table border='0'>\n";
+
+	html += "<tr><th class='tr_labels tr_idCell rotate'><div>All/None</div></th>";
+	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+	for (var i=0;i<sequences.length;i++) 
+		if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+			{
+			var id = sequences[dispOrder[i]].id;
+			if(options.idSubmit == null)
+				{
+				html += "<th class='tr_seqCell tr_idCell rotate'><div>" + id + "</div></th>";
+				}
+			else
+				{
+             			var idSubmitAttribute = options.idSubmitAttribute;
+				var url         = options.idSubmit;
+				var submitParam = sequences[dispOrder[i]][idSubmitAttribute];
+				if(options.idSubmitClean)
+					{
+					submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+					}
+       			        url += submitParam;
+				html += "<th class='tr_seqCell tr_idCell rotate'><div><a href='" + url + "'>" + id + "</a></div></th>";
+				}
+			}
+	if(options.consensus != undefined)
+		html += "<th class='tr_idCell rotate tr_consensusCell'><div>Consensus</div></th>";
+	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+	html += '</tr>';
+
+	// Create the selection button line
+	if (options.selectable) {
+		html += JSAV_buildSelectAllHTML(divId, options.selectable, true, 'tr_labels');
+		if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+		for (var i=0;i<sequences.length;i++) 
+		    if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+			{
+			var name = "select_" + sequences[dispOrder[i]].id;
+			var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+			html += "<td class='tr_seqCell tr_selectCell'><input class='selectBox "+cname+" tr_checkbox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\", \""+cname+"\",this.checked);'/></td>";
+			}
+		if(options.consensus != undefined)
+		    html += "<td class='tr_seqCell tr_consensusCell'></td>";
+		if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+		html += '</tr>';
+	}
+	
+	// Create transposed sequences
+        html += "<tr class='topline'><td></td></tr>";
+
+        for (var i=0;i<gSequenceLengths[divId];i++)
+		{
+                var toplineStr = (i==0) ? "topborder" : "";
+		html += "<tr><th class='tr_labels idCell "+toplineStr+"'>"+options.labels[i]+"</th>";
+		if (options.selectable) {
+			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
+			}
+                var prevAa = '#';
+		for (var s=0; s<sequences.length; s++) 
+			if ((sequences[dispOrder[s]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[s]]))
+			{
+			var aa = sequences[dispOrder[s]].sequence[i];
+			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, options.colourScheme, 'tr_');
+                        prevAa = sequences[dispOrder[s]].sequence[i];
+			}
+		if(options.consensus != undefined) {
+			var aa = gConsensus[divId][i];
+			var prevAa = '#';
+			html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, options.colourScheme, 'tr_');
+			}
+		if (options.selectable) {
+			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
+			}
+		
+		html += "</tr>";
+		}
+	html += "</table>\n";
+        html += "</div>\n";
+        html += "</div>\n";
+	html += "</div>\n";
+        $('#'+divId+'tr_outerseqtable').css('direction','rtl');
+	return(html);
+}
+// ----------------------------------------------------------------
+/**
+Builds the label for the sequence row
+
+@param 		{string}	divId		ID of the div we're dealing with
+@param 		{string}	attributeValue 	value of idSubmitAttribute for the id
+@param 		{string}	id		sequence's id
+@param 		{string}	idSubmit	text for label link
+@param		{number}	colspan		number of table columns to span	
+@returns	{string}	html		HTML for the label
+
+@author
+- 23.03.17 Original By: JH
+*/
+
+function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol) {
+
+    var options = gOptions[divId];
+    var html = "";
+
+    if ((idSubmit == null) || (attributeValue == undefined))
+    {
+       html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
+    }
+    else
+    {
+       var url         = idSubmit;
+       var attrArray = attributeValue.split(':');
+       var keyArray = idSubmitKey.split(':');
+       for (var a=0; a<attrArray.length; a++) 
+          {
+          var submitParam = attrArray[a];
+          var submitKey = keyArray[a];
+//alert(submitParam + ' ' + submitKey);
+          if(options.idSubmitClean)
+             {
+             // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+             // It probably wouldn't make sense for IDs etc
+             submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+             }
+       
+          url += submitKey + '=' + submitParam;
+          }
+       html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
+    }
+
+return(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Returns true if the sequence is numbered
+
+@param   {string}     chainType	  type of chain
+@param   {object[]}   sequence    sequence object
+@returns {boolean}                true if chain or either of the combined chains is numbered, otherwise returns false
+
+@author 
+- 15.10.17 Original  By: JH
+*/
+
+function numberedSequence(chainType, sequence)
+{
+   if (chainType == 'heavy') {
+     return (sequence.heavy_Numbered != 'N');
+   } else if (chainType == 'light') {
+     return (sequence.light_Numbered != 'N');
+   } else {
+     return ((sequence.light_Numbered != 'N') || (sequence.heavy_Numbered != 'N'));
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1219,14 +1628,6 @@ them as a coloured table
 
 @param   {string}     divId       ID of div in which to print
 @param   {object[]}   sequences   Array of sequence objects
-@param   {bool}       sortable    Should the marker line be displayed
-                                  for sortable displays
-@param   {bool}       selectable  Should check marks be displayed
-@param   {int[]}      highlight   Ranges to be highlighted
-@param   {bool}       dotify      Dotify the sequence alignment
-@param   {bool}       nocolour    Don't colour dotified residues
-@param   {bool}       consensus   Display the consensus sequence
-@param   {array}      labels      Labels to display over sequence     
 @returns {string}                 HTML
 
 @author 
@@ -1237,70 +1638,122 @@ them as a coloured table
 - 16.06.14 Added dotify
 - 17.06.14 Added consensus
 - 22.12.15 Added labels
+- 09.01.17 Added empty string format parameter to JSAV_buildSelectAllHTML 
+		   Uses displayOrder to display sequences in sorted order	By: JH
 */
-function JSAV_buildSequencesHTML(divId, sequences, sortable, selectable, highlight,
-                                 dotify, nocolour, consensus, labels)
+
+function JSAV_buildSequencesHTML(divId, sequences)
 {
+   var options = gOptions[divId];
+   var dispOrder = gDisplayOrder[divId];
+
    var html = "";
    html += "<div class='JSAV'>\n";
+
+//------------------ Header Columns --------------------------
+   
+   html += "<div class='header'><table border='0'>";
+   html += "<tr><td class='idCell' colspan='2'>Kabat numbering</td></tr><tr class='labelrow'>";
+   var cc = chainChange(options.labels, divId);
+   if (options.selectable)
+	{ 
+        html += "<td class='idCell'>All/None</td>";
+        html += JSAV_buildSelectAllHTML(divId, options.selectable, true, '');
+        }
+   else
+        { html += "<td>&nbsp;</td><td class='selectCell'>&nbsp;</td>"; }
+
+
+   if(options.labels != undefined)
+       {
+       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels, cc);
+       html += "<td class='rhcol'></td>";
+       }		
+    html += "</tr>";
+
+   if(options.labeltypecol != undefined)
+      {
+      html += "<tr class='typeLabelRow'>";
+      html += "<td></td><td></td>";
+      html += JSAV_buildTypeLabel(options.labels);
+      html += "</tr>";
+      }
+
+  if(options.highlight != undefined)
+       {
+       html += "<tr class='highlightrow'>";
+       html += "<th class='idCell'>CDRs</th><td>&nbsp;</td>";
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+       html += "</tr>";
+       }
+
+html += "</table></div>";
+//---------------- Central Section ------------------------
+
+   html += "<div class='outerseqtable'>";
+   html += "<div class='seqtable'>";
    html += "<table border='0'>\n";
 
-   if(selectable)
-   {
-       // Create the toggle all/none selection button
-       html += JSAV_buildSelectAllHTML(divId, gSequenceLengths[divId]);
-   }
+   var prevSequence = undefined;
+   for(var i=0; i<sequences.length; i++) 
+	if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+  	 {
+	 html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
+         var attrArray = options.idSubmitAttribute.split(':');
+         var idSubmitAttr = '';
+         for (var a=0; a<attrArray.length; a++)
+             idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
+         idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+     	 html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell') + "\n";
+  	 var name = "select_" + sequences[dispOrder[i]].id;
+	 var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+         html += "<th class='selectCell'><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/></th>";
+         html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit, cc) + "\n";
+         prevSequence = sequences[dispOrder[i]].sequence;
+         html += "</tr>";
+  	 }
+ 
+    html += "</table>";
+    html += "</div>";
+    html += "</div>";
 
-   if(labels != undefined)
-   {
-       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], selectable, labels);
-   }
+//------------ Footer section -----------------
+   html += "<div class='footer'>";
+   html += "<table border='0'>";
+   if(options.consensus != undefined)
+       {
+       html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'>";
+       html += "<th class='idCell'>Consensus</th><th class='selectCell'>&nbsp;</th>";
+       html += JSAV_buildASequenceHTML(divId, null, 'Consensus', gConsensus[divId], undefined, true, null, cc) + "\n";
+       html += "</tr>";
+       }
+  if(options.highlight != undefined)
+       {
+       html += "<tr class='highlightrow'>";
+       html += "<th class='idCell'>CDRs</th><th class='selectCell'>&nbsp;</th>";
+       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+       html += "</tr>";
+       }
+   if(options.labeltypecol != undefined)
+      {
+      html += "<tr class='typeLabelRow'>";
+      html += "<td></td><td></td>";
+      html += JSAV_buildTypeLabel(options.labels);
+      html += "</tr>";
+      }
 
-   if(highlight != undefined)
-   {
-       // If we are highlighting regions in the sequence, do so
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
-   }
+   if(options.sortable) {
+       html += "<tr class='tooltip markerrow' title='Select region for sorting - click here to reset sort region'>";
+      html += "<th class='idCell' onclick='resetSortRegion(\""+divId+"\")';>Sort Region</th><th class='selectCell'>&nbsp;</th>";
+       html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], options.selectable);
+       html += "</tr>";
+      }
 
-   // Build the actual sequence entries
-   for(var i=0; i<sequences.length; i++)
-   {
-      var prevSequence = undefined;
-      if(i>0) { prevSequence = sequences[i-1].sequence; }
-      html += JSAV_buildASequenceHTML(sequences[i], sequences[i].id, sequences[i].sequence, prevSequence, 
-                                      selectable, dotify, nocolour, false, 
-                                      gOptions[divId].colourScheme,
-                                      gOptions[divId].idSubmit,
-                                      gOptions[divId].idSubmitClean,
-                                      gOptions[divId].idSubmitAttribute) + "\n";
-   }
-
-   if(consensus != undefined)
-   {
-      html += JSAV_buildASequenceHTML(null, 'Consensus', gConsensus[divId], undefined,
-                                      selectable, dotify, nocolour, true,
-                                      gOptions[divId].colourScheme, 
-                                      null,
-                                      false) + "\n";
-   }
-
-   if(highlight != undefined)
-   {
-       // If we are highlighting regions in the sequence, do so again at the bottom of the table
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], selectable, highlight);
-   }
-
-   if(sortable)
-   {
-      // The marker section which shows the range selected for sorting
-      html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], selectable);
-   }
-
-   html += "</table>\n";
+   html += "</table></div>";
    html += "</div>\n";
+   seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
    return(html);
 }
-
 
 // ---------------------------------------------------------------------
 /**
@@ -1309,23 +1762,25 @@ for selecting/deselecting all sequences
 
 @param   {string}  divId  - ID of the div we are working in
 @param   {int}     seqLen - sequence length
+@param	 {string}  pref   - prefix for display class - uses 'tr_' for transposed cells
 @returns {string}         - HTML
 
 @author 
 - 09.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
+- 09.01.17 Changes made to allow for reformatting of labels By: JH
 */
-function JSAV_buildSelectAllHTML(divId, seqLen)
+function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
 {
+
    var html;
    var id = divId + "_AllNone";
+   var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
+   var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
 
-   html = "<tr><th class='idCell'>All/None</th><th><input class='tooltip' title='Select or deselect all sequences' id='" + id + "' type='checkbox' onclick='JSAV_selectAllOrNone(\"" + divId + "\");' /></th>";
-   for(var i=0; i<seqLen; i++)
-   {
-      html += "<td></td>";
-   }
-   html += "</tr>";
+   if (selectable) {
+	   html = "<td class='selectCell" + extraClass + "'>"+content+"</td>";
+    }   
    return(html);
 }
 
@@ -1343,28 +1798,86 @@ residues to be used for sorting
 - 06.06.14  Original   By: ACRM
 - 10.06.14  Added 'selectable'
 - 23.09.15  Added &nbsp; into 'Sort Region' to stop it breaking the line
+- 09.01.17  Markers are now used for selecting start and stop for sort By: JH
 */
 function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
     var html = "";
 
-    if(selectable)
-    {
-        html += "<tr class='markerrow'><th class='idCell'>Sort&nbsp;Region:</th>";
-        html += "<th class='selectCell'></th>";
-    }
-    else
-    {
-        html += "<tr class='markerrow'><th class='idCell'>Sort&nbsp;Region:</th>";
-    }
+//    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
 
     for(var i=0; i<seqLen; i++)
     {
         var id = divId + "_JSAVMarker" + i;
-        html += "<td id='" + id + "' class='unmarked'>&nbsp;</td>";
+		var onmousedown = "setSortStart(\""+divId+"\", "+(i)+");";
+		var onmouseover = "setSortRange(\""+divId+"\", "+i+");";
+        html += "<td id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
     }
-    html += "</tr>\n";
+    html += "<td class='rhcol'></td>\n";
     return(html);
+}
+
+// ---------------------------------------------------------------------	
+/**
+Sets the start (and stop) position when mouse is depressed
+
+@param {string} divId 	- the divId we're dealing with
+@param {int} i 			- the sort region position
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function setSortStart(divId, i) {
+	
+gStartPos[divId] = i+1;
+gStopPos[divId] = i+1;
+mouseState = "down";
+JSAV_showRange(divId);
+}
+
+// -----------------------------------------------------------------------
+/**
+Adjusts the stop position to current cell if mouse is depressed
+
+@param {string} divId 	- the divId we're dealing with
+@param {int} i 			- the sort region position
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function setSortRange(divId, i) {
+if (mouseState=="down") {
+	gStopPos[divId] = i+1;
+	JSAV_showRange(divId);
+	}
+}
+
+// ---------------------------------------------------------------------
+/**
+Resets sort region to full width
+
+@author
+- 15.09.17 Original By: JH
+*/
+function resetSortRegion(divId) {
+
+gStartPos[divId] = 1;
+gStopPos[divId] = gSequenceLengths[divId];
+JSAV_showRange(divId);
+}
+
+// ---------------------------------------------------------------------
+/**
+Initialises the global mouseState
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function mouseUpHandler() {
+mouseState = "up";
 }
 
 // ---------------------------------------------------------------------
@@ -1505,16 +2018,16 @@ sequence
 @param   {object[]}   sequences   Array of sequence objects
 @param   {int}        start       Offset of start of region to sort
 @param   {int}        stop        Offset of end of region to sort
-@returns {object[]}               Sorted array of sequence objects
+@param   {string}     divId       the divId we're dealing with
 
 @author 
 - 29.05.14 Original   By: ACRM
 - 04.06.14 Added ignoreEnds (true) to JSAV_calcDifferenceMatrix() call
          Range version
+- 04.09.17 Now writes new sort order to gDisplayOrder[divId]  By: JH
 */
-function JSAV_sortSequences(sequences, start, stop)
+function JSAV_sortSequences(sequences, start, stop, divId)
 {
-   var sortedSequences = [];
    var sortedIndexes   = [];
    var nSeqs           = sequences.length;
    var ignoreEnds      = false;
@@ -1575,10 +2088,8 @@ function JSAV_sortSequences(sequences, start, stop)
    // Finally copy across the sequences in sorted order
    for(var i=0; i<nSeqs; i++)
    {
-      sortedSequences[i] = sequences[sortedIndexes[i]];
+      gDisplayOrder[divId][i] = sortedIndexes[i];
    }
-
-   return(sortedSequences);
 }
 
 
@@ -1691,9 +2202,6 @@ be displayed here and then this is tied to the action on a button
 that sorts and refreshes the display.
 
 @param {char}  divId        ID of an HTML <div>
-@param {bool}  sortable     Is the display sortable
-@param {bool}  selectable   Are checkboxes shown next to sequences
-@param {bool}  border       Should CSS be updated to show a border
 @returns {bool}             FALSE - (not sure why!)
 
 @author 
@@ -1703,18 +2211,17 @@ that sorts and refreshes the display.
 - 16.06.14 Added dotify and nocolour options to refresh call
 - 17.06.14 Added consensus
 - 22.12.15 Added passing of labels
+- 09.01.17 Calls resetDisplayColumn to reset display status of datatabe columns after sequence sort By: JH
 */
-function JSAV_sortAndRefreshSequences(divId, sortable, selectable, border)
+function JSAV_sortAndRefreshSequences(divId)
 {
    var id = divId + "_JSAVStart";
 
    var range=JSAV_getRange(divId);
-   var sortedSequences = JSAV_sortSequences(gSequences[divId], range[0], range[1]);
-
-   JSAV_refresh(divId, sortedSequences, sortable, selectable, border, 
-                range[0], range[1], gOptions[divId].highlight, 
-                gOptions[divId].dotify, gOptions[divId].nocolour, 
-                gOptions[divId].consensus, gOptions[divId].labels);
+   JSAV_sortSequences(gSequences[divId], range[0], range[1], divId);
+   resetDisplayColumn(gDisplayColumn[gOptions[divId].chaintype], gSequences[divId]);
+   
+   JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
 
    // Record the fact that the display has been sorted
    gOptions[divId].sorted = true;
@@ -1730,16 +2237,8 @@ Also updates the marked range and the CSS if the border option is set
 
 @param {char}     divId        ID of an HTML <div>
 @param {object[]} sequences    Array of sequence objects
-@param {bool}     sortable     Is the display sortable
-@param {bool}     selectable   Are checkboxes shown next to sequences
-@param {bool}     border       Should CSS be updated to show a border
 @param {int}      start        start of selected region
 @param {int}      stop         end of selected region
-@param {int[]}    highlight    regions to be highlighted
-@param {bool}     dotify       Dotify the sequence
-@param {bool}     nocolour     Don't colour dotified residues
-@param {bool}     consensus    Should we display a consensus sequence
-@param {string[]} labels       Array of labels (or undefined) 
 
 @author 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
@@ -1747,25 +2246,41 @@ Also updates the marked range and the CSS if the border option is set
 - 17.06.14  Added consensus
 - 19.06.14  Added callback
 - 22.12.15  Added labels
+- 09.01.17  Choice of display (transposed or standard) based on transpose parameter
+		JSAV_MarkRange only called if options.sortable is true
+		Also calls printDataTable		By: JH
 */
-function JSAV_refresh(divId, sequences, sortable, selectable, border, 
-                      start, stop, highlight, dotify, nocolour, consensus, 
-                      labels)
+function JSAV_refresh(divId, sequences, start, stop)
 {
-   var html = JSAV_buildSequencesHTML(divId, sequences, sortable, 
-                                      selectable, highlight, dotify, nocolour, 
-                                      consensus, labels);
+	var options = gOptions[divId];
+	if (options.transpose) {
+		var html = JSAV_transposeSequencesHTML(divId, sequences)
+	} else {
+		var html = JSAV_buildSequencesHTML(divId, sequences);
+	}
+									  
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
-   if(border)
+   $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+   $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+   $('#' + divId + ' .header').css('width', seqtabWidth);
+   $('#' + divId + ' .footer').css('width', seqtabWidth);
+
+ if(options.border)
    {
        JSAV_modifyCSS(divId);
    }
-   JSAV_markRange(divId, gSequenceLengths[divId], start, stop);
 
-    if(gOptions[divId].callback != undefined)
+   if (options.sortable)
+   {	  
+	   JSAV_showRange(divId);
+   }
+   
+   printDataTable(divId, sequences);						
+
+   if(options.callback != undefined)
     {
-        window[gOptions[divId].callback](divId);
+        window[options.callback](divId);
     }
 
 }
@@ -1794,6 +2309,7 @@ function JSAV_markRange(divId, seqLen, start, stop)
        var id = divId + "_JSAVMarker" + i;
        document.getElementById(id).className = 'unmarked';
    }
+  
    if((start >= 0) && (stop >= 0))
    {
       for(var i=start; i<=stop; i++)
@@ -1812,6 +2328,7 @@ Initializes global arrays
 - 09.06.14 Original   By: ACRM
 - 12.06.14 Added more arrays
 - 17.06.14 Added gConsensus array
+- 01.09.17 Added gDisplayOrder and gDisplayColumn  By: JH
 */
 function JSAV_init()
 {
@@ -1831,6 +2348,8 @@ function JSAV_init()
        gStopPos         = Array();
        gConsensus       = Array();
        gSequenceLengths = Array();
+       gDisplayOrder 	= {};
+       gDisplayColumn 	= {};
    }
 }
 
@@ -1860,10 +2379,12 @@ Calculates a consensus sequence
 
 @author 
 - 17.06.14  Original   By: ACRM
+- 01.09.17  Added displayrow condition - consensus calculated on non-hidden sequences only
 */
 function JSAV_buildConsensus(sequences)
 {
     var nSeqs    = sequences.length;
+    var nDispSeqs = 0;
     var seqLen   = sequences[0].sequence.length;
     // Initialize array
     var aaCounts = Array(seqLen);
@@ -1874,7 +2395,9 @@ function JSAV_buildConsensus(sequences)
 
     // Step through the sequences
     for(var seq=0; seq<nSeqs; seq++)
+	if (sequences[seq].displayrow)					
     {
+        nDispSeqs++;
         var seqArray = sequences[seq].sequence.split('');
 
         // Step through the positions
@@ -1907,7 +2430,7 @@ function JSAV_buildConsensus(sequences)
                 maxAA = aaCounts[pos][validAAs[aaCount]];
             }
         }
-        if(maxAA <= (nSeqs / 2))
+        if(maxAA <= (nDispSeqs / 2))
         {
             mostCommon = mostCommon.toLowerCase();
         }
@@ -2077,6 +2600,20 @@ function ACRM_dialog(title, msg, width, pre)
 };
 
 
+function chainChange(labels, divId) {
+
+if (labels != undefined) {
+  var res = labels.length;
+  for (var i=0; i < labels.length-1; i++)
+    if (labels[i].substring(0,1) != labels[i+1].substring(0,1)) {
+      res = i;
+    }
+  return res;
+} else {
+  return gSequencelength[divId];
+}
+}
+
 // ---------------------------------------------------------------------
 /**
 Create the HTML for a label row in the sequence display
@@ -2089,36 +2626,50 @@ Create the HTML for a label row in the sequence display
 
 @author 
 - 22.12.15 Original   By: ACRM
+- 09.01.17 Modified considerably for new label format	By: JH
 */
-function JSAV_buildLabelsHTML(divId,  seqLen, selectable, labels)
+
+function JSAV_buildLabelsHTML(divId,  seqLen, labels, cc)
 {
     var html = "";
-    if(selectable)
-    {
-        html += "<tr class='highlightrow'><th></th>";
-        html += "<td></td>";
-    }
-    else
-    {
-        html += "<tr class='highlightrow'><td></td>";
-    }
-
+    var pref;
+    var labelNumbers = "";
     for(var i=0; i<labels.length; i++)
     {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
         // Make a copy of the label and remove the chain label
-        var labelText = labels[i];
-        labelText.replace(/^[A-Za-z]/g, '');
+        var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
+        var labelText = labels[i].replace(/^[A-Za-z]/g, '');
+        var lastChar = labelText.substring(labelText.length-1,labelText.length);
+	html += "<td class='"+pref+cellCol+"'>";
+        if (lastChar == "0") {
+           labelNumbers = labelText;
+	   }
+	if (labelNumbers.length > 0) {
+	   html += labelNumbers[0];
+	   labelNumbers = labelNumbers.substring(1,labelNumbers.length)
+	   }
+	html += "</td>";
+	}
+   html += "<td class='rhcol'></td></tr><tr class='labelrow'><td>&nbsp;</td><td>&nbsp;</td></td>";
+   for(var i=0; i<labels.length; i++)
+    {
+        pref = '';
+        if (i == cc) { pref = 'br_'; }
+        var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
+        var labelText = labels[i].replace(/^[A-Za-z]/g, '');
 
         // Find the last character
         var lastChar = labelText.substring(labelText.length-1,labelText.length);
 
         // Open a table cell with the label as a tooltip
-        html += "<td class='tooltip' title='" + labels[i] + "'>";
+        html += "<td class='tooltip "+pref+cellCol+"' title='" + labels[i] + "'>";
 
         // Insert the appropriate character
-        if(lastChar == "0")                   // 0 - do a '|'
+        if (lastChar == "0")   // 0 - do a '|'
         {
-            html += "|";
+			html += "|";
         }
         else if (lastChar.match(/[A-Za-z]/))  // Insert code - show the code
         {
@@ -2132,9 +2683,6 @@ function JSAV_buildLabelsHTML(divId,  seqLen, selectable, labels)
         // And finish the table cell
         html += "</td>";
     }
-
-    // Finish the table row
-    html += "</tr>\n";
 
     return html;
 }
@@ -2160,3 +2708,675 @@ function JSAV_autoLabels(sequences)
     }
     return labels;
 }
+
+// -----------------------------------------------------------------
+/**
+Initialises dispOrder to initial sequence ordering
+
+@param {object[]} sequences 	- array of sequence objects
+@returns {int[]} dispOrder	- array of sequence elements in order of display
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function initDisplayOrder(sequences) {
+
+var dispOrder = [];
+for (var r=0; r<sequences.length; r++) {
+	dispOrder[r] = r;
+	}
+return(dispOrder);
+}
+
+// -----------------------------------------------------------------
+/**
+Initialises dispColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
+
+@param {string} divId		- divId we're dealing with
+@param {object[]} sequences 	- array of sequence objects
+@returns {int[]} dispColumn	- array of codes for indicating column sort status
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function initDisplayColumn(divId, sequences) {
+	
+var stypes = ['heavy','light'];
+var dispColumn = {};
+for (var stype in stypes) {
+  for (var s=0; s<=sequences.length; s++) {
+    for (var key in sequences[s]) {
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
+           if (key.substr(0,5) == stypes[stype]) {
+		if ( gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0 )
+		  { 
+ 		  dispColumn[key] = 1; 
+		  } else {
+                  dispColumn[key] = 0;
+                  }
+                }
+            }
+	}
+    }
+  }
+for (var term in gOptions[divId].searchTerms) {
+  for (var stype in stypes) {
+    for (var s=0; s<=sequences.length; s++) {
+      for (var key in sequences[s]) {
+	if ((key.substr(6).toLowerCase() == term) || (term == 'simple')) {
+           if (key.substr(0,5) == stypes[stype]) {
+	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
+		{ 
+ 		  dispColumn[key] = 1; 
+                }
+              }
+           }
+         }
+      }
+    }
+  }
+return(dispColumn);
+}
+
+// -----------------------------------------------------------------
+// ------------------ Data Table Functions -------------------------
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
+/**
+Main function for printing the data table
+
+@param {string} divId		- divId we're dealing with
+@param {object[]} sequences 	- array of sequence objects
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function printDataTable(divId, sequences) {
+
+var options = gOptions[divId];
+var ctype = options.chainType;
+var dispOrder = gDisplayOrder[divId];
+var tableDiv = divId + '_Table';
+var outerTableDiv = tableDiv + 'Outer';
+var tableTag = "#" + tableDiv;
+var html = '';
+html += printToggleList(divId);
+html += "<div id='"+outerTableDiv+"'>";
+html += "<div class='header' style='padding-left:16px;'>";
+html += printTableHeader(divId, options.selectable);
+html += "</div>";
+html += "<div id='" + tableDiv + "_Outer' class='outertablebody'>";
+html += "<div id='" + tableDiv + "_Inner' class='innertablebody'>";
+html += "<table class='results' border='1' id='" + divId + "_tablebody'>";
+for (var s=0;s<sequences.length;s++)
+	html += printDataRow(divId, sequences[dispOrder[s]]);
+html += '</table>';
+html += "</div></div></div>";
+html += "<div id='" + tableDiv + "_Controls' class='JSAVControls'>";
+html += "</div>";
+$("#" + tableDiv).html(html);
+
+if (options.hideable)
+  {
+  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Hide selected sequences', 
+                     options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
+  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Show hidden sequences', 
+                     options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
+  }
+
+if (options.exportable)
+  {
+  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to CSV', 
+                     options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
+  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
+                     options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
+  }
+$('#' + divId + "_tablebody").css('width',tableWidth+6); 
+$('#' + tableDiv + "_Outer").css('width',tableWidth+24); 
+$('#' + tableDiv + "_Inner").css('width',tableWidth+8); 
+$("#" + outerTableDiv).css("width","98vw");
+$("#" + outerTableDiv).css("margin-left","0.5em");
+$("#" + outerTableDiv).css("overflow-x","auto");
+}
+
+
+// -----------------------------------------------------------------
+/**
+resets displayColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
+
+@param {object[]} sequences 		- array of sequence objects
+@param {int[]} displayColumn		- array of codes for indicating column sort status
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function resetDisplayColumn(displayColumn, sequences) {
+for (var key in displayColumn) 
+	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id'))
+		if (displayColumn[key] >0)
+			displayColumn[key] = 1;
+}
+
+// -----------------------------------------------------------------
+/**
+Sorts the table based on the column values and the sort direction
+Final ordering is set in gDisplayOrder[divId]
+Calls JSAV_refresh to redraw the sequences and table
+
+@param {string} divId 		- the divId we're dealing with
+@param {string} direction	- the sort direction
+@param {string} colName		- name of the column on which the sort is based
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function compareVals(colVal, hiVal, numeric) {
+
+if (numeric) {
+    if (Number(colVal) > Number(hiVal))
+       return 1;
+    else if (Number(colVal) < Number(hiVal))
+       return -1;
+    else return 0;
+} else {
+     if (colVal > hiVal)
+       return 1; 
+     else if (colVal < hiVal)
+       return -1;
+     else return 0;
+}
+}
+
+function DT_sortColumn(divId, direction, colName) {
+	
+var options = gOptions[divId];
+var sequence = gSequences[divId];
+var numeric = true;	
+var idxFree = [];
+var hV = -1;
+gStartPos[divId] = 1;
+gStopPos[divId] = gSequenceLengths[divId];
+
+for (var r1=0; r1<sequence.length; r1++) {
+	idxFree[r1] = true;
+	if (isNaN(sequence[r1][colName])) {
+		hV = ''; 
+		numeric = false;
+		}
+	}
+if (direction == 'asc') {
+	for (var r1=sequence.length-1; r1>=0; r1--) 
+		{
+		var hiVal = hV;
+		var idx = 0;
+		for (var r2=0; r2<sequence.length; r2++)
+			if (idxFree[r2]) {
+				if (compareVals(sequence[r2][colName], hiVal, numeric) >=0 ) {
+					hiVal = sequence[r2][colName];
+					idx = r2;
+					}
+			}
+		idxFree[idx] = false;
+		gDisplayOrder[divId][r1] = idx;
+		}
+	gDisplayColumn[gOptions[divId].chainType][colName] = 2;
+} else {
+	for (var r1=0; r1<sequence.length; r1++) 
+		{
+		var hiVal = hV;
+		var idx = 0;
+		for (var r2=0; r2<sequence.length; r2++)
+			if (idxFree[r2]) {
+				if (compareVals(sequence[r2][colName], hiVal, numeric) >0) {
+					hiVal = sequence[r2][colName];
+					idx = r2;
+					}
+			}
+		idxFree[idx] = false;
+		gDisplayOrder[divId][r1] = idx;
+		}
+	gDisplayColumn[gOptions[divId].chainType][colName] = 3;
+}
+for (var key in gDisplayColumn[gOptions[divId].chainType])
+	if ((key != colName) && (gDisplayColumn[gOptions[divId].chainType][key] != 0))
+		gDisplayColumn[gOptions[divId].chainType][key] = 1;
+
+JSAV_refresh(divId, gSequences[divId], 0, gSequences[divId][0].sequence.length-1);
+
+} 
+ 
+// -----------------------------------------------------------------
+/**
+Toggles display of the column then recalls printDataTable
+@param {string} divId	- divId we're dealing with
+@param {string} colName - name of column to display/undisplay
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function DT_toggleColumn(divId, colName) {
+		
+        if (gDisplayColumn[gOptions[divId].chainType][colName]) {
+		gDisplayColumn[gOptions[divId].chainType][colName] = 0;
+	}
+	else {
+		gDisplayColumn[gOptions[divId].chainType][colName] = 1;
+	}
+        printDataTable(divId, gSequences[divId]);
+		
+}
+
+// -----------------------------------------------------------------
+/**
+Export sequences to CSV file
+@param {string} divId	- divId we're dealing with
+
+@author
+- 22.05.17 Original By : JH
+*/
+
+function JSON2CSV(divId) {
+
+var sequence = gSequences[divId];
+var dispOrder = gDisplayOrder[divId];
+var CSV = '';
+var row = '';
+var columns = [];
+columns['heavy'] = new Array();
+columns['light'] = new Array();
+for (var s in sequence[0]) {
+    if (gDisplayColumn[gOptions[divId].chainType][s]) {
+	columns[s.substring(0,5)].push(s);
+	}
+    }
+for (var t in columns) 
+   if (columns[t].length > 0) {
+   row += '"' + t.toUpperCase() + '",';
+   for (var d=1; d<columns[t].length; d++)
+     row += ",";
+}
+CSV += row.slice(0,-1) + '\r\n';
+row = '';
+for (var t in columns) {
+    for (var c=0; c<columns[t].length; c++)
+	row += columns[t][c].substring(6) + ',';
+    }
+for (var s=0; s<gOptions[divId].labels.length; s++) {
+    row += gOptions[divId].labels[s] + ',';
+    }
+CSV += row.slice(0,-1) + '\r\n';
+for (var i=0; i<sequence.length; i++) {
+    if (sequence[dispOrder[i]].displayrow) {
+        row = '';
+	for (var t in columns) {
+        for (var c=0; c<columns[t].length; c++) {
+           if (sequence[dispOrder[i]][columns[t][c]] == undefined) {
+	      row += ',';
+           } else {
+              row += '"' + sequence[dispOrder[i]][columns[t][c]] + '",';
+	   }
+        }
+	}
+        for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
+           row += sequence[dispOrder[i]].sequence[s] + ',';
+           }
+	CSV += row.slice(0,-1) + '\r\n';
+	}
+    }
+if (CSV == '') {
+	alert("Invalid data");
+	return;
+	}
+var link = document.createElement("a");
+var browser = window.navigator.userAgent;
+var appStr = 'data:text/csv;charset=utf-8';
+var fileName = "JSAV_Export.csv";
+if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
+   { 
+   var blob = new Blob([CSV], {type: appStr });
+   window.navigator.msSaveBlob(blob, fileName);
+   }
+else
+   {
+   link.href = appStr + ',' + encodeURIComponent(CSV);
+   link.style = "visibility:hidden";
+   link.download = fileName;
+   document.body.appendChild(link);
+   link.click();
+   document.body.removeChild(link);
+   }
+
+}
+
+
+// -----------------------------------------------------------------
+/**
+Export sequences to XML file
+@param {string} divId	- divId we're dealing with
+
+@author
+- 2.08.17 Original By : JH
+*/
+
+function JSON2XML(divId) {
+
+var sequence = gSequences[divId];
+var dispOrder = gDisplayOrder[divId];
+var options = gOptions[divId];
+var columns = [];
+columns['heavy'] = new Array();
+columns['light'] = new Array();
+var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
+XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
+XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
+XML += '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"></DocumentProperties>\r\n';
+XML += '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"></ExcelWorkbook>\r\n';
+XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
+XML += '  <Alignment ss:Horizontal="Center"/>\r\n';
+XML += '  <Font ss:Bold="1"/>\r\n';
+XML += ' </Style>\r\n';
+for (var c in aaColours[options.colourScheme]) {
+   XML += ' <Style ss:ID="'+ c + '">';
+   XML += '  <Interior ss:Color="' + aaColours[options.colourScheme][c] + '" ss:Pattern="Solid" />';
+   XML += ' </Style>\r\n';
+   }
+XML += ' <Style ss:ID="heavy">';
+XML += '  <Interior ss:Color="#666666" ss:Pattern="Solid" />';
+XML += ' </Style>\r\n';
+XML += ' <Style ss:ID="light">';
+XML += '  <Interior ss:Color="#999999" ss:Pattern="Solid" />';
+XML += ' </Style>\r\n';
+XML += '</Styles>\r\n';
+XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+
+for (var s in sequence[0]) {
+    if (gDisplayColumn[gOptions[divId].chainType][s]) {
+	XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
+	columns[s.substring(0,5)].push(s);
+	}
+    }
+for (var s=0; s<sequence[0].sequence.length; s++) {
+    XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
+    }
+
+
+XML += '<Row ss:StyleID="columnHeader">\r\n';
+for (var t in columns) 
+   if (columns[t].length > 0) {
+   XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase() + '</Data></Cell>\r\n';
+}
+XML += '</Row>\r\n';
+XML += '<Row ss:StyleID="columnHeader">\r\n';
+for (var t in columns) {
+    for (var c=0; c<columns[t].length; c++)
+	XML += '  <Cell ss:StyleID="' + t + '"><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
+    }
+for (var s=0; s<options.labels.length; s++) {
+    XML += '  <Cell><Data ss:Type="String">' + options.labels[s] + '</Data></Cell>\r\n';
+    }
+
+XML += '</Row>\r\n';
+
+for (var i=0; i<sequence.length; i++) {
+    if (sequence[dispOrder[i]].displayrow) {
+        row = '<Row>\r\n';
+	for (var t in columns) {
+        for (var c=0; c<columns[t].length; c++) {
+           if (sequence[dispOrder[i]][columns[t][c]] == undefined) {
+	      row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
+           } else {
+              row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]][columns[t][c]] + '</Data></Cell>\r\n';
+	   }
+        }
+	}
+         for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
+           row += '  <Cell ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          }
+        row += '</Row>';
+	XML += row;
+	}
+    }
+
+XML += '</Table></Worksheet></Workbook>';
+if (XML == '') {
+	alert("Invalid data");
+	return;
+	}
+
+var link = document.createElement("a");
+var browser = window.navigator.userAgent;
+var appStr = 'data:application/xml;charset=utf-8';
+var fileName = "JSAV_Export.xml";
+if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
+   { 
+   var blob = new Blob([XML], {type: appStr });
+   window.navigator.msSaveBlob(blob, fileName);
+   }
+else
+   {
+   link.href = appStr + ',' + encodeURIComponent(XML);
+   link.style = "visibility:hidden";
+   link.download = fileName;
+   document.body.appendChild(link);
+   link.click();
+   document.body.removeChild(link);
+   }
+}
+
+
+// -----------------------------------------------------------------
+/**
+Prints the toggle list - the buttons for redisplaying columns where display is toggled off
+
+@param {string} divId 		- divId we're dealing with
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function truncateLabel(lbl, num) {
+
+var lblarr = lbl.split(' ');
+if (lblarr.length <= num) {
+   var lblsht = lbl;
+   } else {
+   var lblsht = lblarr.slice(lblarr.length-(num+2)).join(" ");
+   }
+return lblsht;
+}
+
+function printToggleList(divId) {
+
+var html = "<div class='toggle-col-list'>";
+for (var key in gDisplayColumn[gOptions[divId].chainType]) {
+	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
+ 	if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+        	var seqtype = key.substring(0,5);
+		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+key.substring(6).replace(/_/g, " ")+"' onclick='"+onclick+"'>"+truncateLabel(key.substring(6).replace(/_/g, " "), 4)+"</button>";
+        }
+} 
+html += '</div>';
+return(html);
+}
+
+// -----------------------------------------------------------------
+/**
+Prints the header for the table columns. Top line is the 'hide' icon, to toggle the column display to off.
+Second line is the Name and the sort icon, based on the respective field in gDisplayColumn.
+
+@param {string} divId 		- divId we're dealing with
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function printTableHeader(divId, selectable) {
+	
+var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
+
+var options = gOptions[divId];
+var maxrows = 0;
+for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+  if (gDisplayColumn[gOptions[divId].chainType][key]) {		
+	var numrows = key.split('_');
+        if (numrows.length > maxrows) maxrows = numrows.length;
+	}
+
+for (var row=0; row<maxrows; row++) {
+  html += "<tr>";
+  if (row > 0) 
+     html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), '');
+  var colspan = 3;
+  var rowstart = true;
+  var lastcell = "";
+  var lasthtml = "";
+  tableWidth = 20;
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+     {
+     if (gDisplayColumn[gOptions[divId].chainType][key]) 
+        {
+        var colheaders = key.split('_');
+	var colheader = "";
+	var colClass = colheaders[0]+"-col";
+        var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
+        var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+        tableWidth += (colWidth + 40);
+	for (var r=0;r<=row;r++)
+	   colheader += colheaders[r];
+        var htmlcell = "";
+	if (colheader == lastcell) {
+	    colspan +=3;
+	} else {
+	    colspan = 3;
+	}
+        if (row==0) 
+           {
+           var seqtype = colheaders[0];
+           }
+        else if (row==colheaders.length-1) 
+           {
+	   switch (gDisplayColumn[gOptions[divId].chainType][key]) 
+                { 
+		case 2: var clist='headerSortDown'; 
+                        var icon = 'fas fa-sort-down';
+			var direction = "desc";
+			break;
+		case 3: var clist='headerSortUp'; 
+                        var icon = 'fas fa-sort-up';
+			var direction = "asc";
+			break;
+		default: var clist='headerSortBoth'; 
+                         var icon = 'fas fa-sort';
+			 var direction = "asc";
+		}
+	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
+	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
+	   htmlcell += "<th class='"+colClass+" headerHide'>";
+           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colName+"'></i></div></th>";
+           htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
+           htmlcell += "<div class='truncated tooltip' title='"+colheaders[row]+"'>" + colheaders[row] + "</div></th>";
+           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i><div></th>";
+	   } 
+        else 
+           {
+           htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+">";
+           if (row < colheaders.length) htmlcell += colheaders[row]; 
+           htmlcell += "</th>";
+           }
+        if (rowstart) 
+           {
+           rowstart = false;
+	   } 
+        else if (colheader != lastcell) 
+           {
+           html += lasthtml;
+           }
+	lasthtml = htmlcell;
+	lastcell = colheader;
+        }
+     }
+  html += lasthtml + "</tr>";
+  }
+html += "</table>";
+return(html);
+}
+
+// -----------------------------------------------------------------
+/**
+Displays a single row of the data table, where displayrow is true
+
+@param {string} divId 		- the divId we're dealing with
+@param {object} sequence	- the sequence to display
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function printDataRow(divId, sequence) {
+
+var options = gOptions[divId];
+var html = "";
+var bgcol;
+if (sequence.displayrow) 
+   {
+   html += "<tr id = 'table_" + sequence.id + "'>";
+   var name = "select_" + sequence.id;
+   var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+   var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
+   var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
+   html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+   for (var key in gDisplayColumn[gOptions[divId].chainType])
+      if (gDisplayColumn[gOptions[divId].chainType][key])
+	 {
+	 var matchcol = key.substr(0,5) + '_Numbered';
+         var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
+         var lcColName = (colName in options.formattedCols) ? colName : 'other';
+         var colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+         var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
+         bgcol = '';
+ 	 if (typeof(sequence[key]) == 'undefined') 
+            {
+            html += "<td></td>";
+	    } 
+         else if (key.substring(6).toLowerCase() == 'accession') 
+            {
+            bgcol = "accession";
+            if (options.searchTerms['accession']) 
+               if (sequence[key].toLowerCase().indexOf(options.searchTerms['accession'].toLowerCase()) >= 0)
+                  bgcol += " highlight"; 
+            var attrArray = options.idSubmitAttribute.split(':');
+            var idSubmitAttr = '';
+            for (var a=0; a<attrArray.length; a++)
+               idSubmitAttr += sequence[attrArray[a]] + ':';
+            idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+            if (sequence[matchcol] == 'N') idSubmitAttr = null;
+	    html += JSAV_buildId(divId, idSubmitAttr, sequence[key], options.idSubmit, options.idSubmitKey, 1, bgcol)
+ 	    } 
+         else 
+            { 
+	    var cellText = sequence[key];                      
+            for (var term in options.searchTerms) 
+               {
+               if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) 
+                  {
+                  var re = new RegExp(options.searchTerms[term], 'gi');
+                  cellText = sequence[key].replace(re, "<span class='highlightmatch'>"+options.searchTerms[term].toUpperCase()+"</span>");
+                  }
+               }
+	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='" + lcColName + feint + "'>" + cellText + "</div></td>";
+	    }
+	}
+	html += "</tr>";
+   }
+return(html);
+}
+
+// --------------------- END OF FILE ------------------------------------

@@ -67,6 +67,7 @@
    V1.8    24.09.15   Added options.scrollX and options.scrollY
 */
 
+
 /***********************************************************************/
 /*** Things the user is LIKELY to want to change                     ***/
 /***********************************************************************/
@@ -76,13 +77,7 @@
 /* .JSAV p, .JSAV label {color: #333399; }                             */
 
 /* Colour for the region marked for sorting                            */
-.JSAV .marked {background-color: #AAAAAA;}
-/* Colour for regions marked as highlighted with options.highlight     */
-.JSAV .highlighted {background-color: #00FF00;}
-/* Size of the highlighting row                                        */
-.JSAV .highlightrow {height: 5px;}
-/* Padding and border around the JSAV sequence display                 */
-/* .JSAV {padding: 2ex 1in; border: 2px solid green;}                  */
+.JSAV .marked {background-color: #AAAAAA; padding: 0; margin: 0; width: 9px;}
 
 /* Size and space of checkboxes for sequence selection                 */
 .JSAV input[type=checkbox]   /* Mini Checkboxes */
@@ -95,61 +90,152 @@
 }
 
 /* Spacing of controls from the sequence display                       */
-.JSAVControls {margin: 1em 0 0 0;}
+.JSAVControls { margin: 1em 0 0 0; }
+.JSAVControls .controlbuttons {
+				}
 /* Spacing around the buttons in the controls section                  */
-.JSAVControls button {margin: 1px 4px 1px 0px;} 
-/* Background colour for the residue range slider                      */
-.JSAVControls .ui-slider-range { background: #AAAAAA; }
-/* Handle colour for the residue range slider                          */
-.JSAVControls .ui-slider-handle { background: #FFFFFF; 
-                                  border-color: #AAAAAA;}
-/*** Note that to get true JQueryUI-like styling you need to generate
-     a new theme with the alternate colour and use the image from that
-     for your buttons. 
-     See http://stackoverflow.com/questions/4391588/changing-color-of-jquery-ui-buttons
-***/
-/* Any styling to apply to the sort button                             */
-.JSAVControls .sortbutton { }
-/* Any styling to apply to the export button                           */
-.JSAVControls .exportbutton { }
-/* Any styling to apply to the delete button                           */
-.JSAVControls .deletebutton { }
-/* Any styling to apply to the submit button                           */
-.JSAVControls .submitbutton { }
-/* Any styling to apply to the action button                           */
-.JSAVControls .actionbutton { }
-/* For example:
-.JSAVControls .actionbutton { background: #FF4444; 
-                              border-color: #666666; 
-                              border-radius: 4px; }
-*/
+.JSAVControls button { margin: 1px 4px 1px 0px;
+			display:inline-block;
+			padding:1px 5px;
+			margin-bottom:0;
+			font-size:12px;
+			font-weight:400;
+			line-height:1.42857143;
+			text-align:center;
+			white-space:nowrap;
+			vertical-align:middle;
+			-ms-touch-action:manipulation;
+			touch-action:manipulation;
+			cursor:pointer;
+			-webkit-user-select:none;
+			-moz-user-select:none;
+			-ms-user-select:none;
+			user-select:none;
+			background-image:none;
+			border:1px solid transparent;
+			border-radius:3px;			
+			border-color:#333333;} 
+.JSAVControls button.active		{color:#fcd3a5;}
+/* Any styling to apply to the heavy buttons                             */
+.heavybutton {	background-color:#333333; color:#fff;}
+/* Any styling to apply to the light buttons                             */
+.lightbutton {	background-color:#999999; color:#fff;} 
+/* Any styling to apply to the combined buttons                          */
+.combinedbutton {	background-color:#666666; color:#fff;} 
+.JSAVControls .colourselect {	margin: 1px 4px 1px 0px;
+				display:inline-block;
+				padding:1px 5px;
+				margin-bottom:0;
+				font-size:12px;
+				font-weight:400;
+				line-height:1.42857143;
+				text-align:center;
+				white-space:nowrap;
+				vertical-align:middle;
+				background-image:none;
+				border:1px solid transparent;
+				border-radius:3px;
+				
+				border-color:#333333; }
 
 /***********************************************************************/
 /*** Things the user is NOT likely to want to change                 ***/
 /***********************************************************************/
-.JSAV table {border-collapse: collapse;}
+
+.JSAVControls .actionbutton { background: #999999; border-radius: 4px; border-color: #666666; }
+.JSAVControls input { margin-left: 8pt; }
+.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {text-align: left; color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px; min-width: 100px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; padding-left: 18px;}
+.JSAV p, .JSAV label {color: #274c7b;}
+.JSAV .highlightrow  {height: 18px;}
+.JSAV .br_highlightrow  {height: 18px; border-right: 3px solid #999999;}
+.JSAV .tr_highlightrow {width: 12px; padding:0; margin: 0;} /* Transposed version */
+.JSAV .typeLabelRow {height: 2px;}
+.JSAV .highlighted   {background-color: #bbbbbb; padding: 0; margin: 0; width: 9px;}
+.JSAV .unhighlighted {background-color: #777777; padding: 0; margin: 0; width: 9px;}
+
+/* Three section sequence table - ids, checkboxes, sequences */
+.JSAV .header {white-space: nowrap; direction: ltr;}
+.JSAV .footer {white-space: nowrap; direction: ltr;}
+.JSAV .outerseqtable {white-space: nowrap; overflow-y: scroll; overflow-x: hidden; direction: rtl; max-height: 30em;}
+.JSAV .seqtable {white-space: nowrap; direction: ltr; max-height: 30em;}
+
+/* Transposed version of above */
+.JSAV .tr_seqtable {overflow-y: hidden; overflow-x: scroll; direction: ltr;}
+.JSAV .tr_outerseqtable {overflow-y: scroll; overflow-x: hidden; max-height: 40em;}
+.JSAV .spacer {height: 20px;}
+
+.JSAV table {border-collapse: collapse;
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;}
 .JSAV tr    {padding: 0;
              margin: 0}
 .JSAV td    {padding: 1px;
              margin: 0;
-             font: 10pt courier,monospaced;}
+             font: 10pt courier,monospaced;
+             text-align: center;}
 .JSAV th    {padding: 1px;
              margin: 0;
              text-align: left;
              font: bold 10pt courier,monospaced;}
+.JSAV tr.topline { border-bottom: 2px solid black; padding-bottom: 5px;}
 .JSAV .toprow td {border-bottom: 1px solid #AAAAAA;
                   margin: 0 0 1px 0;}
 .JSAV .bottomrow td {border-top: 1px solid black;
                      border-bottom: 1px solid black;
                      margin: 0 0 1px 0;}
-.JSAV .markerrow {border-right: 1px solid black; height:10px}
-.JSAV .selectCell {border-right: 1px solid black;}
+.JSAV .rhcol {border-left: 1px solid #999999; padding: 0px; }
+.JSAV .markerrow {height:10px;}		/* Height of sequence sort marker row	*/
+.JSAV .labelrow {height: 16px;}		/* Height of label row 		     	*/
+.JSAV .tr_labels {width: 50px;} 	/* Width of transposed label column  	*/
+.JSAV .seqrow {height: 18px;}		/* Height of sequence row	     	*/
+.JSAV .selectCell {padding-left: 5px; padding-top: 0px; width: 20px ;min-width: 20px;}
+.JSAV .seqCell {padding: 0; margin: 0; min-width: 9px; width: 9px;}	
+.JSAV .tr_selectCell {padding-left: 5px;}	
+.JSAV .br_seqCell {padding: 0; margin: 0; border-right: 3px solid #999999;}	
+.JSAV .tr_idCell, .JSAV .tr_idCell a:link, .JSAV .tr_idCell a:visited {text-align: left; color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 20px; min-width: 20px; max-width: 20px; overflow: hidden; text-overflow: ellipsis;}
+
+.JSAV .tr_seqCell {width: 20px; } 			/* Transposed version 	*/
 .JSAV .consensusSelectCell {border-right: 1px solid black; 
                             border-top: 2px solid black}
-.JSAV .consensusCell {border-top: 2px solid black; }
+.JSAV .consensusCell {border-top: 2px solid black;}
+.JSAV .br_consensusCell {border-top: 2px solid black; border-right: 3px solid #999999;}
+.JSAV .tr_consensusCell {border-left: 2px solid black; } /* Transposed version 	*/
 
-.JSAV .unmarked {background-color: #FFFFFF;}
-.JSAV .unhighlighted {background-color: #FFFFFF;}
+.JSAV .unmarked {background-color: #FFFFFF; padding: 0; margin: 0; width: 9px;}
+
+/* Transformations for rotation in transposed version 				*/
+.JSAV th.rotate {
+  height: 100px;
+  white-space: nowrap;
+}
+
+.JSAV th.rotate > div {
+  	-moz-transform: 
+    		translate(2px, 40px)
+    		rotate(270deg);
+        -webkit-transform: 
+    		translate(2px, 40px)
+    		rotate(270deg);
+  	transform: 
+    		translate(2px, 40px)
+    		rotate(270deg);
+  	width: 20px;
+  	padding: 0px 0px;
+}
+
+/* Colouring for chain type row (under label row) */
+.light-col {background-color:#999999;}
+.heavy-col {background-color:#333333;}
+
+/* Colouring and formatting of text in label row */
+.JSAV .light-txt {color:#999999;font-weight: normal; font: 9pt sans-serif; height: 10px; width: 9px; min-width: 9px; padding: 0; margin: 0;}
+.JSAV .heavy-txt {color:#333333;font-weight: normal; font: 9pt sans-serif; height: 10px; width: 9px; min-width: 9px; padding: 0; margin: 0;}
+.JSAV .br_light-txt {color:#999999;font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid #999999;}
+.JSAV .br_heavy-txt {color:#333333;font-weight: normal; font: 9pt sans-serif; height: 10px; border-right: 3px solid #999999;}
 
 .JSAV a:link {color:#000000; text-decoration:none;}
 .JSAV a:visited {color:#000000; text-decoration:none;}
@@ -157,190 +243,233 @@
 .JSAV a:active {color:#000000; text-decoration:none;}
 
 /* Delete and dot colours */
-.JSAV .aaDel {background-color: #000000; color: #FFFFFF}
-.JSAV .aaDot {background-color: #FFFFFF; color: #000000}
+.JSAV .aaDel {background-color: #000000; color: #FFFFFF;}
+.JSAV .aaDot {background-color: #FFFFFF; color: #000000;}
 
-/* Willie Taylor scheme */
-.JSAV .clustalA {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalR {background-color: #f01505; color: #000000;}
-.JSAV .clustalN {background-color: #00ff00; color: #000000;}
-.JSAV .clustalD {background-color: #c048c0; color: #000000;}
-.JSAV .clustalC {background-color: #f08080; color: #000000;}
-.JSAV .clustalQ {background-color: #00ff00; color: #000000;}
-.JSAV .clustalE {background-color: #c048c0; color: #000000;}
-.JSAV .clustalG {background-color: #f09048; color: #000000;}
-.JSAV .clustalH {background-color: #15a4a4; color: #000000;}
-.JSAV .clustalI {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalL {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalK {background-color: #f01505; color: #000000;}
-.JSAV .clustalM {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalF {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalP {background-color: #ffff00; color: #000000;}
-.JSAV .clustalS {background-color: #00ff00; color: #000000;}
-.JSAV .clustalT {background-color: #00ff00; color: #000000;}
-.JSAV .clustalW {background-color: #80a0f0; color: #000000;}
-.JSAV .clustalY {background-color: #15a4a4; color: #000000;}
-.JSAV .clustalV {background-color: #80a0f0; color: #000000;}
+/* Residue colour schemes */
+.clustalA {background-color: #80a0f0; color: #000000;}
+.clustalR {background-color: #f01505; color: #000000;}
+.clustalN {background-color: #00ff00; color: #000000;}
+.clustalD {background-color: #c048c0; color: #000000;}
+.clustalC {background-color: #f08080; color: #000000;}
+.clustalQ {background-color: #00ff00; color: #000000;}
+.clustalE {background-color: #c048c0; color: #000000;}
+.clustalG {background-color: #f09048; color: #000000;}
+.clustalH {background-color: #15a4a4; color: #000000;}
+.clustalI {background-color: #80a0f0; color: #000000;}
+.clustalL {background-color: #80a0f0; color: #000000;}
+.clustalK {background-color: #f01505; color: #000000;}
+.clustalM {background-color: #80a0f0; color: #000000;}
+.clustalF {background-color: #80a0f0; color: #000000;}
+.clustalP {background-color: #ffff00; color: #000000;}
+.clustalS {background-color: #00ff00; color: #000000;}
+.clustalT {background-color: #00ff00; color: #000000;}
+.clustalW {background-color: #80a0f0; color: #000000;}
+.clustalY {background-color: #15a4a4; color: #000000;}
+.clustalV {background-color: #80a0f0; color: #000000;}
 
-.JSAV .zappoA {background-color: #ffafaf; color: #000000;}
-.JSAV .zappoR {background-color: #6464ff; color: #000000;}
-.JSAV .zappoN {background-color: #00ff00; color: #000000;}
-.JSAV .zappoD {background-color: #ff0000; color: #000000;}
-.JSAV .zappoC {background-color: #ffff00; color: #000000;}
-.JSAV .zappoQ {background-color: #00ff00; color: #000000;}
-.JSAV .zappoE {background-color: #ff0000; color: #000000;}
-.JSAV .zappoG {background-color: #ff00ff; color: #000000;}
-.JSAV .zappoH {background-color: #6464ff; color: #000000;}
-.JSAV .zappoI {background-color: #ffafaf; color: #000000;}
-.JSAV .zappoL {background-color: #ffafaf; color: #000000;}
-.JSAV .zappoK {background-color: #6464ff; color: #000000;}
-.JSAV .zappoM {background-color: #ffafaf; color: #000000;}
-.JSAV .zappoF {background-color: #ffc800; color: #000000;}
-.JSAV .zappoP {background-color: #ff00ff; color: #000000;}
-.JSAV .zappoS {background-color: #00ff00; color: #000000;}
-.JSAV .zappoT {background-color: #00ff00; color: #000000;}
-.JSAV .zappoW {background-color: #ffc800; color: #000000;}
-.JSAV .zappoY {background-color: #ffc800; color: #000000;}
-.JSAV .zappoV {background-color: #ffafaf; color: #000000;}
+.zappoA {background-color: #ffafaf; color: #000000;}
+.zappoR {background-color: #6464ff; color: #000000;}
+.zappoN {background-color: #00ff00; color: #000000;}
+.zappoD {background-color: #ff0000; color: #000000;}
+.zappoC {background-color: #ffff00; color: #000000;}
+.zappoQ {background-color: #00ff00; color: #000000;}
+.zappoE {background-color: #ff0000; color: #000000;}
+.zappoG {background-color: #ff00ff; color: #000000;}
+.zappoH {background-color: #6464ff; color: #000000;}
+.zappoI {background-color: #ffafaf; color: #000000;}
+.zappoL {background-color: #ffafaf; color: #000000;}
+.zappoK {background-color: #6464ff; color: #000000;}
+.zappoM {background-color: #ffafaf; color: #000000;}
+.zappoF {background-color: #ffc800; color: #000000;}
+.zappoP {background-color: #ff00ff; color: #000000;}
+.zappoS {background-color: #00ff00; color: #000000;}
+.zappoT {background-color: #00ff00; color: #000000;}
+.zappoW {background-color: #ffc800; color: #000000;}
+.zappoY {background-color: #ffc800; color: #000000;}
+.zappoV {background-color: #ffafaf; color: #000000;}
 
-.JSAV .taylorA {background-color: #ccff00; color: #000000;}
-.JSAV .taylorR {background-color: #0000ff; color: #000000;}
-.JSAV .taylorN {background-color: #cc00ff; color: #000000;}
-.JSAV .taylorD {background-color: #ff0000; color: #000000;}
-.JSAV .taylorC {background-color: #ffff00; color: #000000;}
-.JSAV .taylorQ {background-color: #ff00cc; color: #000000;}
-.JSAV .taylorE {background-color: #ff0066; color: #000000;}
-.JSAV .taylorG {background-color: #ff9900; color: #000000;}
-.JSAV .taylorH {background-color: #0066ff; color: #000000;}
-.JSAV .taylorI {background-color: #66ff00; color: #000000;}
-.JSAV .taylorL {background-color: #33ff00; color: #000000;}
-.JSAV .taylorK {background-color: #6600ff; color: #000000;}
-.JSAV .taylorM {background-color: #00ff00; color: #000000;}
-.JSAV .taylorF {background-color: #00ff66; color: #000000;}
-.JSAV .taylorP {background-color: #ffcc00; color: #000000;}
-.JSAV .taylorS {background-color: #ff3300; color: #000000;}
-.JSAV .taylorT {background-color: #ff6600; color: #000000;}
-.JSAV .taylorW {background-color: #00ccff; color: #000000;}
-.JSAV .taylorY {background-color: #00ffcc; color: #000000;}
-.JSAV .taylorV {background-color: #99ff00; color: #000000;}
+.taylorA {background-color: #ccff00; color: #000000;}
+.taylorR {background-color: #0000ff; color: #000000;}
+.taylorN {background-color: #cc00ff; color: #000000;}
+.taylorD {background-color: #ff0000; color: #000000;}
+.taylorC {background-color: #ffff00; color: #000000;}
+.taylorQ {background-color: #ff00cc; color: #000000;}
+.taylorE {background-color: #ff0066; color: #000000;}
+.taylorG {background-color: #ff9900; color: #000000;}
+.taylorH {background-color: #0066ff; color: #000000;}
+.taylorI {background-color: #66ff00; color: #000000;}
+.taylorL {background-color: #33ff00; color: #000000;}
+.taylorK {background-color: #6600ff; color: #000000;}
+.taylorM {background-color: #00ff00; color: #000000;}
+.taylorF {background-color: #00ff66; color: #000000;}
+.taylorP {background-color: #ffcc00; color: #000000;}
+.taylorS {background-color: #ff3300; color: #000000;}
+.taylorT {background-color: #ff6600; color: #000000;}
+.taylorW {background-color: #00ccff; color: #000000;}
+.taylorY {background-color: #00ffcc; color: #000000;}
+.taylorV {background-color: #99ff00; color: #000000;}
 
-.JSAV .hphobA {background-color: #ad0052; color: #000000;}
-.JSAV .hphobR {background-color: #0000ff; color: #000000;}
-.JSAV .hphobN {background-color: #0c00f3; color: #000000;}
-.JSAV .hphobD {background-color: #0c00f3; color: #000000;}
-.JSAV .hphobC {background-color: #c2003d; color: #000000;}
-.JSAV .hphobQ {background-color: #0c00f3; color: #000000;}
-.JSAV .hphobE {background-color: #0c00f3; color: #000000;}
-.JSAV .hphobG {background-color: #6a0095; color: #000000;}
-.JSAV .hphobH {background-color: #1500ea; color: #000000;}
-.JSAV .hphobI {background-color: #ff0000; color: #000000;}
-.JSAV .hphobL {background-color: #ea0015; color: #000000;}
-.JSAV .hphobK {background-color: #0000ff; color: #000000;}
-.JSAV .hphobM {background-color: #b0004f; color: #000000;}
-.JSAV .hphobF {background-color: #cb0034; color: #000000;}
-.JSAV .hphobP {background-color: #4600b9; color: #000000;}
-.JSAV .hphobS {background-color: #5e00a1; color: #000000;}
-.JSAV .hphobT {background-color: #61009e; color: #000000;}
-.JSAV .hphobW {background-color: #5b00a4; color: #000000;}
-.JSAV .hphobY {background-color: #4f00b0; color: #000000;}
-.JSAV .hphobV {background-color: #f60009; color: #000000;}
-.JSAV .hphobB {background-color: #0c00f3; color: #000000;}
-.JSAV .hphobX {background-color: #680097; color: #000000;}
-.JSAV .hphobZ {background-color: #0c00f3; color: #000000;}
+.hphobA {background-color: #ad0052; color: #000000;}
+.hphobR {background-color: #0000ff; color: #000000;}
+.hphobN {background-color: #0c00f3; color: #000000;}
+.hphobD {background-color: #0c00f3; color: #000000;}
+.hphobC {background-color: #c2003d; color: #000000;}
+.hphobQ {background-color: #0c00f3; color: #000000;}
+.hphobE {background-color: #0c00f3; color: #000000;}
+.hphobG {background-color: #6a0095; color: #000000;}
+.hphobH {background-color: #1500ea; color: #000000;}
+.hphobI {background-color: #ff0000; color: #000000;}
+.hphobL {background-color: #ea0015; color: #000000;}
+.hphobK {background-color: #0000ff; color: #000000;}
+.hphobM {background-color: #b0004f; color: #000000;}
+.hphobF {background-color: #cb0034; color: #000000;}
+.hphobP {background-color: #4600b9; color: #000000;}
+.hphobS {background-color: #5e00a1; color: #000000;}
+.hphobT {background-color: #61009e; color: #000000;}
+.hphobW {background-color: #5b00a4; color: #000000;}
+.hphobY {background-color: #4f00b0; color: #000000;}
+.hphobV {background-color: #f60009; color: #000000;}
+.hphobB {background-color: #0c00f3; color: #000000;}
+.hphobX {background-color: #680097; color: #000000;}
+.hphobZ {background-color: #0c00f3; color: #000000;}
 
-.JSAV .helixA {background-color: #e718e7; color: #000000;}
-.JSAV .helixR {background-color: #6f906f; color: #000000;}
-.JSAV .helixN {background-color: #1be41b; color: #000000;}
-.JSAV .helixD {background-color: #778877; color: #000000;}
-.JSAV .helixC {background-color: #23dc23; color: #000000;}
-.JSAV .helixQ {background-color: #926d92; color: #000000;}
-.JSAV .helixE {background-color: #ff00ff; color: #000000;}
-.JSAV .helixG {background-color: #00ff00; color: #000000;}
-.JSAV .helixH {background-color: #758a75; color: #000000;}
-.JSAV .helixI {background-color: #8a758a; color: #000000;}
-.JSAV .helixL {background-color: #ae51ae; color: #000000;}
-.JSAV .helixK {background-color: #a05fa0; color: #000000;}
-.JSAV .helixM {background-color: #ef10ef; color: #000000;}
-.JSAV .helixF {background-color: #986798; color: #000000;}
-.JSAV .helixP {background-color: #00ff00; color: #000000;}
-.JSAV .helixS {background-color: #36c936; color: #000000;}
-.JSAV .helixT {background-color: #47b847; color: #000000;}
-.JSAV .helixW {background-color: #8a758a; color: #000000;}
-.JSAV .helixY {background-color: #21de21; color: #000000;}
-.JSAV .helixV {background-color: #857a85; color: #000000;}
-.JSAV .helixB {background-color: #49b649; color: #000000;}
-.JSAV .helixX {background-color: #758a75; color: #000000;}
-.JSAV .helixZ {background-color: #c936c9; color: #000000;}
+.helixA {background-color: #e718e7; color: #000000;}
+.helixR {background-color: #6f906f; color: #000000;}
+.helixN {background-color: #1be41b; color: #000000;}
+.helixD {background-color: #778877; color: #000000;}
+.helixC {background-color: #23dc23; color: #000000;}
+.helixQ {background-color: #926d92; color: #000000;}
+.helixE {background-color: #ff00ff; color: #000000;}
+.helixG {background-color: #00ff00; color: #000000;}
+.helixH {background-color: #758a75; color: #000000;}
+.helixI {background-color: #8a758a; color: #000000;}
+.helixL {background-color: #ae51ae; color: #000000;}
+.helixK {background-color: #a05fa0; color: #000000;}
+.helixM {background-color: #ef10ef; color: #000000;}
+.helixF {background-color: #986798; color: #000000;}
+.helixP {background-color: #00ff00; color: #000000;}
+.helixS {background-color: #36c936; color: #000000;}
+.helixT {background-color: #47b847; color: #000000;}
+.helixW {background-color: #8a758a; color: #000000;}
+.helixY {background-color: #21de21; color: #000000;}
+.helixV {background-color: #857a85; color: #000000;}
+.helixB {background-color: #49b649; color: #000000;}
+.helixX {background-color: #758a75; color: #000000;}
+.helixZ {background-color: #c936c9; color: #000000;}
 
-.JSAV .strandA {background-color: #5858a7; color: #000000;}
-.JSAV .strandR {background-color: #6b6b94; color: #000000;}
-.JSAV .strandN {background-color: #64649b; color: #000000;}
-.JSAV .strandD {background-color: #2121de; color: #000000;}
-.JSAV .strandC {background-color: #9d9d62; color: #000000;}
-.JSAV .strandQ {background-color: #8c8c73; color: #000000;}
-.JSAV .strandE {background-color: #0000ff; color: #000000;}
-.JSAV .strandG {background-color: #4949b6; color: #000000;}
-.JSAV .strandH {background-color: #60609f; color: #000000;}
-.JSAV .strandI {background-color: #ecec13; color: #000000;}
-.JSAV .strandL {background-color: #b2b24d; color: #000000;}
-.JSAV .strandK {background-color: #4747b8; color: #000000;}
-.JSAV .strandM {background-color: #82827d; color: #000000;}
-.JSAV .strandF {background-color: #c2c23d; color: #000000;}
-.JSAV .strandP {background-color: #2323dc; color: #000000;}
-.JSAV .strandS {background-color: #4949b6; color: #000000;}
-.JSAV .strandT {background-color: #9d9d62; color: #000000;}
-.JSAV .strandW {background-color: #c0c03f; color: #000000;}
-.JSAV .strandY {background-color: #d3d32c; color: #000000;}
-.JSAV .strandV {background-color: #ffff00; color: #000000;}
-.JSAV .strandB {background-color: #4343bc; color: #000000;}
-.JSAV .strandX {background-color: #797986; color: #000000;}
-.JSAV .strandZ {background-color: #4747b8; color: #000000;}
+.strandA {background-color: #5858a7; color: #000000;}
+.strandR {background-color: #6b6b94; color: #000000;}
+.strandN {background-color: #64649b; color: #000000;}
+.strandD {background-color: #2121de; color: #000000;}
+.strandC {background-color: #9d9d62; color: #000000;}
+.strandQ {background-color: #8c8c73; color: #000000;}
+.strandE {background-color: #0000ff; color: #000000;}
+.strandG {background-color: #4949b6; color: #000000;}
+.strandH {background-color: #60609f; color: #000000;}
+.strandI {background-color: #ecec13; color: #000000;}
+.strandL {background-color: #b2b24d; color: #000000;}
+.strandK {background-color: #4747b8; color: #000000;}
+.strandM {background-color: #82827d; color: #000000;}
+.strandF {background-color: #c2c23d; color: #000000;}
+.strandP {background-color: #2323dc; color: #000000;}
+.strandS {background-color: #4949b6; color: #000000;}
+.strandT {background-color: #9d9d62; color: #000000;}
+.strandW {background-color: #c0c03f; color: #000000;}
+.strandY {background-color: #d3d32c; color: #000000;}
+.strandV {background-color: #ffff00; color: #000000;}
+.strandB {background-color: #4343bc; color: #000000;}
+.strandX {background-color: #797986; color: #000000;}
+.strandZ {background-color: #4747b8; color: #000000;}
 
-.JSAV .turnA {background-color: #2cd3d3; color: #000000;}
-.JSAV .turnR {background-color: #708f8f; color: #000000;}
-.JSAV .turnN {background-color: #ff0000; color: #000000;}
-.JSAV .turnD {background-color: #e81717; color: #000000;}
-.JSAV .turnC {background-color: #a85757; color: #000000;}
-.JSAV .turnQ {background-color: #3fc0c0; color: #000000;}
-.JSAV .turnE {background-color: #778888; color: #000000;}
-.JSAV .turnG {background-color: #ff0000; color: #000000;}
-.JSAV .turnH {background-color: #708f8f; color: #000000;}
-.JSAV .turnI {background-color: #00ffff; color: #000000;}
-.JSAV .turnL {background-color: #1ce3e3; color: #000000;}
-.JSAV .turnK {background-color: #7e8181; color: #000000;}
-.JSAV .turnM {background-color: #1ee1e1; color: #000000;}
-.JSAV .turnF {background-color: #1ee1e1; color: #000000;}
-.JSAV .turnP {background-color: #f60909; color: #000000;}
-.JSAV .turnS {background-color: #e11e1e; color: #000000;}
-.JSAV .turnT {background-color: #738c8c; color: #000000;}
-.JSAV .turnW {background-color: #738c8c; color: #000000;}
-.JSAV .turnY {background-color: #9d6262; color: #000000;}
-.JSAV .turnV {background-color: #07f8f8; color: #000000;}
-.JSAV .turnB {background-color: #f30c0c; color: #000000;}
-.JSAV .turnX {background-color: #7c8383; color: #000000;}
-.JSAV .turnZ {background-color: #5ba4a4; color: #000000;}
+.turnA {background-color: #2cd3d3; color: #000000;}
+.turnR {background-color: #708f8f; color: #000000;}
+.turnN {background-color: #ff0000; color: #000000;}
+.turnD {background-color: #e81717; color: #000000;}
+.turnC {background-color: #a85757; color: #000000;}
+.turnQ {background-color: #3fc0c0; color: #000000;}
+.turnE {background-color: #778888; color: #000000;}
+.turnG {background-color: #ff0000; color: #000000;}
+.turnH {background-color: #708f8f; color: #000000;}
+.turnI {background-color: #00ffff; color: #000000;}
+.turnL {background-color: #1ce3e3; color: #000000;}
+.turnK {background-color: #7e8181; color: #000000;}
+.turnM {background-color: #1ee1e1; color: #000000;}
+.turnF {background-color: #1ee1e1; color: #000000;}
+.turnP {background-color: #f60909; color: #000000;}
+.turnS {background-color: #e11e1e; color: #000000;}
+.turnT {background-color: #738c8c; color: #000000;}
+.turnW {background-color: #738c8c; color: #000000;}
+.turnY {background-color: #9d6262; color: #000000;}
+.turnV {background-color: #07f8f8; color: #000000;}
+.turnB {background-color: #f30c0c; color: #000000;}
+.turnX {background-color: #7c8383; color: #000000;}
+.turnZ {background-color: #5ba4a4; color: #000000;}
 
-.JSAV .buriedA {background-color: #00a35c; color: #000000;}
-.JSAV .buriedR {background-color: #00fc03; color: #000000;}
-.JSAV .buriedN {background-color: #00eb14; color: #000000;}
-.JSAV .buriedD {background-color: #00eb14; color: #000000;}
-.JSAV .buriedC {background-color: #0000ff; color: #000000;}
-.JSAV .buriedQ {background-color: #00f10e; color: #000000;}
-.JSAV .buriedE {background-color: #00f10e; color: #000000;}
-.JSAV .buriedG {background-color: #009d62; color: #000000;}
-.JSAV .buriedH {background-color: #00d52a; color: #000000;}
-.JSAV .buriedI {background-color: #0054ab; color: #000000;}
-.JSAV .buriedL {background-color: #007b84; color: #000000;}
-.JSAV .buriedK {background-color: #00ff00; color: #000000;}
-.JSAV .buriedM {background-color: #009768; color: #000000;}
-.JSAV .buriedF {background-color: #008778; color: #000000;}
-.JSAV .buriedP {background-color: #00e01f; color: #000000;}
-.JSAV .buriedS {background-color: #00d52a; color: #000000;}
-.JSAV .buriedT {background-color: #00db24; color: #000000;}
-.JSAV .buriedW {background-color: #00a857; color: #000000;}
-.JSAV .buriedY {background-color: #00e619; color: #000000;}
-.JSAV .buriedV {background-color: #005fa0; color: #000000;}
-.JSAV .buriedB {background-color: #00eb14; color: #000000;}
-.JSAV .buriedX {background-color: #00b649; color: #000000;}
-.JSAV .buriedZ {background-color: #00f10e; color: #000000;}
+.buriedA {background-color: #00a35c; color: #000000;}
+.buriedR {background-color: #00fc03; color: #000000;}
+.buriedN {background-color: #00eb14; color: #000000;}
+.buriedD {background-color: #00eb14; color: #000000;}
+.buriedC {background-color: #0000ff; color: #000000;}
+.buriedQ {background-color: #00f10e; color: #000000;}
+.buriedE {background-color: #00f10e; color: #000000;}
+.buriedG {background-color: #009d62; color: #000000;}
+.buriedH {background-color: #00d52a; color: #000000;}
+.buriedI {background-color: #0054ab; color: #000000;}
+.buriedL {background-color: #007b84; color: #000000;}
+.buriedK {background-color: #00ff00; color: #000000;}
+.buriedM {background-color: #009768; color: #000000;}
+.buriedF {background-color: #008778; color: #000000;}
+.buriedP {background-color: #00e01f; color: #000000;}
+.buriedS {background-color: #00d52a; color: #000000;}
+.buriedT {background-color: #00db24; color: #000000;}
+.buriedW {background-color: #00a857; color: #000000;}
+.buriedY {background-color: #00e619; color: #000000;}
+.buriedV {background-color: #005fa0; color: #000000;}
+.buriedB {background-color: #00eb14; color: #000000;}
+.buriedX {background-color: #00b649; color: #000000;}
+.buriedZ {background-color: #00f10e; color: #000000;}
+
+/* DATATABLE FUNCTION FORMATTING - Datatable itself uses table.results (abysis.css) */
+
+/* Toggle button and toggle list formatting */
+button.toggle-col { margin: 2px 4px 2px 2px;
+		display:inline-block;
+		padding:1px 5px;
+		margin-bottom:0;
+		font-size:10px;
+		font-weight:400;
+		line-height:1.42857143;
+		text-align:center;
+		white-space:nowrap;
+		vertical-align:top;
+		-ms-touch-action:manipulation;
+		touch-action:manipulation;
+		cursor:pointer;
+		-webkit-user-select:none;
+		-moz-user-select:none;
+		-ms-user-select:none;
+		user-select:none;
+		border:1px solid transparent;
+		border-radius:3px;
+		color:#fff;
+		border-color:#333333;} 
+			
+.toggle-col-list { margin: 5px 0px 5px 5px; padding: 2px 0px 2px 5px; width: 90%; }
+.outertablebody {overflow-y: scroll; padding-top: 0;  overflow-x: hidden; direction: rtl; max-height: 40em; border:1px solid black;}
+.innertablebody {direction: ltr; padding-top: 0; max-height: 40em;}
+.table_xscroll {    width: -moz-calc(100% - 0.5em);
+   width: -webkit-calc(100% - 0.5em);
+   width: calc(100% - 0.5em);
+   margin-left: 0.5em}
+
+/* GLOBAL FORMATTING */
+
+.notshown {
+   display: none;
+}
+
+
+
+
 
