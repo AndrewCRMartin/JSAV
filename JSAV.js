@@ -2610,7 +2610,7 @@ if (labels != undefined) {
     }
   return res;
 } else {
-  return gSequencelength[divId];
+  return gSequenceLengths[divId];
 }
 }
 
