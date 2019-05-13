@@ -78,6 +78,14 @@
                       ID can now call a URL with things other than the sequence
    V1.10.1 25.02.16   Delete button is now correctly 'deletebutton' class
                       instead of 'delete' class
+   V2.0	   13.05.19   New functiionality includes greatly modified JSAV sequence viewer and datatable viewer.
+                      Functionality includes:
+                      - Datatable viewer included, with hiding of columns, sorting on column value, 
+                        hiding table rows.
+                      - Communication between sequence view and datatable view: sorting and row hiding will
+                        be duplicated for both views.
+                      - Modified sequence sorting routines.
+                      - Export to CSV and Excel.
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -121,27 +129,19 @@ accession code).
 @param {Object}    options                        - Options that can be provided - see Properties
 @property {bool}      options.sortable            - Should the sorting options be displayed
                                                     (default: false)
-@property {string}    options.width               - The width of the selection slider with
-                                                    units (default: '400px')
-@property {string}    options.height              - The height of the selection slider with
-                                                    units (default: '6pt')
 @property {bool}      options.selectable          - Should selection checkboxes be displayed
                                                     for each sequence
 @property {bool}      options.deletable           - Makes it possible to delete sequences
-@property {bool}	  options.hideable			  - Makes it possible to hide sequences and respective
-													datatable rows
+@property {bool}      options.hideable	          - Makes it possible to hide sequences and respective
+						    datatable rows
+@property {bool}      options.hideLabel	       	  - Label for hide button.
+@property {bool}      options.showallLabel        - Label for Show All button.
 @property {string}    options.deleteLabel         - Label for delete button
 @property {int[]}     options.highlight           - Array of ranges to highlight
 @property {string}    options.submit              - URL for submitting selected sequences
 @property {string}    options.submitLabel         - Label for submit button
-@property {string}    options.idSubmit            - URL for submitting a single sequence where its
-                                                    id/label has been clicked. 
-                                                    See also options.idSubmitAttribute
 @property {bool}      options.idSubmitClean       - Remove non-alpha characters from sequence
                                                     before submitting
-@property {string}    options.idSubmitAttribute   - Specifies which attribute of the sequence
-                                                    object should be passed to a URL specified
-                                                    with options.idSubmit. Default is 'sequence'
 @property {string}    options.action              - Function to call using selected sequences.
                                                     This is passed the seqId and array of
                                                     currently selected sequence objects
@@ -155,7 +155,8 @@ accession code).
 @property {bool}      options.toggleNocolour      - Create a check box for toggling nocolour
 @property {string}    options.toggleNocolourLabel - Label for nocolour checkbox toggle
 @property {bool}      options.fasta               - Create a FASTA export button 
-@property {string}    options.fastaLabel          - Label for FASTA export button
+@property {string}    options.sortLabel           - Label for sort button
+@property {string}    options.exportLabel         - Label for export buttons
 @property {bool}      options.consensus           - Display consensus sequence
 @property {string}    options.colourScheme        - Default colour scheme - valid options 
                                                     depend on the css, but are currently
@@ -167,7 +168,6 @@ accession code).
 @property {string[]}  options.colourChoices       - Array of colour scheme names - only used
                                                     if the user has added to the CSS. This
                                                     can be in mixed case.
-@property {bool}      options.plainTooltips       - Don't use JQuery tooltips
 @property {callback}  options.callback            - Specify the name of a function to be
                                                     called whenever the display is refreshed.
                                                     This is passed the seqId
@@ -180,7 +180,15 @@ accession code).
 @property {string[]}  options.labels              - Array of residue label strings
 @property {bool}      options.autolabels          - Automatically generate label strings
                                                     (overrides options.labels)
-
+@property {string}    options.idSubmit            - URL for submitting a single sequence where its
+                                                    id/label has been clicked. 
+                                                    See also options.idSubmitAttribute and options.idSubmitKey
+@property {string}    options.idSubmitAttribute   - Specifies a colon-separated list of attribute values of the 
+                                                    sequence object which should be passed to a URL specified 
+                                                    with options.idSubmit. Default is 'sequence'.
+@property {string}    options.idSubmitKey         - Specifies a colon-separated list of attribute keys which 
+                                                    should be passed to the URL specified with options.idSubmit. 
+ 
 @author 
 - 29.05.14 Original  By: ACRM
 - 30.05.14 Now just calls JSAV_buildSequencesHTML() and prints the results
@@ -233,13 +241,17 @@ function printJSAV(divId, sequences, options)
    if(options                     == undefined) { options                     = Array();                   }
    if(options.width               == undefined) { options.width               = "400px";                   }
    if(options.height              == undefined) { options.height              = "6pt";                     }
-   if(options.submitLabel         == undefined) { options.sumbitLabel 	      = 'fa fa-check'; 		   }
-   if(options.actionLabel         == undefined) { options.actionLabel 	      = 'fa fa-cogs';       	   }
+   if((options.submitLabel        == undefined) 
+      && (options.iconButtons))                 { options.sumbitILabel 	      = 'fa fa-check'; 		   }
+   if((options.actionLabel         == undefined) 
+      && (options.iconButtons))                 { options.actionLabel 	      = 'fa fa-cogs';       	   }
    if(options.nocolor)                          { options.nocolour            = true;                      }
    if(options.toggleNocolor)                    { options.toggleNocolour      = true;                      }
    if(options.transpose           == undefined) { options.transpose           = false;                     }
-   if(options.exportLabel         == undefined) { options.exportLabel 	      = 'fas fa-share-square';     }
-   if(options.sortLabel           == undefined) { options.sortLabel 	      = 'fa fa-sort-down';	   }
+   if((options.exportLabel         == undefined) 
+      && (options.iconButtons))                 { options.exportLabel 	      = 'fas fa-share-square';     }
+   if((options.sortLabel           == undefined) 
+      && (options.iconButtons))                 { options.sortLabel 	      = 'fa fa-sort-down';	   }
    if(options.colorScheme)                      { options.colourScheme        = options.colorScheme;       }
    if(options.colourScheme        == undefined) { options.colourScheme        = "taylor";                  }
    if(options.selectColor)                      { options.selectColour        = true;                      }
@@ -247,14 +259,20 @@ function printJSAV(divId, sequences, options)
    if(options.deletable)                        { options.selectable          = true;                      }
    if(options.hideable)                         { options.selectable          = true;                      }	
    if(options.exportable)                       { options.selectable          = true;                      }	
+   if(options.submit 		  != undefined) { options.selectable          = true;                      }	
    if(options.idSubmitAttribute   == undefined) { options.idSubmitAttribute   = "sequence";                }
    if(options.idSubmitKey         == undefined) { options.idSubmitKey         = "";                        }
-   if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
-   if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = 'fa fa-th'; 		   }
-   if(options.hideLabel        	  == undefined) { options.hideLabel 	      = 'fa fa-eye-slash';	   }
-   if(options.showallLabel        == undefined) { options.showallLabel	      = 'fa fa-eye';		   }
-   if(options.deleteLabel         == undefined) { options.deleteLabel 	      = 'fa fa-window-close';	   }
+   if((options.toggleDotifyLabel   == undefined) 
+     && (options.iconButtons))                  { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
+   if((options.toggleNocolourLabel == undefined) 
+     && (options.iconButtons))                  { options.toggleNocolourLabel = 'fa fa-th'; 		   }
+   if((options.hideLabel           == undefined) 
+     && (options.iconButtons))                  { options.hideLabel 	      = 'fa fa-eye-slash';	   }
+   if((options.showallLabel        == undefined)  && (options.iconButtons)) { options.showallLabel	      = 'fa fa-eye';		   }
+   if((options.deleteLabel        == undefined)
+     && (options.iconButtons))                  { options.deleteLabel 	      = 'fa fa-window-close';	   }
    if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
+   
 
    // Initialize globals if not yet done
    JSAV_init();
@@ -374,7 +392,7 @@ function printJSAV(divId, sequences, options)
           JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to CSV', 
                              options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
           JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
-                              options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
+                             options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
         }
 
         if(options.border)
@@ -557,10 +575,11 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    var ctype = options.chainType;
    var tooltipText = "title='"+tooltip+"'";
    var html = "<button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
+
    if (options.iconButtons) {
-   html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
-      } else {
-   html += textlabel;
+      html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+   } else {
+      html +=  (icon != undefined) ? icon : textlabel;
    }
    html += "</button>";
    $(parrenttag).append(html);
@@ -1576,13 +1595,14 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
     else
     {
        var url         = idSubmit;
+       var seperator = '?';
        var attrArray = attributeValue.split(':');
        var keyArray = idSubmitKey.split(':');
        for (var a=0; a<attrArray.length; a++) 
           {
           var submitParam = attrArray[a];
           var submitKey = keyArray[a];
-//alert(submitParam + ' ' + submitKey);
+ 
           if(options.idSubmitClean)
              {
              // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
@@ -1590,7 +1610,8 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
              submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
              }
        
-          url += submitKey + '=' + submitParam;
+          url += seperator + submitKey + '=' + submitParam;
+          seperator = '&';
           }
        html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
     }
@@ -1707,7 +1728,9 @@ html += "</table></div>";
      	 html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell') + "\n";
   	 var name = "select_" + sequences[dispOrder[i]].id;
 	 var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-         html += "<th class='selectCell'><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/></th>";
+         html += "<th class='selectCell'>";
+         html += (options.selectable) ? "<input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/>" : "";
+         html +="</th>";
          html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit, cc) + "\n";
          prevSequence = sequences[dispOrder[i]].sequence;
          html += "</tr>";
@@ -1720,7 +1743,7 @@ html += "</table></div>";
 //------------ Footer section -----------------
    html += "<div class='footer'>";
    html += "<table border='0'>";
-   if(options.consensus != undefined)
+   if(options.consensus)
        {
        html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'>";
        html += "<th class='idCell'>Consensus</th><th class='selectCell'>&nbsp;</th>";
@@ -2610,7 +2633,7 @@ if (labels != undefined) {
     }
   return res;
 } else {
-  return gSequencelength[divId];
+  return gSequenceLengths[divId];
 }
 }
 

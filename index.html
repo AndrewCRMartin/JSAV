@@ -10,21 +10,7 @@
 
 <!-- JSAV -->
 <link href="JSAV.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV.js'></script>
-
-<!-- If using tooltipster -->
-<link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
-<script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
-<script>
-function enableTooltipster()
-{
-    $(document).ready(function() {
-        $('.tooltip').tooltipster();
-    });
-}
-enableTooltipster();
-</script>
-<!-- END -->
+<script type='text/javascript' src='JSAV.min.js'></script>
 
 </head>
 
@@ -70,21 +56,22 @@ var MyOptions = Array();
 MyOptions.sortable = true;
 MyOptions.selectable = true;
 MyOptions.deletable = true;
+MyOptions.exportable = true;
 MyOptions.border = false;
 MyOptions.highlight = [3,5,10,14];
 MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
 MyOptions.action = "myAction";
-MyOptions.actionLabel = "My Action";
 MyOptions.toggleDotify = true;
 MyOptions.toggleNocolour = true;
 MyOptions.fasta = true;
 MyOptions.consensus = true;
-MyOptions.colourScheme = "zappo";
+MyOptions.colourScheme = "taylor";
 MyOptions.selectColour = true;
-MyOptions.callback = "enableTooltipster";
-MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl?seq=";
+MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.idSubmitKey = "id:seq";
+MyOptions.idSubmitAttribute = "id:sequence";
 MyOptions.idSubmitClean = true;
-//MyOptions.idSubmitAttribute = "id";
+MyOptions.autoLabels = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
 </script>
