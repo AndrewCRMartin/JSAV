@@ -1,4 +1,4 @@
-JavaScript Sequence Alignment Viewer (JSAV) V1.10
+JavaScript Sequence Alignment Viewer (JSAV) V2.0
 =================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
@@ -18,32 +18,18 @@ Where:
 The options for controlling the display are:
 
 - `sortable` - Should the sorting options be displayed (default: false)
-- `width` - The width of the selection slider with units (default: '400px')
-- `height` - The height of the selection slider with units. This is actually a font size
-and the actualy slider height is relative to this (default: '6pt')
 - `selectable`  - Should selection checkboxes be displayed for each sequence
+- `hideable`	- Makes it possible to hide sequences
 - `deletable`   - Makes it possible to delete sequences
-- `deleteLabel` - Label for the delete button
 - `highlight`   - Array of ranges to highlight (e.g. [24,34,50,56] would highlight
 positions 24-34 and 50-56)
-- `submit`      - URL for submitting selected sequences
-- `submitLabel` - Label for submit button
-- `idSubmit`    - URL for submitting a single sequence where its id/label has been clicked.
-See also `idSubmitAttribute` which allows other attributes to be passed 
-- `idSubmitClean` - Remove non-alpha characters from sequence before submitting
-- `idSubmitAttribute` - Specifies which attribute of the sequence
-object should be passed to a URL specified with idSubmit. Default is 'sequence'
 - `action`      - Function to call using selected sequences - the function will be passed 
 the divId and array of sequence objects
-- `actionLabel` - Label for action button
 - `dotify`      - Repeated residues in the alignment are replaced with dots
 - `nocolour` or `nocolor` - Repeated residues are not coloured
 - `toggleDotify` - Display a checkbox to toggle the dotify mode
-- `toggleDotifyLabel` - Label for dotify checkbox toggle
 - `toggleNocolour` or `toggleNocolor` - Display a checkbox to toggle the nocolour-dotify mode
-- `toggleNocolourLabel` or `toggleNocolorLabel` - Label for nocolour checkbox toggle
 - `fasta`          - Create a FASTA export button 
-- `fastaLabel`     - Label for FASTA export button
 - `consensus`      - Display consensus sequence
 - `colourScheme` or `colorScheme`   - Default colour scheme - valid options 
                                     depend on the css, but are currently
@@ -53,7 +39,6 @@ the divId and array of sequence objects
                                     scheme.
 - `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
                                     if the user has added to the CSS
-- `plainTooltips` - disable JQuery tool-tips
 - `callback`      - name of a function to be called whenever the display is
                     refreshed. The divId is passed into this function.
 - `scrollX`       - Specify a width for the sequence display
@@ -64,6 +49,24 @@ the divId and array of sequence objects
                     div and make it scrollable (e.g. "500px")
 - `labels`        - Array of residue labels 
 - `autoLabels`    - Generate sequential labels automatically
+- `submit`        - URL for submitting selected sequences
+- `idSubmit`      - URL for submitting a single sequence where its id/label has been clicked.
+See also `idSubmitKey` and `idSubmitAttribute` which allows other attributes to be passed 
+- `idSubmitClean` - Remove non-alpha characters from sequence before submitting
+- `idSubmitAttribute` - Specifies a colon-separated list of attribute values of the sequence
+object which should be passed to a URL specified with idSubmit. Default is 'sequence'
+- `idSubmitKey`   - Specifies a colon-separated list of attribute keys which should be passed to the URL
+specified with idSubmit. 
+- `hideLabel`	        - Label for hide button.
+- `showallLabel`        - Label for Show All button.
+- `deleteLabel`         - Label for delete button
+- `submitLabel`         - Label for submit button
+- `actionLabel`         - Label for action button
+- `toggleDotifyLabel`   - Label for dotify checkbox toggle
+- `toggleNocolourLabel` - Label for nocolour checkbox toggle
+- `sortLabel`           - Label for sort button
+- `exportLabel`         - Label for export buttons
+
 
 The Sequence Object
 -------------------
