@@ -3384,14 +3384,24 @@ if (sequence.displayrow)
 	    html += JSAV_buildId(divId, idSubmitAttr, sequence[key], options.idSubmit, options.idSubmitKey, 1, bgcol)
  	    } 
          else 
-            { 
-	    var cellText = sequence[key];                      
+            {                     
             for (var term in options.searchTerms) 
                {
+               var cellText = sequence[key];
                if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) 
                   {
-                  var re = new RegExp(options.searchTerms[term], 'gi');
-                  cellText = sequence[key].replace(re, "<span class='highlightmatch'>"+options.searchTerms[term].toUpperCase()+"</span>");
+                  var re = new RegExp(options.searchTerms[term], 'i');
+                  if (sequence[key].search(re) != -1) {
+                     var cellArr = sequence[key].replace('>','> ').split(' ');
+                     cellText = '';
+                     for (var c=0; c<cellArr.length; c++) {
+                        var cellWord = cellArr[c] + ' ';
+                        if (cellWord.search(re) != -1) {
+                           cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
+                           }
+                        cellText += cellWord;
+                        }
+                     }
                   }
                }
 	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='" + lcColName + feint + "'>" + cellText + "</div></td>";
