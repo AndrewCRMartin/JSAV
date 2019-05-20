@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V1.10.1 25.02.16
+    JSAV V2.0 13.05.19
     Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,8 +8,8 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V1.10.1
-   Date:       25.02.16
+   Version:    V2.0
+   Date:       13.05.19
    Function:   JavaScript Sequence Alignment Viewier
    
    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
@@ -1590,6 +1590,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
 
     if ((idSubmit == null) || (attributeValue == undefined))
     {
+alert(bgcol);
        html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
     }
     else
