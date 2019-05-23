@@ -3385,9 +3385,9 @@ if (sequence.displayrow)
  	    } 
          else 
             {                     
+            var cellText = sequence[key];
             for (var term in options.searchTerms) 
                {
-               var cellText = sequence[key];
                if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) 
                   {
                   var re = new RegExp(options.searchTerms[term], 'i');
