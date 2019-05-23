@@ -1590,7 +1590,6 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
 
     if ((idSubmit == null) || (attributeValue == undefined))
     {
-alert(bgcol);
        html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
     }
     else
