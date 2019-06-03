@@ -1583,7 +1583,7 @@ Builds the label for the sequence row
 - 23.03.17 Original By: JH
 */
 
-function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol) {
+function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol, humanOrg) {
 
     var options = gOptions[divId];
     var html = "";
@@ -1609,9 +1609,12 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
              // It probably wouldn't make sense for IDs etc
              submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
              }
-       
           url += seperator + submitKey + '=' + submitParam;
           seperator = '&';
+          }
+       if (humanOrg) 
+          {
+          url += '&humanorganism='+humanOrg;
           }
        html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
     }
@@ -1720,12 +1723,13 @@ html += "</table></div>";
 	if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
   	 {
 	 html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
+
          var attrArray = options.idSubmitAttribute.split(':');
          var idSubmitAttr = '';
          for (var a=0; a<attrArray.length; a++)
              idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
          idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-     	 html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell') + "\n";
+     	 html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
   	 var name = "select_" + sequences[dispOrder[i]].id;
 	 var cname = name.replace(/\./g, "_").replace(/\//g, "_");
          html += "<th class='selectCell'>";
@@ -3381,7 +3385,7 @@ if (sequence.displayrow)
                idSubmitAttr += sequence[attrArray[a]] + ':';
             idSubmitAttr = idSubmitAttr.replace(/:$/,'');
             if (sequence[matchcol] == 'N') idSubmitAttr = null;
-	    html += JSAV_buildId(divId, idSubmitAttr, sequence[key], options.idSubmit, options.idSubmitKey, 1, bgcol)
+	    html += JSAV_buildId(divId, idSubmitAttr, sequence[key], options.idSubmit, options.idSubmitKey, 1, bgcol, options.humanOrganism)
  	    } 
          else 
             {                     
@@ -3404,7 +3408,8 @@ if (sequence.displayrow)
                      }
                   }
                }
-	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='" + lcColName + feint + "'>" + cellText + "</div></td>";
+	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='" + lcColName + feint + "'>";
+            html += cellText + "</div></td>";
 	    }
 	}
 	html += "</tr>";
