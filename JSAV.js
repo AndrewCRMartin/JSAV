@@ -280,8 +280,7 @@ function printJSAV(divId, sequences, options)
    gOptions[divId]         = options;
    gSequences[divId]       = sequences;
    initDisplayrow(gSequences[divId]);
-   if (!gDisplayColumn[options.chainType])				
-      gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences);
+   gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
    gDisplayOrder[divId] = initDisplayOrder(sequences);
 
    // Sequence View
@@ -2768,7 +2767,7 @@ Initialises dispColumn to default code 1 (unsorted) for each data table column (
 - 09.01.17 Original By: JH
 */
 
-function initDisplayColumn(divId, sequences) {
+function initDisplayColumn(divId, sequences, displayColumns) {
 	
 var stypes = ['heavy','light'];
 var dispColumn = {};
@@ -2777,13 +2776,16 @@ for (var stype in stypes) {
     for (var key in sequences[s]) {
 	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
            if (key.substr(0,5) == stypes[stype]) {
+      	      if (displayColumns && displayColumns.hasOwnProperty(key))
+                       dispColumn[key] = displayColumns[key];
+              else
 		if ( gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0 )
 		  { 
- 		  dispColumn[key] = 1; 
+                     dispColumn[key] = 1;
 		  } else {
-                  dispColumn[key] = 0;
+                    dispColumn[key] = 0;
                   }
-                }
+               }
             }
 	}
     }
@@ -3313,9 +3315,14 @@ for (var row=0; row<maxrows; row++) {
 	   } 
         else 
            {
-           htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+">";
+           if (row < colheaders.length-1)
+              var colSpread = ((colWidth * colspan)/3);
+           else
+              var colSpread = colWidth;
+           htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colSpread+"px;'>";
+           htmlcell += "<div class='truncated'>";
            if (row < colheaders.length) htmlcell += colheaders[row]; 
-           htmlcell += "</th>";
+           htmlcell += "</div></th>";
            }
         if (rowstart) 
            {
@@ -3408,7 +3415,7 @@ if (sequence.displayrow)
                      }
                   }
                }
-	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='" + lcColName + feint + "'>";
+	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
             html += cellText + "</div></td>";
 	    }
 	}
