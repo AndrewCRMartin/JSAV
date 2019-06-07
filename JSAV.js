@@ -273,7 +273,6 @@ function printJSAV(divId, sequences, options)
      && (options.iconButtons))                  { options.deleteLabel 	      = 'fa fa-window-close';	   }
    if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
    
-
    // Initialize globals if not yet done
    JSAV_init();
    document.onmouseup = mouseUpHandler;				
@@ -2798,6 +2797,9 @@ for (var term in gOptions[divId].searchTerms) {
            if (key.substr(0,5) == stypes[stype]) {
 	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
 		{ 
+      	        if (displayColumns && displayColumns.hasOwnProperty(key))
+                       dispColumn[key] = displayColumns[key];
+                else
  		  dispColumn[key] = 1; 
                 }
               }
