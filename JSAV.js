@@ -3405,7 +3405,7 @@ if (sequence.displayrow)
                   {
                   var re = new RegExp(options.searchTerms[term], 'i');
                   if (sequence[key].search(re) != -1) {
-                     var cellArr = sequence[key].replace('>','> ').split(' ');
+                     var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
                      cellText = '';
                      for (var c=0; c<cellArr.length; c++) {
                         var cellWord = cellArr[c] + ' ';
