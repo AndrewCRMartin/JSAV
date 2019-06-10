@@ -1675,7 +1675,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
 //------------------ Header Columns --------------------------
    
    html += "<div class='header'><table border='0'>";
-   html += "<tr><td class='idCell' colspan='2'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
+   html += "<tr><td class='idCell' colspan='10'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
    var cc = chainChange(options.labels, divId);
    if (options.selectable)
 	{ 
