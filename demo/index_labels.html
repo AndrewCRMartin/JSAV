@@ -4,13 +4,27 @@
 <title>JSAV</title>
 
 <!-- JQuery and JQuery-UI -->
-<link href="external/jquery.css" rel="stylesheet" />
-<script type='text/javascript' src='external/jquery-1.10.2.min.js'></script>
-<script type='text/javascript' src='external/jquery-ui-1.10.4.custom.min.js'></script>
+<link href="JSAV/external/jquery.css" rel="stylesheet" />
+<script type='text/javascript' src='JSAV/external/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='JSAV/external/jquery-ui-1.10.4.custom.min.js'></script>
 
 <!-- JSAV -->
-<link href="JSAV.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV.min.js'></script>
+<link href="JSAV/JSAV.css" rel="stylesheet" />
+<script type='text/javascript' src='JSAV/JSAV.js'></script>
+
+<!-- If using tooltipster -->
+<link href="JSAV/external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
+<script type='text/javascript' src='JSAV/external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
+<script>
+function enableTooltipster()
+{
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
+    });
+}
+enableTooltipster();
+</script>
+<!-- END -->
 
 </head>
 
@@ -50,7 +64,7 @@ function myAction(divId, sequences)
    for(var i=0; i<sequences.length; i++)
    {
        seqString += ">" + sequences[i].id + "\n";
-       seqString += sequences[i].sequence + "\n\n";
+       seqString += sequences[i].sequence + "\n";
    }
    alert(seqString);
 }
@@ -59,22 +73,56 @@ var MyOptions = Array();
 MyOptions.sortable = true;
 MyOptions.selectable = true;
 MyOptions.deletable = true;
-MyOptions.exportable = true;
 MyOptions.border = false;
 MyOptions.highlight = [3,5,10,14];
 MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
 MyOptions.action = "myAction";
+MyOptions.actionLabel = "My Action";
 MyOptions.toggleDotify = true;
 MyOptions.toggleNocolour = true;
 MyOptions.fasta = true;
 MyOptions.consensus = true;
-MyOptions.colourScheme = "taylor";
+MyOptions.colourScheme = "zappo";
 MyOptions.selectColour = true;
+MyOptions.callback = "enableTooltipster";
 MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
-MyOptions.idSubmitKey = "id:seq";
-MyOptions.idSubmitAttribute = "id:sequence";
+MyOptions.idSubmitKey = "seq";
 MyOptions.idSubmitClean = true;
-MyOptions.autoLabels = true;
+
+var labels = Array();
+labels.push("L1");
+labels.push("L2");
+labels.push("L3");
+labels.push("L4");
+labels.push("L5");
+labels.push("L6");
+labels.push("L7");
+labels.push("L8");
+labels.push("L9");
+labels.push("L10");
+labels.push("L11");
+labels.push("L12");
+labels.push("L13");
+labels.push("L13a");
+labels.push("L13b");
+labels.push("L14");
+labels.push("L15");
+labels.push("L16");
+labels.push("L17");
+labels.push("L18");
+labels.push("L19");
+labels.push("L20");
+labels.push("L21");
+labels.push("L22");
+labels.push("L23");
+labels.push("L24");
+labels.push("L25");
+labels.push("L28");
+labels.push("L29");
+labels.push("L30");
+MyOptions.labels = labels;
+
+// MyOptions.autoLabels = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
 </script>
