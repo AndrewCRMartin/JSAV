@@ -3226,10 +3226,12 @@ function printToggleList(divId) {
 
 var html = "<div class='toggle-col-list'>";
 for (var key in gDisplayColumn[gOptions[divId].chainType]) {
+        var keyText = key.substring(6).replace(/_/g, " ");
+        var desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
 	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
  	if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
         	var seqtype = key.substring(0,5);
-		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+key.substring(6).replace(/_/g, " ")+"' onclick='"+onclick+"'>"+truncateLabel(key.substring(6).replace(/_/g, " "), 4)+"</button>";
+		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+desc+"' onclick='"+onclick+"'>"+truncateLabel(keyText,4)+"</button>";
         }
 } 
 html += '</div>';
@@ -3276,8 +3278,9 @@ for (var row=0; row<maxrows; row++) {
         var colheaders = key.split('_');
 	var colheader = "";
 	var colClass = colheaders[0]+"-col";
-        var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
+        var colName = (options.ptmLabels.hasOwnProperty(key.substring(6))) ? options.ptmLabels[key.substring(6)] : key.substring(6).replace(/ /g,"_");
         var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+        var colText = colName.replace(/_/g, " ");
         tableWidth += (colWidth + 40);
 	for (var r=0;r<=row;r++)
 	   colheader += colheaders[r];
@@ -3310,10 +3313,10 @@ for (var row=0; row<maxrows; row++) {
 	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	   htmlcell += "<th class='"+colClass+" headerHide'>";
-           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colName+"'></i></div></th>";
+           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colText+"'></i></div></th>";
            htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-           htmlcell += "<div class='truncated tooltip' title='"+colheaders[row]+"'>" + colheaders[row] + "</div></th>";
-           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i><div></th>";
+           htmlcell += "<div class='truncated tooltip' title='"+colText+"'>" + colheaders[row] + "</div></th>";
+           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colText+"'></i><div></th>";
 	   } 
         else 
            {
@@ -3373,8 +3376,8 @@ if (sequence.displayrow)
       if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
 	 var matchcol = key.substr(0,5) + '_Numbered';
-         var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
-         var lcColName = (colName in options.formattedCols) ? colName : 'other';
+         var colName = key.substring(6).replace(/ /g,"_");
+         var lcColName = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
          var colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
          var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
          bgcol = '';
