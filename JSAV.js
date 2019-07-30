@@ -1323,8 +1323,8 @@ separate <td> tag with a class to indicate the amino acid type
 */
 function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit, cc)
 {
-	var options = gOptions[divId];
-	var seqArray     = sequence.split("");
+    var options = gOptions[divId];
+    var seqArray     = sequence.split("");
     var prevSeqArray = undefined;
 
     if((options.dotify || options.nocolour) && (prevSequence != undefined))
@@ -1337,7 +1337,11 @@ function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequen
     var consensusClass = "";
     if(isConsensus)
     {
-        consensusClass = " consensusCell";
+        if (id == 'Consensus') {
+           consensusClass = " consensusCell";
+        } else {
+           consensusClass = " blastqueryCell";
+        }
     }
 
     var pref;
@@ -1706,6 +1710,14 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += "<tr class='highlightrow'>";
        html += "<th class='idCell'>CDRs</th><td>&nbsp;</td>";
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+       html += "</tr>";
+       }
+
+   if(options.blastaaquery != undefined)
+       {
+       html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
+       html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
+       html += JSAV_buildASequenceHTML(divId, null, 'BlastQuery', options.blastaaquery, undefined, true, null, cc) + "\n";
        html += "</tr>";
        }
 
