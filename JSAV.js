@@ -187,7 +187,9 @@ accession code).
                                                     sequence object which should be passed to a URL specified 
                                                     with options.idSubmit. Default is 'sequence'.
 @property {string}    options.idSubmitKey         - Specifies a colon-separated list of attribute keys which 
-                                                    should be passed to the URL specified with options.idSubmit. 
+                                                    should be passed to the URL specified with options.idSubmit.
+@property {string}    options.sortColumn	  - Column to be used for initial sort (optional).
+@property {string}    options.sortDirection       - Specifies direction of sort when sortColumn is used.
  
 @author 
 - 29.05.14 Original  By: ACRM
@@ -234,6 +236,8 @@ accession code).
 			- start and stop sort positions now global
 			- now uses Bootstrap tooltips instead of jQuery tooltips
 - 05.09.17 Removed scrollX - now 100% by default
+- 12.08.19 Added sortColumn and sortDirection for initilial sorting of columns 
+
 */
 function printJSAV(divId, sequences, options)
 {
@@ -402,6 +406,10 @@ function printJSAV(divId, sequences, options)
       if (options.displaydatatable != undefined)
       {
  	printDataTable(divId, sequences);
+      }
+      if (options.sortColumn != undefined)
+      {
+        DT_sortColumn(divId, options.sortDirection, options.sortColumn);
       }
 
       // Ensure buttons etc match the data
