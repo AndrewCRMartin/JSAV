@@ -66,6 +66,9 @@ specified with idSubmit.
 - `toggleNocolourLabel` - Label for nocolour checkbox toggle
 - `sortLabel`           - Label for sort button
 - `exportLabel`         - Label for export buttons
+- `sortColumn`		- Column name for initial sort (optional). Sequences and datatable will be sorted on this
+			  column on initialisation.
+- `sortDirection`	- Direction of initial sort (optional) - 'asc' or 'desc'.
 
 
 The Sequence Object
