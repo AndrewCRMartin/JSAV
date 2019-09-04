@@ -24,7 +24,11 @@ fi
 mkdir -p $dest/JSAV
 
 # Copy demo files
+<<<<<<< HEAD
 cp index.html index2.html index3.html jsav.cgi .htaccess $dest
+=======
+cp index.html index2.html index3.html index_labels.html jsav.cgi .htaccess $dest
+>>>>>>> JH_V3.2
 
 # Copy JSAV and the external files
 cp ../JSAV.* $dest/JSAV
