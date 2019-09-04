@@ -2552,9 +2552,9 @@ function ACRM_confirm(title, msg, callback)
                 $( this ).remove();
             },
             "OK": function() {
-                callback(true);
                 $( this ).dialog( "close" );
                 $( this ).remove();
+                callback(true);
             }
         }
     });
