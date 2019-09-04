@@ -58,7 +58,7 @@ MySeqs.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
 </div>
 
 <script type='text/javascript'>
-function myAction(divId, sequences)
+function myAction(sequences)
 {
    var seqString = "";
    for(var i=0; i<sequences.length; i++)
@@ -75,7 +75,7 @@ MyOptions.selectable = true;
 MyOptions.deletable = true;
 MyOptions.highlight = [3,5,10,14];
 MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
-MyOptions.action = "myAction";
+MyOptions.action = "myAction(MySeqs)";
 MyOptions.actionLabel = "My Action";
 MyOptions.toggleDotify = true;
 MyOptions.toggleNocolour = true;
