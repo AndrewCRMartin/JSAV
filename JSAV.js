@@ -1720,7 +1720,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += "</tr>";
        }
 
-   if(options.blastaaquery != undefined)
+   if((options.blastaaquery != undefined) && (options.blastaaquery != ''))
        {
        html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
        html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
@@ -3260,7 +3260,7 @@ for (var key in gDisplayColumn[gOptions[divId].chainType])
        	grpList.push(keyList[1]);
   }
 for (var i=0; i<grpList.length; i++) {
-  html += "<select class='buttonselect'><option style='display:none;'>" + grpList[i] + "</option>"
+  html += "<select class='" + gOptions[divId].chainType + "button'><option style='display:none;'>" + grpList[i] + "</option> "
   for (var key in gDisplayColumn[gOptions[divId].chainType]) 
     if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
       var keyList = key.split('_');
