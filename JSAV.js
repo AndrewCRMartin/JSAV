@@ -2827,7 +2827,7 @@ for (var term in gOptions[divId].searchTerms) {
       	        if (displayColumns && displayColumns.hasOwnProperty(key))
                        dispColumn[key] = displayColumns[key];
                 else
- 		  dispColumn[key] = 1; 
+ 		  dispColumn[key] = 0; 
                 }
               }
            }
