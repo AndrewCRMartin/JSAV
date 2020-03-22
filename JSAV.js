@@ -1708,6 +1708,13 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
        html += "</tr>";
        }
+   if(options.blastaaquery !== "")
+       {
+       html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
+       html += "<th class='idQueryCell'>Query</th><th class='selectQueryCell'>&nbsp;</th>";
+       html += JSAV_buildASequenceHTML(divId, null, 'BlastQuery', options.blastaaquery, undefined, true, null, cc) + "\n";
+       html += "</tr>";
+       }
 
 html += "</table></div>";
 //---------------- Central Section ------------------------
@@ -3427,3 +3434,25 @@ return(html);
 }
 
 // --------------------- END OF FILE ------------------------------------
+;
+                     cellText = '';
+                     for (var c=0; c<cellArr.length; c++) {
+                        var cellWord = cellArr[c] + ' ';
+                        if (cellWord.search(re) != -1) {
+                           cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
+                           }
+                        cellText += cellWord;
+                        }
+                     }
+                  }
+               }
+	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
+            html += cellText + "</div></td>";
+	    }
+	}
+	html += "</tr>";
+   }
+return(html);
+}
+
+// --------------------- END OF FILE ------------------------------------/
