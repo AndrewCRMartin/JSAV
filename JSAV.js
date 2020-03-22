@@ -187,7 +187,9 @@ accession code).
                                                     sequence object which should be passed to a URL specified 
                                                     with options.idSubmit. Default is 'sequence'.
 @property {string}    options.idSubmitKey         - Specifies a colon-separated list of attribute keys which 
-                                                    should be passed to the URL specified with options.idSubmit. 
+                                                    should be passed to the URL specified with options.idSubmit.
+@property {string}    options.sortColumn	  - Column to be used for initial sort (optional).
+@property {string}    options.sortDirection       - Specifies direction of sort when sortColumn is used.
  
 @author 
 - 29.05.14 Original  By: ACRM
@@ -234,6 +236,8 @@ accession code).
 			- start and stop sort positions now global
 			- now uses Bootstrap tooltips instead of jQuery tooltips
 - 05.09.17 Removed scrollX - now 100% by default
+- 12.08.19 Added sortColumn and sortDirection for initilial sorting of columns 
+
 */
 function printJSAV(divId, sequences, options)
 {
@@ -402,6 +406,10 @@ function printJSAV(divId, sequences, options)
       if (options.displaydatatable != undefined)
       {
  	printDataTable(divId, sequences);
+      }
+      if (options.sortColumn != undefined)
+      {
+        DT_sortColumn(divId, options.sortDirection, options.sortColumn);
       }
 
       // Ensure buttons etc match the data
@@ -1323,8 +1331,8 @@ separate <td> tag with a class to indicate the amino acid type
 */
 function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit, cc)
 {
-	var options = gOptions[divId];
-	var seqArray     = sequence.split("");
+    var options = gOptions[divId];
+    var seqArray     = sequence.split("");
     var prevSeqArray = undefined;
 
     if((options.dotify || options.nocolour) && (prevSequence != undefined))
@@ -1337,7 +1345,11 @@ function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequen
     var consensusClass = "";
     if(isConsensus)
     {
-        consensusClass = " consensusCell";
+        if (id == 'Consensus') {
+           consensusClass = " consensusCell";
+        } else {
+           consensusClass = " blastqueryCell";
+        }
     }
 
     var pref;
@@ -1708,10 +1720,11 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
        html += "</tr>";
        }
-   if(options.blastaaquery !== "")
+
+   if(options.blastaaquery != undefined)
        {
        html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
-       html += "<th class='idQueryCell'>Query</th><th class='selectQueryCell'>&nbsp;</th>";
+       html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
        html += JSAV_buildASequenceHTML(divId, null, 'BlastQuery', options.blastaaquery, undefined, true, null, cc) + "\n";
        html += "</tr>";
        }
@@ -2558,7 +2571,7 @@ function ACRM_confirm(title, msg, callback)
                 $( this ).dialog( "close" );
                 $( this ).remove();
             },
-            "OK": function() {
+            "OK": function() {             
                 $( this ).dialog( "close" );
                 $( this ).remove();
                 callback(true);
@@ -3233,10 +3246,12 @@ function printToggleList(divId) {
 
 var html = "<div class='toggle-col-list'>";
 for (var key in gDisplayColumn[gOptions[divId].chainType]) {
+        var keyText = key.substring(6).replace(/_/g, " ");
+        var desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
 	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
  	if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
         	var seqtype = key.substring(0,5);
-		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+key.substring(6).replace(/_/g, " ")+"' onclick='"+onclick+"'>"+truncateLabel(key.substring(6).replace(/_/g, " "), 4)+"</button>";
+		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+desc+"' onclick='"+onclick+"'>"+truncateLabel(keyText,4)+"</button>";
         }
 } 
 html += '</div>';
@@ -3283,8 +3298,9 @@ for (var row=0; row<maxrows; row++) {
         var colheaders = key.split('_');
 	var colheader = "";
 	var colClass = colheaders[0]+"-col";
-        var colName = key.substring(6).replace(/ /g,"_");
+        var colName = (options.ptmLabels.hasOwnProperty(key.substring(6))) ? options.ptmLabels[key.substring(6)] : key.substring(6).replace(/ /g,"_");
         var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+        var colText = colName.replace(/_/g, " ");
         tableWidth += (colWidth + 40);
 	for (var r=0;r<=row;r++)
 	   colheader += colheaders[r];
@@ -3317,10 +3333,10 @@ for (var row=0; row<maxrows; row++) {
 	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	   htmlcell += "<th class='"+colClass+" headerHide'>";
-           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colName+"'></i></div></th>";
+           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colText+"'></i></div></th>";
            htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-           htmlcell += "<div class='truncated tooltip' title='"+colheaders[row]+"'>" + colheaders[row] + "</div></th>";
-           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i><div></th>";
+           htmlcell += "<div class='truncated tooltip' title='"+colText+"'>" + colheaders[row] + "</div></th>";
+           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colText+"'></i><div></th>";
 	   } 
         else 
            {
@@ -3413,28 +3429,6 @@ if (sequence.displayrow)
                   var re = new RegExp(options.searchTerms[term], 'i');
                   if (sequence[key].search(re) != -1) {
                      var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
-                     cellText = '';
-                     for (var c=0; c<cellArr.length; c++) {
-                        var cellWord = cellArr[c] + ' ';
-                        if (cellWord.search(re) != -1) {
-                           cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
-                           }
-                        cellText += cellWord;
-                        }
-                     }
-                  }
-               }
-	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
-            html += cellText + "</div></td>";
-	    }
-	}
-	html += "</tr>";
-   }
-return(html);
-}
-
-// --------------------- END OF FILE ------------------------------------
-;
                      cellText = '';
                      for (var c=0; c<cellArr.length; c++) {
                         var cellWord = cellArr[c] + ' ';
