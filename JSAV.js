@@ -1721,7 +1721,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += "</tr>";
        }
 
-   if(options.blastaaquery != undefined)
+   if((options.blastaaquery != undefined) && (options.blastaaquery != ''))
        {
        html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
        html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
