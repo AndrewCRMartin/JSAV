@@ -3260,7 +3260,8 @@ for (var key in gDisplayColumn[gOptions[divId].chainType])
        	grpList.push(keyList[1]);
   }
 for (var i=0; i<grpList.length; i++) {
-  html += "<select class='" + gOptions[divId].chainType + "button'><option style='display:none;'>" + grpList[i] + "</option> "
+  html += "<select class='toggle-col-list " + gOptions[divId].chainType + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + grpList[i] + "</option> "
   for (var key in gDisplayColumn[gOptions[divId].chainType]) 
     if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
       var keyList = key.split('_');
@@ -3270,8 +3271,7 @@ for (var i=0; i<grpList.length; i++) {
             keyText += keyList[k] + ' ';
 	keyText = keyText.trim();
         var desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
-        var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
-        html += "<option class='tooltip' title='Show "+desc+"' onclick='"+onclick+"'>"+keyText+"</option>";
+        html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
       }
     }
   html += "</select>"
