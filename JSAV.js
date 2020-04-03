@@ -3251,21 +3251,27 @@ return lblsht;
 
 function printToggleList(divId) {
 
+var stypes = ['heavy','light'];
 var html = "<div class='toggle-col-list'>Show hidden columns: ";
 var grpList = [];
-for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-  if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
-    var keyList = key.split('_');
-    if (grpList.indexOf(keyList[1]) == -1) 
-       	grpList.push(keyList[1]);
-  }
-for (var i=0; i<grpList.length; i++) {
-  html += "<select class='toggle-col-list " + gOptions[divId].chainType + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
-  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + grpList[i] + "</option> "
+for (var stype in stypes)
   for (var key in gDisplayColumn[gOptions[divId].chainType]) 
     if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
       var keyList = key.split('_');
-      if (grpList[i] == keyList[1]) {
+      if (keyList[0] == stypes[stype]) {
+        var grpGroup = keyList[0] + '_' + keyList[1];
+        if (grpList.indexOf(grpGroup) == -1) 
+       	  grpList.push(grpGroup);
+        }
+      }
+for (var i=0; i<grpList.length; i++) {
+  var grpType = grpList[i].split('_');
+  html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + grpType[1] + "</option> "
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+      var keyList = key.split('_');
+      if (grpList[i] == (keyList[0] + '_' + keyList[1])) {
         var keyText = '';
         for (var k=2; k<keyList.length; k++) 
             keyText += keyList[k] + ' ';
@@ -3274,7 +3280,7 @@ for (var i=0; i<grpList.length; i++) {
         html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
       }
     }
-  html += "</select>"
+  html += "</select>";
 } 
 html += '</div>';
 return(html);
