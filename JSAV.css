@@ -229,6 +229,33 @@
   	padding: 0px 0px;
 }
 
+/* Frequency sliders */
+
+.freqSlider {
+   float: left;
+   display: none;
+}
+.freqSliderLimits {
+   float: left;
+   margin-left: 0.5em;
+   font-size: 10pt;
+}
+
+.freqSliderValue {
+    border:1;
+    color:black;
+    width: 4em;
+}
+
+.freqSliderLabel {
+   float: left;
+   font-weight: bold;
+   font-size: 12px;
+   font-style: normal;
+   margin: 0.2em 0.5em 0 1.5em;
+   width: 70px;
+}
+
 /* Colouring for chain type row (under label row) */
 .light-col {background-color:#999999;}
 .heavy-col {background-color:#333333;}

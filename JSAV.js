@@ -396,6 +396,11 @@ function printJSAV(divId, sequences, options)
                              options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
         }
 
+        if (options.frequencies) 
+        {
+          JSAV_printFrequencyControls(divId, divId + '_controls', options);
+        }
+
         if(options.border)
         {
          JSAV_modifyCSS(divId);
@@ -514,7 +519,7 @@ function JSAV_printColourSelector(divId, options)
 
     var id   = divId + "_selectColour";
     var ctype = options.chainType;
-    var html = "<select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+    var html = "<div style='float:left'><select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
     for(var i=0; i<options.colourChoices.length; i++)
     {
         var lcChoice = options.colourChoices[i].toLowerCase();
@@ -529,7 +534,7 @@ function JSAV_printColourSelector(divId, options)
     if (options.frequencies) {
         html += "<option value='frequencies'>Frequencies</option>";
     }
-    html += "</select>";
+    html += "</select></div>";
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
 }
@@ -549,8 +554,13 @@ colour scheme and refreshes the display
 */
 function JSAV_setColourScheme(divId, select)
 {
-	gOptions[divId].colourScheme = select.value;
-
+    gOptions[divId].colourScheme = select.value;
+    if (gOptions[divId].frequencies) {
+       if (select.value == 'frequencies')
+          $('#'+divId+'FrequencyControls').show();
+       else
+          $('#'+divId+'FrequencyControls').hide();
+    }
     var options = gOptions[divId];
     if(options.sorted)
     {
@@ -582,14 +592,14 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    var options = gOptions[divId];
    var ctype = options.chainType;
    var tooltipText = "title='"+tooltip+"'";
-   var html = "<button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
+   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
 
    if (options.iconButtons) {
       html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
    } else {
       html +=  (icon != undefined) ? icon : textlabel;
    }
-   html += "</button>";
+   html += "</button></div>";
    $(parrenttag).append(html);
 }
 
@@ -633,11 +643,11 @@ function JSAV_printToggleDotify(divId, options)
     var idText = " id='" + id + "'";
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
     var title = "title='Replace repeated residues with dots'";
-    var html = "<button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
+    var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
     if (gOptions[divId].iconButtons) {
        html += "<i class='"+label+"'  "+title+"></i></button>";
     } else {
-       html += "Dotify</button>";
+       html += "Dotify</button></div>";
     }
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
@@ -667,11 +677,11 @@ function JSAV_printToggleNocolour(divId, options)
     var label = options.toggleNocolourLabel;
     var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
     var title = "title='Do not colour repeated residues'";
-    var html = "<button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
+    var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
     if (gOptions[divId].iconButtons) {
        html += "<i class='"+label+"' "+title+"></i></button>";
     } else {
-       html += "No Repeat Colour</button>";
+       html += "No Repeat Colour</button></div>";
     }
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
@@ -692,7 +702,7 @@ function JSAV_printToggleTranspose(divId, options)
 {
     var options = gOptions[divId];
     var ctype = options.chainType;
-    var html = "";
+    var html = "<div style='float:left'>";
     var activeText = "fas fa-reply";
     var inactiveText = "fas fa-share";
     var active = "";
@@ -713,6 +723,7 @@ function JSAV_printToggleTranspose(divId, options)
     } else {
        html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
     }
+    html += "</div>";
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
 }
@@ -1237,6 +1248,104 @@ function JSAV_unselectAll(divId)
    $(tag).prop('checked', false);
 }
 
+// ----------------------------------------------------------------------------------
+/**
+Prints the frequency slider and range boxes
+@param	{string}	uid		Global Id for the page
+@param  {string}     	divId		the div we're dealing with
+@param  {string}     	controlDiv	the div for the controls
+@param	{object}	opts		options object
+
+@author 
+- 01.06.18 Original  By: JH
+*/
+function printFrequencySlider(divId, controlDiv, opts) {
+
+var lowerlimit = '#' + controlDiv.toString() + 'lowerlimit';
+var upperlimit = '#' + controlDiv.toString() + 'upperlimit';
+var sliderrange = '#' + controlDiv.toString() + 'slider';
+var AboveMax = '#' + controlDiv.toString() + 'AboveMax';
+var initialPos = 100 * (opts.freqMax - opts.freqSlider2)/opts.freqMax;
+var AboveMaxDiv = '<div id="' + controlDiv.toString() + 'AboveMax" class="AboveMax" style="width: '+initialPos+'%"></div>';
+
+
+$(sliderrange).slider({
+    range: true,
+    min: 0,
+    step: gOptions[divId].freqStep,
+    max: gOptions[divId].freqMax,
+    values: [gOptions[divId].freqSlider1, gOptions[divId].freqSlider2],
+    change: function (event, ui) {
+        var disabled = $(sliderrange).slider( "option", "disabled");
+        if (!disabled){
+            $(lowerlimit).val(ui.values[0]);
+            $(upperlimit).val(ui.values[1]);
+            gOptions[divId].freqSlider1 = ui.values[0];
+            gOptions[divId].freqSlider2 = ui.values[1];
+            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+	    var max = parseFloat($(sliderrange).slider( "option", "max"));
+            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
+        }
+    },
+    slide: function (event, ui) {
+        var disabled = $(sliderrange).slider( "option", "disabled");
+        if (!disabled){
+            $(lowerlimit).val(ui.values[0]);
+            $(upperlimit).val(ui.values[1]);
+            gOptions[divId].freqSlider1 = ui.values[0];
+            gOptions[divId].freqSlider2 = ui.values[1];
+            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+	    var max = parseFloat($(sliderrange).slider( "option", "max"));
+            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
+        }
+    }
+}).append(AboveMaxDiv);
+$(sliderrange).slider().addClass("heatmap-slider");
+
+//Set initial values
+$(lowerlimit).change(function(){
+    var newlowerlim = parseFloat(this.value);
+    $(sliderrange).slider('values',0,newlowerlim);
+    gOptions[divId].freqSlider1 = newlowerlim;
+});
+
+$(upperlimit).change(function(){
+    var newupperlim = parseFloat(this.value);
+    $(sliderrange).slider('values',1,newupperlim);
+    gOptions[divId].freqSlider2 = newupperlim;
+});
+ 
+}
+
+// ----------------------------------------------------------------------------------
+/**
+Prints the heatmap control divs and slider
+@param  {string}     	divId		the div we're dealing with
+@param  {string}     	controlDiv	the div for the controls
+@param	{object}	opts		options object
+
+@author 
+- 01.06.18 Original  By: JH
+*/
+function JSAV_printFrequencyControls(divId, controlDiv, opts) {
+
+var html = '';
+html += "<div class='freqSlider' id='"+divId+"FrequencyControls'>";
+html += "<div class='freqSliderLabel'>Frequencies </div>";
+html += "<div class='freqSliderLimits'>Lower limit: ";
+html += "<input value='"+opts.freqSlider1+"' name='"+divId+"fsMin' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
+html += "id='"+controlDiv+"lowerlimit' class='freqSliderValue' /></div>";
+html += "<div class='freqSliderLimits'>Upper limit: ";
+html += "<input value='"+opts.freqSlider2+"' name='"+divId+"fsMax' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
+html += "id='"+controlDiv+"upperlimit' class='freqSliderValue' /></div>";
+html += "<div class='freqSliderLimits' id='" + controlDiv + "slider'></div></div>";
+
+$('#' + controlDiv).append(html);
+
+printFrequencySlider(divId, controlDiv, opts);
+
+}
+
 // ---------------------------------------------------------------------
 /**
 Change the <td> elements to have a white border
@@ -1267,17 +1376,16 @@ param {string} consensusClass	- consensus class
 - 09.01.17 Original taken from JSAV_buildASequenceHTML By: JH
 */
 
-function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, freqDivs) {
+function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, slider1, slider2) {
 
 var colourClass = colourScheme + aa.toUpperCase();
         
-if ((colourScheme == 'frequencies') && (freq != undefined) && (freqDivs != undefined)) 
+if ((colourScheme == 'frequencies') && (freq != undefined) && (slider1 != undefined)) 
    {
-   freqDiv = freqDivs.split(":");  
    colourClass = 'frequencyMed';
-   if (freq <= freqDiv[0]) 
+   if (freq <= slider1) 
       colourClass = 'frequencyMin';
-   else if (freq >= freqDiv[1])
+   else if (freq > slider2)
       colourClass = 'frequencyMax';
    }
 
@@ -1366,7 +1474,8 @@ function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence,
 
     var pref;
     var nResidues = seqArray.length;
-    var freqDivs = (options.freqDivs) ? options.freqDivs : undefined;
+    var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
+    var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
     for(var i=0; i<nResidues; i++) {
         pref = '';
         if (i == cc) { pref = 'br_'; }
@@ -1376,7 +1485,7 @@ function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence,
            freq = frequencies[options.labels[i]];
 	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
         tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, 
-                                      options.nocolour, options.dotify, options.colourScheme, pref, freq, freqDivs);
+                                      options.nocolour, options.dotify, options.colourScheme, pref, freq, slider1, slider2);
 	}
   
     tableLine += "</td><td class='rhcol'></td></tr>";
@@ -1571,7 +1680,8 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
 			}
                 var prevAa = '#';
-                var freqDivs = (options.freqDivs) ? options.freqDivs : undefined;
+                var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
+                var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
 		for (var s=0; s<sequences.length; s++) 
 			if ((sequences[dispOrder[s]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[s]]))
 			{
@@ -1581,14 +1691,14 @@ function JSAV_transposeSequencesHTML(divId, sequences)
                            freq = sequences[dispOrder[s]].frequencies[options.labels[i]];
 			var aa = sequences[dispOrder[s]].sequence[i];
 			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, 
-                                                 options.colourScheme, 'tr_', freq, freqDivs);
+                                                 options.colourScheme, 'tr_', freq, slider1, slider2);
                         prevAa = sequences[dispOrder[s]].sequence[i];
 			}
 		if(options.consensus != undefined) {
 			var aa = gConsensus[divId][i];
 			var prevAa = '#';
 			html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, 
-                                                 options.colourScheme, 'tr_', undefined, undefined);
+                                                 options.colourScheme, 'tr_', undefined, undefined, undefined);
 			}
 		if (options.selectable) {
 			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
@@ -1854,6 +1964,7 @@ function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
     }   
    return(html);
 }
+
 
 // ---------------------------------------------------------------------
 /**
