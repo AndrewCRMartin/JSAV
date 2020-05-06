@@ -1270,6 +1270,16 @@ param {string} consensusClass	- consensus class
 function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, freqDivs) {
 
 var colourClass = colourScheme + aa.toUpperCase();
+        
+if ((colourScheme == 'frequencies') && (freq != undefined) && (freqDivs != undefined)) 
+   {
+   freqDiv = freqDivs.split(":");  
+   colourClass = 'frequencyMed';
+   if (freq <= freqDiv[0]) 
+      colourClass = 'frequencyMin';
+   else if (freq >= freqDiv[1])
+      colourClass = 'frequencyMax';
+   }
 
 if((dotify || nocolour) && !isConsensus)
 	{
@@ -1300,14 +1310,6 @@ if((dotify || nocolour) && !isConsensus)
 	}
 else 
         {
-        if ((colourScheme == 'frequencies') && (freq != undefined) && (freqDivs != undefined)) {
-            freqDiv = freqDivs.split(":");  
-            colourClass = 'frequencyMed';
-            if (freq <= freqDiv[0]) 
-               colourClass = 'frequencyMin';
-            else if (freq >= freqDiv[1])
-               colourClass = 'frequencyMax';
-        }
 	var html = "<td class='"+pref+"seqCell " + colourClass + consensusClass + "'>" + aa + "</td>";
 	}
 return(html);
