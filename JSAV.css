@@ -432,6 +432,10 @@
 .buriedX {background-color: #00b649; color: #000000;}
 .buriedZ {background-color: #00f10e; color: #000000;}
 
+.frequencyMin {background-color: #ff9580; color: #000000;}
+.frequencyMed {background-color: #ffff80; color: #000000;}
+.frequencyMax {background-color: #b3ffb3; color: #000000;}
+
 /* DATATABLE FUNCTION FORMATTING - Datatable itself uses table.results (abysis.css) */
 
 /* Toggle button and toggle list formatting */

@@ -526,6 +526,9 @@ function JSAV_printColourSelector(divId, options)
         html += "<option value='" + lcChoice + "'" + selected + ">" + 
                 options.colourChoices[i] + "</option>";
     }
+    if (options.frequencies) {
+        html += "<option value='frequencies'>Frequencies</option>";
+    }
     html += "</select>";
     var parrenttag = '#' + divId + '_controls';
     $(parrenttag).append(html);
@@ -1264,7 +1267,7 @@ param {string} consensusClass	- consensus class
 - 09.01.17 Original taken from JSAV_buildASequenceHTML By: JH
 */
 
-function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref) {
+function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, freqDivs) {
 
 var colourClass = colourScheme + aa.toUpperCase();
 
@@ -1296,7 +1299,15 @@ if((dotify || nocolour) && !isConsensus)
 	var html = "<td class='"+pref+"seqCell " + colourClass + "'>" + aa + "</td>";
 	}
 else 
-	{
+        {
+        if ((colourScheme == 'frequencies') && (freq != undefined) && (freqDivs != undefined)) {
+            freqDiv = freqDivs.split(":");  
+            colourClass = 'frequencyMed';
+            if (freq <= freqDiv[0]) 
+               colourClass = 'frequencyMin';
+            else if (freq >= freqDiv[1])
+               colourClass = 'frequencyMax';
+        }
 	var html = "<td class='"+pref+"seqCell " + colourClass + consensusClass + "'>" + aa + "</td>";
 	}
 return(html);
@@ -1328,7 +1339,7 @@ separate <td> tag with a class to indicate the amino acid type
 - 09.01.17 Changed first if statement to allow independent dotify or nocolour display
 		   Individual cell display now carried out by printResidueCell By: JH
 */
-function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequence, isConsensus, idSubmit, cc)
+function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence, isConsensus, idSubmit, cc)
 {
     var options = gOptions[divId];
     var seqArray     = sequence.split("");
@@ -1353,11 +1364,17 @@ function JSAV_buildASequenceHTML(divId, sequenceObject, id, sequence, prevSequen
 
     var pref;
     var nResidues = seqArray.length;
+    var freqDivs = (options.freqDivs) ? options.freqDivs : undefined;
     for(var i=0; i<nResidues; i++) {
         pref = '';
         if (i == cc) { pref = 'br_'; }
+        var label = options.labels[i];
+        var freq = undefined;
+        if (frequencies != undefined)
+           freq = frequencies[options.labels[i]];
 	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
-        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, options.nocolour, options.dotify, options.colourScheme, pref);
+        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, 
+                                      options.nocolour, options.dotify, options.colourScheme, pref, freq, freqDivs);
 	}
   
     tableLine += "</td><td class='rhcol'></td></tr>";
@@ -1552,17 +1569,24 @@ function JSAV_transposeSequencesHTML(divId, sequences)
 			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
 			}
                 var prevAa = '#';
+                var freqDivs = (options.freqDivs) ? options.freqDivs : undefined;
 		for (var s=0; s<sequences.length; s++) 
 			if ((sequences[dispOrder[s]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[s]]))
 			{
+                        var label = options.labels[s];
+                        var freq = undefined;
+                        if (frequencies != undefined)
+                           freq = sequences[dispOrder[s]].frequencies[options.labels[i]];
 			var aa = sequences[dispOrder[s]].sequence[i];
-			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, options.colourScheme, 'tr_');
+			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, 
+                                                 options.colourScheme, 'tr_', freq, freqDivs);
                         prevAa = sequences[dispOrder[s]].sequence[i];
 			}
 		if(options.consensus != undefined) {
 			var aa = gConsensus[divId][i];
 			var prevAa = '#';
-			html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, options.colourScheme, 'tr_');
+			html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, 
+                                                 options.colourScheme, 'tr_', undefined, undefined);
 			}
 		if (options.selectable) {
 			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
@@ -1724,7 +1748,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
        {
        html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
        html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildASequenceHTML(divId, null, 'BlastQuery', options.blastaaquery, undefined, true, null, cc) + "\n";
+       html += JSAV_buildASequenceHTML(divId, 'BlastQuery', options.blastaaquery, undefined, undefined, true, null, cc) + "\n";
        html += "</tr>";
        }
 
@@ -1752,7 +1776,8 @@ html += "</table></div>";
          html += "<th class='selectCell'>";
          html += (options.selectable) ? "<input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/>" : "";
          html +="</th>";
-         html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]], sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, prevSequence, false, options.idSubmit, cc) + "\n";
+         html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, 
+                                         sequences[dispOrder[i]].frequencies, prevSequence, false, options.idSubmit, cc) + "\n";
          prevSequence = sequences[dispOrder[i]].sequence;
          html += "</tr>";
   	 }
@@ -1768,7 +1793,7 @@ html += "</table></div>";
        {
        html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'>";
        html += "<th class='idCell'>Consensus</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildASequenceHTML(divId, null, 'Consensus', gConsensus[divId], undefined, true, null, cc) + "\n";
+       html += JSAV_buildASequenceHTML(divId, 'Consensus', gConsensus[divId], undefined, undefined, true, null, cc) + "\n";
        html += "</tr>";
        }
   if(options.highlight != undefined)
