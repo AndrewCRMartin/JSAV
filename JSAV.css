@@ -227,6 +227,33 @@
   	padding: 0px 0px;
 }
 
+/* Frequency sliders */
+
+.freqSlider {
+   float: left;
+   display: none;
+}
+.freqSliderLimits {
+   float: left;
+   margin-left: 0.5em;
+   font-size: 10pt;
+}
+
+.freqSliderValue {
+    border:1;
+    color:black;
+    width: 4em;
+}
+
+.freqSliderLabel {
+   float: left;
+   font-weight: bold;
+   font-size: 12px;
+   font-style: normal;
+   margin: 0.2em 0.5em 0 1.5em;
+   width: 70px;
+}
+
 /* Colouring for chain type row (under label row) */
 .light-col {background-color:#999999;}
 .heavy-col {background-color:#333333;}
@@ -429,6 +456,10 @@
 .buriedB {background-color: #00eb14; color: #000000;}
 .buriedX {background-color: #00b649; color: #000000;}
 .buriedZ {background-color: #00f10e; color: #000000;}
+
+.frequencyMin {background-color: #ff9580; color: #000000;}
+.frequencyMed {background-color: #ffff80; color: #000000;}
+.frequencyMax {background-color: #b3ffb3; color: #000000;}
 
 /* DATATABLE FUNCTION FORMATTING - Datatable itself uses table.results (abysis.css) */
 
