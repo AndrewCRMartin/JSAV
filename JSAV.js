@@ -279,7 +279,8 @@ function printJSAV(divId, sequences, options)
    
    // Initialize globals if not yet done
    JSAV_init();
-   document.onmouseup = mouseUpHandler;				
+   document.onmouseup = mouseUpHandler;	
+   mouseState = 'up';			
    gOptions[divId]         = options;
    gSequences[divId]       = sequences;
    initDisplayrow(gSequences[divId]);
@@ -2861,6 +2862,7 @@ var tableDiv = divId + '_Table';
 var outerTableDiv = tableDiv + 'Outer';
 var tableTag = "#" + tableDiv;
 var html = '';
+tableWidth = 20;
 html += printToggleList(divId);
 html += "<div id='"+outerTableDiv+"'>";
 html += "<div class='header' style='padding-left:16px;'>";
