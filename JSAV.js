@@ -187,7 +187,9 @@ accession code).
                                                     sequence object which should be passed to a URL specified 
                                                     with options.idSubmit. Default is 'sequence'.
 @property {string}    options.idSubmitKey         - Specifies a colon-separated list of attribute keys which 
-                                                    should be passed to the URL specified with options.idSubmit. 
+                                                    should be passed to the URL specified with options.idSubmit.
+@property {string}    options.sortColumn	  - Column to be used for initial sort (optional).
+@property {string}    options.sortDirection       - Specifies direction of sort when sortColumn is used.
  
 @author 
 - 29.05.14 Original  By: ACRM
@@ -234,6 +236,8 @@ accession code).
 			- start and stop sort positions now global
 			- now uses Bootstrap tooltips instead of jQuery tooltips
 - 05.09.17 Removed scrollX - now 100% by default
+- 12.08.19 Added sortColumn and sortDirection for initilial sorting of columns 
+
 */
 function printJSAV(divId, sequences, options)
 {
@@ -241,17 +245,9 @@ function printJSAV(divId, sequences, options)
    if(options                     == undefined) { options                     = Array();                   }
    if(options.width               == undefined) { options.width               = "400px";                   }
    if(options.height              == undefined) { options.height              = "6pt";                     }
-   if((options.submitLabel        == undefined) 
-      && (options.iconButtons))                 { options.sumbitILabel 	      = 'fa fa-check'; 		   }
-   if((options.actionLabel         == undefined) 
-      && (options.iconButtons))                 { options.actionLabel 	      = 'fa fa-cogs';       	   }
    if(options.nocolor)                          { options.nocolour            = true;                      }
    if(options.toggleNocolor)                    { options.toggleNocolour      = true;                      }
    if(options.transpose           == undefined) { options.transpose           = false;                     }
-   if((options.exportLabel         == undefined) 
-      && (options.iconButtons))                 { options.exportLabel 	      = 'fas fa-share-square';     }
-   if((options.sortLabel           == undefined) 
-      && (options.iconButtons))                 { options.sortLabel 	      = 'fa fa-sort-down';	   }
    if(options.colorScheme)                      { options.colourScheme        = options.colorScheme;       }
    if(options.colourScheme        == undefined) { options.colourScheme        = "taylor";                  }
    if(options.selectColor)                      { options.selectColour        = true;                      }
@@ -262,29 +258,44 @@ function printJSAV(divId, sequences, options)
    if(options.submit 		  != undefined) { options.selectable          = true;                      }	
    if(options.idSubmitAttribute   == undefined) { options.idSubmitAttribute   = "sequence";                }
    if(options.idSubmitKey         == undefined) { options.idSubmitKey         = "";                        }
-   if((options.toggleDotifyLabel   == undefined) 
-     && (options.iconButtons))                  { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
-   if((options.toggleNocolourLabel == undefined) 
-     && (options.iconButtons))                  { options.toggleNocolourLabel = 'fa fa-th'; 		   }
-   if((options.hideLabel           == undefined) 
-     && (options.iconButtons))                  { options.hideLabel 	      = 'fa fa-eye-slash';	   }
-   if((options.showallLabel        == undefined)  && (options.iconButtons)) { options.showallLabel	      = 'fa fa-eye';		   }
-   if((options.deleteLabel        == undefined)
-     && (options.iconButtons))                  { options.deleteLabel 	      = 'fa fa-window-close';	   }
    if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
-   
+   if(options.chainType           == undefined) { options.chainType           = "heavy";                        }
+   if(options.iconButtons) {
+	  if(options.submitLabel == undefined)      { options.submitLabel 	      = 'far fa-check-square'; 		   }
+      if(options.actionLabel == undefined)      { options.actionLabel 	      = 'fa fa-cogs';       	   }
+      if(options.exportLabel == undefined)      { options.exportLabel 	      = 'fas fa-share-square';     }
+      if(options.sortLabel   == undefined)      { options.sortLabel 	      = 'fa fa-sort-down';	       }  
+      if(options.sortUpLabel == undefined)      { options.sortUpLabel         = 'fas fa-sort-up';          } 
+      if(options.sortDownLabel == undefined)    { options.sortDownLabel       = 'fas fa-sort-down';       }
+      if(options.sortBothLabel == undefined)    {  options.sortBothLabel       = 'fas fa-sort';            }
+      if(options.toggleDotifyLabel == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
+      if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = 'fa fa-th'; 		   }
+      if(options.hideLabel     == undefined)    { options.hideLabel 	      = 'fa fa-eye-slash';	   }
+      if(options.showallLabel  == undefined)    { options.showallLabel	      = 'fa fa-eye';		   }
+      if(options.deleteLabel   == undefined)    { options.deleteLabel 	      = 'fa fa-window-close';	   }   
+ 	   options.sortUpText = '';
+	   options.sortDownText = '';
+	   options.sortBothText = '';
+	   options.hideText = ''
+   }
+   else {
+	   options.sortUpText = '&#9650;';
+	   options.sortDownText = '&#9660;';
+	   options.sortBothText = '&#9670;';
+	   options.hideText = '&#9747;'
+   }
    // Initialize globals if not yet done
    JSAV_init();
-   document.onmouseup = mouseUpHandler;				
+   document.onmouseup = mouseUpHandler;
    mouseState = 'up';	
    gOptions[divId]         = options;
+   tidySequences(divId, sequences);
    gSequences[divId]       = sequences;
    initDisplayrow(gSequences[divId]);
    gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
    gDisplayOrder[divId] = initDisplayOrder(sequences);
 
    // Sequence View
-
    if (sequences.length > 0) {
       gSequenceLengths[divId] = sequences[0].sequence.length;
       if (gSequenceLengths[divId] > 0) {
@@ -408,6 +419,10 @@ function printJSAV(divId, sequences, options)
       if (options.displaydatatable != undefined)
       {
  	printDataTable(divId, sequences);
+      }
+      if (options.sortColumn != undefined)
+      {
+        DT_sortColumn(divId, options.sortDirection, options.sortColumn);
       }
 
       // Ensure buttons etc match the data
@@ -1294,7 +1309,7 @@ $(sliderrange).slider({
         }
     }
 }).append(AboveMaxDiv);
-$(sliderrange).slider().addClass("heatmap-slider");
+$(sliderrange).slider().addClass("freq-slider");
 
 //Set initial values
 $(lowerlimit).change(function(){
@@ -1445,8 +1460,8 @@ separate <td> tag with a class to indicate the amino acid type
 */
 function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence, isConsensus, idSubmit, cc)
 {
-	var options = gOptions[divId];
-	var seqArray     = sequence.split("");
+    var options = gOptions[divId];
+    var seqArray     = sequence.split("");
     var prevSeqArray = undefined;
 
     if((options.dotify || options.nocolour) && (prevSequence != undefined))
@@ -1459,7 +1474,11 @@ function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence,
     var consensusClass = "";
     if(isConsensus)
     {
-        consensusClass = " consensusCell";
+        if (id == 'Consensus') {
+           consensusClass = " consensusCell";
+        } else {
+           consensusClass = " blastqueryCell";
+        }
     }
 
     var pref;
@@ -1843,6 +1862,14 @@ function JSAV_buildSequencesHTML(divId, sequences)
        html += "<tr class='highlightrow'>";
        html += "<th class='idCell'>CDRs</th><td>&nbsp;</td>";
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+       html += "</tr>";
+       }
+
+   if((options.blastaaquery != undefined) && (options.blastaaquery != ''))
+       {
+       html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
+       html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
+       html += JSAV_buildASequenceHTML(divId, 'BlastQuery', options.blastaaquery, undefined, undefined, true, null, cc) + "\n";
        html += "</tr>";
        }
 
@@ -2690,7 +2717,7 @@ function ACRM_confirm(title, msg, callback)
                 $( this ).dialog( "close" );
                 $( this ).remove();
             },
-            "OK": function() {
+            "OK": function() {             
                 $( this ).dialog( "close" );
                 $( this ).remove();
                 callback(true);
@@ -2913,17 +2940,21 @@ for (var stype in stypes) {
   for (var s=0; s<=sequences.length; s++) {
     for (var key in sequences[s]) {
 	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
-           if (key.substr(0,5) == stypes[stype]) {
+           var colheaders = key.split('_');
+           var colname = '';
+           for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
+           colname = colname.trim();
+           if (colheaders[0] == stypes[stype]) {
       	      if (displayColumns && displayColumns.hasOwnProperty(key))
-                       dispColumn[key] = displayColumns[key];
-              else
-		if ( gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0 )
+                  dispColumn[key] = displayColumns[key];
+              else 
+		if ( gOptions[divId].defaultVisibleColumns.indexOf(colname) >= 0 )
 		  { 
                      dispColumn[key] = 1;
 		  } else {
-                    dispColumn[key] = 0;
+                     dispColumn[key] = 0;
                   }
-               }
+                }
             }
 	}
     }
@@ -2932,14 +2963,18 @@ for (var term in gOptions[divId].searchTerms) {
   for (var stype in stypes) {
     for (var s=0; s<=sequences.length; s++) {
       for (var key in sequences[s]) {
-	if ((key.substr(6).toLowerCase() == term) || (term == 'simple')) {
-           if (key.substr(0,5) == stypes[stype]) {
+        var colheaders = key.split('_');
+        var colname = '';
+        for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
+        colname = colname.trim();
+	if ((colname.toLowerCase() == term) || (term == 'simple')) {
+           if (colheaders[0] == stypes[stype]) {
 	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
 		{ 
       	        if (displayColumns && displayColumns.hasOwnProperty(key))
                        dispColumn[key] = displayColumns[key];
                 else
- 		  dispColumn[key] = 1; 
+ 		  dispColumn[key] = 0; 
                 }
               }
            }
@@ -3013,7 +3048,38 @@ $("#" + outerTableDiv).css("margin-left","0.5em");
 $("#" + outerTableDiv).css("overflow-x","auto");
 }
 
+function notColumnGroup(col) {
 
+var colGroups = ['General','PTMs','CDRs','Canonical Classes','Structural Environment','Modelled Structural Environment',
+                'Regions(Chothia definition)','Regions(AbM definition)','Regions(Kabat definition)','Regions(Contact definition)',
+                'Regions(IMGT definition)','Positions','Blast'];
+return (colGroups.indexOf(col) == -1) ? true : false;
+
+}
+
+function tidySequences(divId, sequences) {
+
+var section;
+var stypes = ['heavy','light'];
+for (var s=0;s<sequences.length;s++) {
+   for (var key in sequences[s]) 
+      {
+      var row = key.split('_');
+      var newkey = key;
+      section = (stypes.includes(row[0])) ? 1 : 0;
+      if ((row[section]) && (row[section] != 'Chain id') && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
+         if (notColumnGroup(row[section]))
+            newkey = key.replace(row[section],'_' + row[section]);
+      if ((row[section]) && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
+         if (!stypes.includes(row[0])) 
+            newkey = 'heavy_' + newkey;
+      if (newkey != key) {
+         sequences[s][newkey] = sequences[s][key];
+         delete sequences[s][key];
+         }
+      }
+   }
+}
 // -----------------------------------------------------------------
 /**
 resets displayColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
@@ -3364,13 +3430,41 @@ return lblsht;
 
 function printToggleList(divId) {
 
-var html = "<div class='toggle-col-list'>";
-for (var key in gDisplayColumn[gOptions[divId].chainType]) {
-	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
- 	if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
-        	var seqtype = key.substring(0,5);
-		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+key.substring(6).replace(/_/g, " ")+"' onclick='"+onclick+"'>"+truncateLabel(key.substring(6).replace(/_/g, " "), 4)+"</button>";
+var stypes = ['heavy','light'];
+var html = "<div class='toggle-col-list'>Show hidden columns: ";
+var grpList = [];
+for (var stype in stypes)
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+      var keyList = key.split('_');
+      if (keyList[0] == stypes[stype]) {
+        var grpGroup = keyList[0] + '_' + keyList[1];
+        if (grpList.indexOf(grpGroup) == -1) {
+       	  grpList.push(grpGroup);
+          }
         }
+      }
+
+for (var i=0; i<grpList.length; i++) {
+  var grpType = grpList[i].split('_');
+  html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+  var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
+  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+      var keyList = key.split('_');
+      if (grpList[i] == (keyList[0] + '_' + keyList[1])) {
+        var keyText = '';
+        for (var k=2; k<keyList.length; k++) 
+            keyText += keyList[k] + ' ';
+	keyText = keyText.trim();
+        var desc = keyText;
+        if (gOptions[divId].ptmLabels)
+          desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
+        html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
+      }
+    }
+  html += "</select>";
 } 
 html += '</div>';
 return(html);
@@ -3394,12 +3488,11 @@ var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
 
 var options = gOptions[divId];
 var maxrows = 0;
-for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-  if (gDisplayColumn[gOptions[divId].chainType][key]) {		
+for (var key in gDisplayColumn[options.chainType]) 
+  if (gDisplayColumn[options.chainType][key]) {		
 	var numrows = key.split('_');
         if (numrows.length > maxrows) maxrows = numrows.length;
 	}
-
 for (var row=0; row<maxrows; row++) {
   html += "<tr>";
   if (row > 0) 
@@ -3409,15 +3502,23 @@ for (var row=0; row<maxrows; row++) {
   var lastcell = "";
   var lasthtml = "";
   tableWidth = 20;
-  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+  for (var key in gDisplayColumn[options.chainType]) 
      {
-     if (gDisplayColumn[gOptions[divId].chainType][key]) 
+     if (gDisplayColumn[options.chainType][key]) 
         {
         var colheaders = key.split('_');
 	var colheader = "";
+        var colName = '';
+        for (var k=2; k<colheaders.length; k++) 
+            colName += colheaders[k] + ' ';
+	colName = colName.trim();
 	var colClass = colheaders[0]+"-col";
-        var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
-        var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+        var colDesc = colName;
+        if (options.ptmLabels) 
+           colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
+        var colWidth = 50;
+        if (options.formattedCols)
+           colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
         tableWidth += (colWidth + 40);
 	for (var r=0;r<=row;r++)
 	   colheader += colheaders[r];
@@ -3433,27 +3534,27 @@ for (var row=0; row<maxrows; row++) {
            }
         else if (row==colheaders.length-1) 
            {
-	   switch (gDisplayColumn[gOptions[divId].chainType][key]) 
+	   switch (gDisplayColumn[options.chainType][key]) 
                 { 
-		case 2: var clist='headerSortDown'; 
-                        var icon = 'fas fa-sort-down';
+		case 2: var icon = options.sortDownLabel;
+		    var textLbl = options.sortDownText;
 			var direction = "desc";
 			break;
-		case 3: var clist='headerSortUp'; 
-                        var icon = 'fas fa-sort-up';
+		case 3: var icon = options.sortUpLabel;
+		    var textLbl = options.sortUpText;
 			var direction = "asc";
 			break;
-		default: var clist='headerSortBoth'; 
-                         var icon = 'fas fa-sort';
+		default: var icon = options.sortBothLabel;
+		    var textLbl = options.sortBothText;
 			 var direction = "asc";
 		}
 	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	   htmlcell += "<th class='"+colClass+" headerHide'>";
-           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colName+"'></i></div></th>";
+           htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
            htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-           htmlcell += "<div class='truncated tooltip' title='"+colheaders[row]+"'>" + colheaders[row] + "</div></th>";
-           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i><div></th>";
+           htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
+           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
 	   } 
         else 
            {
@@ -3512,17 +3613,25 @@ if (sequence.displayrow)
    for (var key in gDisplayColumn[gOptions[divId].chainType])
       if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
-	 var matchcol = key.substr(0,5) + '_Numbered';
-         var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
-         var lcColName = (colName in options.formattedCols) ? colName : 'other';
-         var colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+         var colheaders = key.split('_');
+	 var matchcol = colheaders[0] + '_Numbered';
+         var colName = '';
+         for (var k=2; k<colheaders.length; k++) 
+            colName += colheaders[k] + ' ';
+	 colName = colName.trim();
+         var lcColName = 'other';
+         var colWidth = 90;
+         if (options.formattedCols) {
+            lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
+            colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+            }
          var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
          bgcol = '';
  	 if (typeof(sequence[key]) == 'undefined') 
             {
             html += "<td></td>";
 	    } 
-         else if (key.substring(6).toLowerCase() == 'accession') 
+         else if (colName.toLowerCase() == 'accession') 
             {
             bgcol = "accession";
             if (options.searchTerms['accession']) 
@@ -3541,7 +3650,7 @@ if (sequence.displayrow)
             var cellText = sequence[key];
             for (var term in options.searchTerms) 
                {
-               if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) 
+               if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
                   {
                   var re = new RegExp(options.searchTerms[term], 'i');
                   if (sequence[key].search(re) != -1) {
@@ -3566,4 +3675,4 @@ if (sequence.displayrow)
 return(html);
 }
 
-// --------------------- END OF FILE ------------------------------------
+// --------------------- END OF FILE ------------------------------------/
