@@ -97,6 +97,7 @@
 .JSAVControls button { margin: 1px 4px 1px 0px;
 			display:inline-block;
 			padding:1px 5px;
+			height: 20px;
 			margin-bottom:0;
 			font-size:12px;
 			font-weight:400;
@@ -134,8 +135,7 @@
 				vertical-align:middle;
 				background-image:none;
 				border:1px solid transparent;
-				border-radius:3px;
-				
+				border-radius:3px;		
 				border-color:#333333; }
 
 /***********************************************************************/
@@ -457,7 +457,7 @@ button.toggle-col { margin: 2px 4px 2px 2px;
 		color:#fff;
 		border-color:#333333;} 
 			
-.toggle-col-list { margin: 5px 0px 5px 5px; padding: 2px 0px 2px 5px; width: 90%; }
+.toggle-col-list { margin: 2px 10px 2px 2px; padding: 2px; }
 .outertablebody {overflow-y: scroll; padding-top: 0;  overflow-x: hidden; direction: rtl; max-height: 40em; border:1px solid black;}
 .innertablebody {direction: ltr; padding-top: 0; max-height: 40em;}
 .table_xscroll {    width: -moz-calc(100% - 0.5em);

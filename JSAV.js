@@ -279,7 +279,7 @@ function printJSAV(divId, sequences, options)
    
    // Initialize globals if not yet done
    JSAV_init();
-   document.onmouseup = mouseUpHandler;				
+   document.onmouseup = mouseUpHandler;	
    mouseState = 'up';	
    gOptions[divId]         = options;
    gSequences[divId]       = sequences;
@@ -288,7 +288,6 @@ function printJSAV(divId, sequences, options)
    gDisplayOrder[divId] = initDisplayOrder(sequences);
 
    // Sequence View
-
    if (sequences.length > 0) {
       gSequenceLengths[divId] = sequences[0].sequence.length;
       if (gSequenceLengths[divId] > 0) {
@@ -2795,17 +2794,21 @@ for (var stype in stypes) {
   for (var s=0; s<=sequences.length; s++) {
     for (var key in sequences[s]) {
 	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
-           if (key.substr(0,5) == stypes[stype]) {
-      	      if (displayColumns && displayColumns.hasOwnProperty(key))
-                       dispColumn[key] = displayColumns[key];
-              else
-		if ( gOptions[divId].defaultVisibleColumns.indexOf(key.substring(6)) >= 0 )
+           var colheaders = key.split('_');
+           var colname = '';
+           for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
+           colname = colname.trim();
+           if (colheaders[0] == stypes[stype]) {
+      	      if (displayColumns && displayColumns.hasOwnProperty(key)) 
+                  dispColumn[key] = displayColumns[key];
+              else 
+		if ( gOptions[divId].defaultVisibleColumns.indexOf(colname) >= 0 )
 		  { 
                      dispColumn[key] = 1;
 		  } else {
                     dispColumn[key] = 0;
                   }
-               }
+                }
             }
 	}
     }
@@ -2814,8 +2817,12 @@ for (var term in gOptions[divId].searchTerms) {
   for (var stype in stypes) {
     for (var s=0; s<=sequences.length; s++) {
       for (var key in sequences[s]) {
-	if ((key.substr(6).toLowerCase() == term) || (term == 'simple')) {
-           if (key.substr(0,5) == stypes[stype]) {
+        var colheaders = key.split('_');
+        var colname = '';
+        for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
+        colname = colname.trim();
+	if ((colname.toLowerCase() == term) || (term == 'simple')) {
+           if (colheaders[0] == stypes[stype]) {
 	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
 		{ 
       	        if (displayColumns && displayColumns.hasOwnProperty(key))
@@ -3246,15 +3253,36 @@ return lblsht;
 
 function printToggleList(divId) {
 
-var html = "<div class='toggle-col-list'>";
-for (var key in gDisplayColumn[gOptions[divId].chainType]) {
-        var keyText = key.substring(6).replace(/_/g, " ");
-        var desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
-	var onclick = "DT_toggleColumn(\"" + divId + "\", \"" + key + "\");"; 
- 	if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
-        	var seqtype = key.substring(0,5);
-		html += "<button class='"+seqtype+"-col toggle-col tooltip' title='Show "+desc+"' onclick='"+onclick+"'>"+truncateLabel(keyText,4)+"</button>";
+var stypes = ['heavy','light'];
+var html = "<div class='toggle-col-list'>Show hidden columns: ";
+var grpList = [];
+for (var stype in stypes)
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+      var keyList = key.split('_');
+      if (keyList[0] == stypes[stype]) {
+        var grpGroup = keyList[0] + '_' + keyList[1];
+        if (grpList.indexOf(grpGroup) == -1) 
+       	  grpList.push(grpGroup);
         }
+      }
+for (var i=0; i<grpList.length; i++) {
+  var grpType = grpList[i].split('_');
+  html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + grpType[1] + "</option> "
+  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
+      var keyList = key.split('_');
+      if (grpList[i] == (keyList[0] + '_' + keyList[1])) {
+        var keyText = '';
+        for (var k=2; k<keyList.length; k++) 
+            keyText += keyList[k] + ' ';
+	keyText = keyText.trim();
+        var desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
+        html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
+      }
+    }
+  html += "</select>";
 } 
 html += '</div>';
 return(html);
@@ -3283,7 +3311,6 @@ for (var key in gDisplayColumn[gOptions[divId].chainType])
 	var numrows = key.split('_');
         if (numrows.length > maxrows) maxrows = numrows.length;
 	}
-
 for (var row=0; row<maxrows; row++) {
   html += "<tr>";
   if (row > 0) 
@@ -3299,10 +3326,13 @@ for (var row=0; row<maxrows; row++) {
         {
         var colheaders = key.split('_');
 	var colheader = "";
+        var colName = '';
+        for (var k=2; k<colheaders.length; k++) 
+            colName += colheaders[k] + ' ';
+	colName = colName.trim();
 	var colClass = colheaders[0]+"-col";
-        var colName = (options.ptmLabels.hasOwnProperty(key.substring(6))) ? options.ptmLabels[key.substring(6)] : key.substring(6).replace(/ /g,"_");
+        var colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
         var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
-        var colText = colName.replace(/_/g, " ");
         tableWidth += (colWidth + 40);
 	for (var r=0;r<=row;r++)
 	   colheader += colheaders[r];
@@ -3335,10 +3365,10 @@ for (var row=0; row<maxrows; row++) {
 	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	   htmlcell += "<th class='"+colClass+" headerHide'>";
-           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colText+"'></i></div></th>";
+           htmlcell += "<div "+toggleclick+"><i class='fa fa-eye-slash fa-inverse tooltip' title='Hide Column "+colDesc+"'></i></div></th>";
            htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-           htmlcell += "<div class='truncated tooltip' title='"+colText+"'>" + colheaders[row] + "</div></th>";
-           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colText+"'></i><div></th>";
+           htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
+           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i><div></th>";
 	   } 
         else 
            {
@@ -3397,8 +3427,12 @@ if (sequence.displayrow)
    for (var key in gDisplayColumn[gOptions[divId].chainType])
       if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
-	 var matchcol = key.substr(0,5) + '_Numbered';
-         var colName = key.substring(6).replace(/ /g,"_");
+         var colheaders = key.split('_');
+	 var matchcol = colheaders[0] + '_Numbered';
+         var colName = '';
+         for (var k=2; k<colheaders.length; k++) 
+            colName += colheaders[k] + ' ';
+	 colName = colName.trim();
          var lcColName = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
          var colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
          var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
@@ -3407,7 +3441,7 @@ if (sequence.displayrow)
             {
             html += "<td></td>";
 	    } 
-         else if (key.substring(6).toLowerCase() == 'accession') 
+         else if (colName.toLowerCase() == 'accession') 
             {
             bgcol = "accession";
             if (options.searchTerms['accession']) 
@@ -3426,7 +3460,7 @@ if (sequence.displayrow)
             var cellText = sequence[key];
             for (var term in options.searchTerms) 
                {
-               if (( term == 'simple')  || (key.substr(6).toLowerCase() == term) ) 
+               if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
                   {
                   var re = new RegExp(options.searchTerms[term], 'i');
                   if (sequence[key].search(re) != -1) {
