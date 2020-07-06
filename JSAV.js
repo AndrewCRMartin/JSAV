@@ -1,19 +1,19 @@
 /** @preserve 
     @file
-    JSAV V2.0 13.05.19
-    Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
+    JSAV V2.0.1 06.07.20
+    Copyright:  (c) Prof. Andrew C.R. Martin, UCL, 2014-2020
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
 /** ***********************************************************************
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V2.0
-   Date:       13.05.19
+   Version:    V2.0.1
+   Date:       06.07.20
    Function:   JavaScript Sequence Alignment Viewier
    
-   Copyright:  (c) Dr. Andrew C.R. Martin, UCL, 2014-2016
-   Author:     Dr. Andrew C.R. Martin
+   Copyright:  (c) Prof. Andrew C.R. Martin, UCL, 2014-2020
+   Author:     Prof. Andrew C.R. Martin
    Address:    Institute of Structural and Molecular Biology
                Division of Biosciences
                University College
@@ -90,6 +90,8 @@
                         both views.
                       - Modified sequence sorting routines.
                       - Export to CSV and Excel.
+   V2.0.1  06.07.20   General code tidy-up and fixed bug in 
+                      JSAV_deleteSelectedSequences()
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -1248,8 +1250,6 @@ function JSAV_selectAllOrNone(divId, status)
 }
 
 //----------------------------------------------------------------------
-/**
-*/
 function JSAV_resetAllNone(divId, cboxname, cboxstatus)
 {
    var tag = "." + divId + "_AllNone";

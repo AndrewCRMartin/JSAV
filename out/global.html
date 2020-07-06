@@ -211,7 +211,7 @@ simple JavaScript alert() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2023">line 2023</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2701">line 2701</a>
     </li></ul></dd>
     
     
@@ -336,7 +336,7 @@ simple JavaScript alert() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1960">line 1960</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2638">line 2638</a>
     </li></ul></dd>
     
     
@@ -539,7 +539,7 @@ simple JavaScript confirm() method
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1990">line 1990</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2668">line 2668</a>
     </li></ul></dd>
     
     
@@ -711,7 +711,7 @@ where the object contains the specified key:value pair.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1930">line 1930</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2608">line 2608</a>
     </li></ul></dd>
     
     
@@ -904,7 +904,765 @@ where the object contains the specified key:value pair.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2051">line 2051</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2729">line 2729</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="compareVals"><span class="type-signature"></span>compareVals<span class="signature">(divId, direction, colName)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sorts the table based on the column values and the sort direction
+Final ordering is set in gDisplayOrder[divId]
+Calls JSAV_refresh to redraw the sequences and table
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>direction</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the sort direction</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>colName</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">name of the column on which the sort is based</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3084">line 3084</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="DT_toggleColumn"><span class="type-signature"></span>DT_toggleColumn<span class="signature">(divId, colName)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Toggles display of the column then recalls printDataTable
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>colName</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">name of column to display/undisplay</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3194">line 3194</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="initDisplayColumn"><span class="type-signature"></span>initDisplayColumn<span class="signature">(divId, sequences)</span><span class="type-signature"> &rarr; {int[]}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Initialises dispColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array of sequence objects</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2911">line 2911</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    dispColumn     - array of codes for indicating column sort status
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int[]</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="initDisplayOrder"><span class="type-signature"></span>initDisplayOrder<span class="signature">(sequences)</span><span class="type-signature"> &rarr; {int[]}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Initialises dispOrder to initial sequence ordering
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array of sequence objects</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2887">line 2887</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    dispOrder      - array of sequence elements in order of display
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int[]</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="initDisplayrow"><span class="type-signature"></span>initDisplayrow<span class="signature">(sequences)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Initialise the displayrow elements for all sequences
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the sequence array</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original     By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line445">line 445</a>
     </li></ul></dd>
     
     
@@ -1028,7 +1786,7 @@ where the object contains the specified key:value pair.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2150">line 2150</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2865">line 2865</a>
     </li></ul></dd>
     
     
@@ -1078,7 +1836,7 @@ where the object contains the specified key:value pair.
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(id, sequence, prevSequence, selectable, dotify, nocolour, isConsensus, colourScheme, idSubmit, idSubmitClean)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="JSAV_buildASequenceHTML"><span class="type-signature"></span>JSAV_buildASequenceHTML<span class="signature">(divId, id, sequence, prevSequence, isConsensus, idSubmit)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
 </dt>
@@ -1119,6 +1877,29 @@ separate <td> tag with a class to indicate the amino acid type
 	</thead>
 	
 	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The divId we're dealing with</td>
+        </tr>
+	
 	
 	
         <tr>
@@ -1192,75 +1973,6 @@ separate <td> tag with a class to indicate the amino acid type
 	
         <tr>
             
-                <td class="name"><code>selectable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Display a selection checkbox</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>dotify</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Dotify the sequence</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>nocolour</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Don't colour dotified residues</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>isConsensus</code></td>
             
             
@@ -1284,30 +1996,6 @@ separate <td> tag with a class to indicate the amino acid type
 	
         <tr>
             
-                <td class="name"><code>colourScheme</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Name of colour scheme - maps to CSS - 
-                                see JSAV_initColourChoices()</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>idSubmit</code></td>
             
             
@@ -1325,30 +2013,6 @@ separate <td> tag with a class to indicate the amino acid type
             
             
             <td class="description last">URL to visit when sequence label clicked</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>idSubmitClean</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Remove non-alpha characters from sequence
-                                before submitting it</td>
         </tr>
 	
 	
@@ -1378,7 +2042,9 @@ separate <td> tag with a class to indicate the amino acid type
 - 18.06.14 Added tooltip
 - 23.09.15 Added idSubmit/idSubmitClean
 - 11.02.16 Added idSubmitAttribute, now takes a sequence object rather than
-           the sequence and the id</li>
+           the sequence and the id
+- 09.01.17 Changed first if statement to allow independent dotify or nocolour display
+                   Individual cell display now carried out by printResidueCell By: JH</li>
         </ul>
     </dd>
     
@@ -1392,7 +2058,7 @@ separate <td> tag with a class to indicate the amino acid type
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line990">line 990</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1401">line 1401</a>
     </li></ul></dd>
     
     
@@ -1417,7 +2083,7 @@ separate <td> tag with a class to indicate the amino acid type
     
             
 <div class="param-desc">
-    text          HTML snippet
+    tableline     HTML snippet
 </div>
 
 
@@ -1524,7 +2190,8 @@ separate <td> tag with a class to indicate the amino acid type
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 17.06.14  Original   By: ACRM</li>
+            <li>- 17.06.14  Original   By: ACRM
+- 01.09.17  Added displayrow condition - consensus calculated on non-hidden sequences only</li>
         </ul>
     </dd>
     
@@ -1538,7 +2205,7 @@ separate <td> tag with a class to indicate the amino acid type
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1861">line 1861</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2536">line 2536</a>
     </li></ul></dd>
     
     
@@ -1671,7 +2338,8 @@ sequences if none are selected
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 17.06.14 Split out from JSAV_submitSequences()  By: ACRM</li>
+            <li>- 17.06.14 Split out from JSAV_submitSequences()  By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH</li>
         </ul>
     </dd>
     
@@ -1685,7 +2353,7 @@ sequences if none are selected
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line793">line 793</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1017">line 1017</a>
     </li></ul></dd>
     
     
@@ -1888,7 +2556,9 @@ count from zero.
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 13.06.14   Original   By: ACRM</li>
+            <li>- 13.06.14   Original   By: ACRM
+- 09.01.17       Now calls calculate
+printHighlightCell to display each cell based on highlight  By: JH</li>
         </ul>
     </dd>
     
@@ -1902,7 +2572,7 @@ count from zero.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line612">line 612</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line875">line 875</a>
     </li></ul></dd>
     
     
@@ -1928,6 +2598,244 @@ count from zero.
             
 <div class="param-desc">
     - HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_buildId"><span class="type-signature"></span>JSAV_buildId<span class="signature">(divId, attributeValue, id, idSubmit, colspan)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Builds the label for the sequence row
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of the div we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>attributeValue</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">value of idSubmitAttribute for the id</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">sequence's id</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>idSubmit</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">text for label link</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>colspan</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">number of table columns to span</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 23.03.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1691">line 1691</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    html            HTML for the label
 </div>
 
 
@@ -2103,7 +3011,8 @@ count from zero.
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 22.12.15 Original   By: ACRM</li>
+            <li>- 22.12.15 Original   By: ACRM
+- 09.01.17 Modified considerably for new label format   By: JH</li>
         </ul>
     </dd>
     
@@ -2117,7 +3026,7 @@ count from zero.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2090">line 2090</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2790">line 2790</a>
     </li></ul></dd>
     
     
@@ -2298,7 +3207,8 @@ residues to be used for sorting
         <ul>
             <li>- 06.06.14  Original   By: ACRM
 - 10.06.14  Added 'selectable'
-- 23.09.15  Added &nbsp; into 'Sort Region' to stop it breaking the line</li>
+- 23.09.15  Added &nbsp; into 'Sort Region' to stop it breaking the line
+- 09.01.17  Markers are now used for selecting start and stop for sort By: JH</li>
         </ul>
     </dd>
     
@@ -2312,7 +3222,7 @@ residues to be used for sorting
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1344">line 1344</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1948">line 1948</a>
     </li></ul></dd>
     
     
@@ -2362,7 +3272,7 @@ residues to be used for sorting
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildSelectAllHTML"><span class="type-signature"></span>JSAV_buildSelectAllHTML<span class="signature">(divId, seqLen)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="JSAV_buildSelectAllHTML"><span class="type-signature"></span>JSAV_buildSelectAllHTML<span class="signature">(divId, seqLen, pref)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
 </dt>
@@ -2448,6 +3358,29 @@ for selecting/deselecting all sequences
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>pref</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">prefix for display class - uses 'tr_' for transposed cells</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -2469,7 +3402,8 @@ for selecting/deselecting all sequences
     <dd class="tag-author">
         <ul>
             <li>- 09.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
+- 18.06.14 Added tooltip
+- 09.01.17 Changes made to allow for reformatting of labels By: JH</li>
         </ul>
     </dd>
     
@@ -2483,7 +3417,7 @@ for selecting/deselecting all sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1315">line 1315</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1918">line 1918</a>
     </li></ul></dd>
     
     
@@ -2533,7 +3467,7 @@ for selecting/deselecting all sequences
         
             
 <dt>
-    <h4 class="name" id="JSAV_buildSequencesHTML"><span class="type-signature"></span>JSAV_buildSequencesHTML<span class="signature">(divId, sequences, sortable, selectable, highlight, dotify, nocolour, consensus, labels)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="JSAV_buildSequencesHTML"><span class="type-signature"></span>JSAV_buildSequencesHTML<span class="signature">(divId, sequences)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
 </dt>
@@ -2619,168 +3553,6 @@ them as a coloured table
         </tr>
 	
 	
-	
-        <tr>
-            
-                <td class="name"><code>sortable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Should the marker line be displayed
-                                  for sortable displays</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>selectable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Should check marks be displayed</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>highlight</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int[]</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Ranges to be highlighted</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>dotify</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Dotify the sequence alignment</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>nocolour</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Don't colour dotified residues</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>consensus</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Display the consensus sequence</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>labels</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">array</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Labels to display over sequence</td>
-        </tr>
-	
-	
 	</tbody>
 </table>
     
@@ -2807,7 +3579,9 @@ them as a coloured table
 - 13.06.14 Added highlight
 - 16.06.14 Added dotify
 - 17.06.14 Added consensus
-- 22.12.15 Added labels</li>
+- 22.12.15 Added labels
+- 09.01.17 Added empty string format parameter to JSAV_buildSelectAllHTML 
+                   Uses displayOrder to display sequences in sorted order       By: JH</li>
         </ul>
     </dd>
     
@@ -2821,7 +3595,7 @@ them as a coloured table
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1238">line 1238</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1779">line 1779</a>
     </li></ul></dd>
     
     
@@ -2864,6 +3638,130 @@ them as a coloured table
 </dl>
 
         
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_buildTypeLabel"><span class="type-signature"></span>JSAV_buildTypeLabel<span class="signature">(labels)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Displays thin row coloured by the label type (heavy or light)
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>labels</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The label array</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 21.03.17  Original    By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1445">line 1445</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -3065,7 +3963,7 @@ the ends of the sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1638">line 1638</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2299">line 2299</a>
     </li></ul></dd>
     
     
@@ -3285,7 +4183,7 @@ of sequences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1601">line 1601</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2262">line 2262</a>
     </li></ul></dd>
     
     
@@ -3437,7 +4335,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1419">line 1419</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2082">line 2082</a>
     </li></ul></dd>
     
     
@@ -3481,6 +4379,135 @@ chooses the one with fewest differences
 </dl>
 
         
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_ControlButton"><span class="type-signature"></span>JSAV_ControlButton<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints a control button with icons, action and tooltip
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The divId we're dealing with
+        {string} tooltip- text for tooltip
+        {string} icon   - option item for icon class
+        {string} label  - extra text after icon
+        {string} textLabel - alternative text label
+        {string} action - button onclick action</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 24.09.17 Original     By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line595">line 595</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -3574,7 +4601,9 @@ chooses the one with fewest differences
 - 15.06.14 Changed from alert() to ACRM_alert()
 - 16.06.14 Changed from confirm() to ACRM_confirm()
 - 17.06.14 Added consensus
-- 22.12.15 Added passing of labels</li>
+- 22.12.15 Added passing of labels
+- 09.01.17 Removed 'input' from tag as this is not required By: JH
+- 06.07.20 Now does a sort-and-refresh if the data are sorted By: ACRM</li>
         </ul>
     </dd>
     
@@ -3588,7 +4617,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line836">line 836</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1067">line 1067</a>
     </li></ul></dd>
     
     
@@ -3712,7 +4741,7 @@ chooses the one with fewest differences
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line505">line 505</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line625">line 625</a>
     </li></ul></dd>
     
     
@@ -3885,7 +4914,7 @@ reference sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1466">line 1466</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2129">line 2129</a>
     </li></ul></dd>
     
     
@@ -4036,7 +5065,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1382">line 1382</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2045">line 2045</a>
     </li></ul></dd>
     
     
@@ -4183,7 +5212,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1205">line 1205</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1502">line 1502</a>
     </li></ul></dd>
     
     
@@ -4233,6 +5262,130 @@ i.e. <= rather than < the last position
         
             
 <dt>
+    <h4 class="name" id="JSAV_hideSelectedSequences"><span class="type-signature"></span>JSAV_hideSelectedSequences<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Hides a set of sequences that have been clicked
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the div to work in</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 04.11.16 Original based on JSAV_deleteSelectedSequences By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1136">line 1136</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="JSAV_init"><span class="type-signature"></span>JSAV_init<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
@@ -4269,7 +5422,8 @@ i.e. <= rather than < the last position
         <ul>
             <li>- 09.06.14 Original   By: ACRM
 - 12.06.14 Added more arrays
-- 17.06.14 Added gConsensus array</li>
+- 17.06.14 Added gConsensus array
+- 01.09.17 Added gDisplayOrder and gDisplayColumn  By: JH</li>
         </ul>
     </dd>
     
@@ -4283,7 +5437,7 @@ i.e. <= rather than < the last position
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1813">line 1813</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2485">line 2485</a>
     </li></ul></dd>
     
     
@@ -4360,7 +5514,7 @@ file
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1845">line 1845</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2519">line 2519</a>
     </li></ul></dd>
     
     
@@ -4580,7 +5734,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1787">line 1787</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2457">line 2457</a>
     </li></ul></dd>
     
     
@@ -4704,178 +5858,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line954">line 954</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="JSAV_printAction"><span class="type-signature"></span>JSAV_printAction<span class="signature">(divId, action, label)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Prints the action button
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>divId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The ID of the div to print in</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>action</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Function to call</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>label</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Label for action button</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>- 13.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip</li>
-        </ul>
-    </dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line705">line 705</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1313">line 1313</a>
     </li></ul></dd>
     
     
@@ -5024,480 +6007,7 @@ class to pick up the appropriate colour for the cells from CSS
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line424">line 424</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="JSAV_printDelete"><span class="type-signature"></span>JSAV_printDelete<span class="signature">(divId, label)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Prints the delete button
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>divId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The ID of the div to print in</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>label</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The label to print in the delete button</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>- 12.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-- 02.09.14 Modifies the DOM rather than printing to the document By: JHN
-- 23.09.15 Added label parameter and use of this label  By: ACRM</li>
-        </ul>
-    </dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line658">line 658</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="JSAV_printFASTA"><span class="type-signature"></span>JSAV_printFASTA<span class="signature">(divId)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Prints the button to allow FASTA export
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>divId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The ID of the div we are printing in</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>- 17.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-- 02.09.14 Modifies the DOM rather than printing to the document By: JHN</li>
-        </ul>
-    </dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line488">line 488</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="JSAV_printSlider"><span class="type-signature"></span>JSAV_printSlider<span class="signature">(divId, seqLen, width, height)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Builds and prints the slider for selecting a maximum and minimum position for
-sorting. Also calls routine to display the currently selected range -
-i.e. the whole sequence length
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>divId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The name of the div used for the display</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>seqLen</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The length of the sequence alignment</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>width</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The width of the slider</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>height</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The height of the slider (text size)</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>- 06.06.14 Original   By: ACRM
-- 10.06.14 Removed redundant variable and changed divs to spans
-- 15.06.14 Added height</li>
-        </ul>
-    </dd>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1118">line 1118</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line523">line 523</a>
     </li></ul></dd>
     
     
@@ -5669,7 +6179,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line678">line 678</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line906">line 906</a>
     </li></ul></dd>
     
     
@@ -5805,7 +6315,8 @@ i.e. the whole sequence length
             <li>- 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
-- 23.09.15 Dotify label now comes from options  By: ACRM</li>
+- 23.09.15 Dotify label now comes from options  By: ACRM
+- 09.01.17 Now includes dotifybutton class, checked changed to active, label now taken from options.toggleDotifyLabel  By: JH</li>
         </ul>
     </dd>
     
@@ -5819,7 +6330,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line525">line 525</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line646">line 646</a>
     </li></ul></dd>
     
     
@@ -5955,7 +6466,8 @@ i.e. the whole sequence length
             <li>- 16.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
-- 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM</li>
+- 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM
+- 09.01.17 Now includes nocolourbutton class, checked changed to active, label now taken from options.toggleNocolourlabel  By: JH</li>
         </ul>
     </dd>
     
@@ -5969,7 +6481,7 @@ i.e. the whole sequence length
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line554">line 554</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line684">line 684</a>
     </li></ul></dd>
     
     
@@ -5997,7 +6509,154 @@ i.e. the whole sequence length
         
             
 <dt>
-    <h4 class="name" id="JSAV_refresh"><span class="type-signature"></span>JSAV_refresh<span class="signature">(divId, sequences, sortable, selectable, border, start, stop, highlight, dotify, nocolour, consensus, labels)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="JSAV_printToggleTranspose"><span class="type-signature"></span>JSAV_printToggleTranspose<span class="signature">(divId, options)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Print a checkbox for toggling transposed sequence view
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The div that we are working in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The options</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 03.01.17 Original   By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line720">line 720</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_refresh"><span class="type-signature"></span>JSAV_refresh<span class="signature">(divId, sequences, start, stop)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -6086,75 +6745,6 @@ Also updates the marked range and the CSS if the border option is set
 	
         <tr>
             
-                <td class="name"><code>sortable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Is the display sortable</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>selectable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Are checkboxes shown next to sequences</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>border</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Should CSS be updated to show a border</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>start</code></td>
             
             
@@ -6198,121 +6788,6 @@ Also updates the marked range and the CSS if the border option is set
         </tr>
 	
 	
-	
-        <tr>
-            
-                <td class="name"><code>highlight</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int[]</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">regions to be highlighted</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>dotify</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Dotify the sequence</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>nocolour</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Don't colour dotified residues</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>consensus</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Should we display a consensus sequence</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>labels</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string[]</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Array of labels (or undefined)</td>
-        </tr>
-	
-	
 	</tbody>
 </table>
     
@@ -6337,7 +6812,10 @@ Also updates the marked range and the CSS if the border option is set
 - 16.06.14  Added dotify and nocolour
 - 17.06.14  Added consensus
 - 19.06.14  Added callback
-- 22.12.15  Added labels</li>
+- 22.12.15  Added labels
+- 09.01.17  Choice of display (transposed or standard) based on transpose parameter
+                JSAV_MarkRange only called if options.sortable is true
+                Also calls printDataTable               By: JH</li>
         </ul>
     </dd>
     
@@ -6351,7 +6829,7 @@ Also updates the marked range and the CSS if the border option is set
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1748">line 1748</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2400">line 2400</a>
     </li></ul></dd>
     
     
@@ -6476,7 +6954,131 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line369">line 369</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line463">line 463</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_resetDisplayrow"><span class="type-signature"></span>JSAV_resetDisplayrow<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Reinitialises displayrow for all sequences  to true. Recalculates consensus sequences and refreshes
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1211">line 1211</a>
     </li></ul></dd>
     
     
@@ -6586,7 +7188,8 @@ window is reloaded
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 09.06.14 Original   By: ACRM</li>
+            <li>- 09.06.14 Original   By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH</li>
         </ul>
     </dd>
     
@@ -6600,7 +7203,7 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line924">line 924</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1278">line 1278</a>
     </li></ul></dd>
     
     
@@ -6724,7 +7327,7 @@ window is reloaded
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line900">line 900</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1236">line 1236</a>
     </li></ul></dd>
     
     
@@ -6859,7 +7462,8 @@ colour scheme and refreshes the display
     <dd class="tag-author">
         <ul>
             <li>- 17.06.14  Original   By: ACRM
-- 22.12.15  Added passing of labels</li>
+- 22.12.15  Added passing of labels
+- 09.01.17  Added options.transpose to JSAV+refresh parameter list By: JH</li>
         </ul>
     </dd>
     
@@ -6873,7 +7477,7 @@ colour scheme and refreshes the display
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line462">line 462</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line566">line 566</a>
     </li></ul></dd>
     
     
@@ -6901,7 +7505,7 @@ colour scheme and refreshes the display
         
             
 <dt>
-    <h4 class="name" id="JSAV_showRange"><span class="type-signature"></span>JSAV_showRange<span class="signature">(eventOrId, ui, eventOrId, ui)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="JSAV_showRange"><span class="type-signature"></span>JSAV_showRange<span class="signature">(divId)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -6909,10 +7513,10 @@ colour scheme and refreshes the display
     
     
     <div class="description">
-        Displays the currently selected range as text and calls the routine
+        Displays the currently selected range as text and calls the routine             
 to higlight that range in the alignment view.
 
-Called as JSAV_showRange(divID), or as a callback from a slider event
+Called as JSAV_showRange(divID)
     </div>
     
 
@@ -6946,54 +7550,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
 	
         <tr>
             
-                <td class="name"><code>eventOrId</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">JQEvent</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">JQuery Event</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>ui</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">JQ-UI</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">JQuery UI object
---OR--</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>eventOrId</code></td>
+                <td class="name"><code>divId</code></td>
             
             
             <td class="type">
@@ -7010,29 +7567,6 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
             
             
             <td class="description last">Identifier of the display div</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>ui</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">null</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Must be set to null</td>
         </tr>
 	
 	
@@ -7059,7 +7593,8 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
             <li>- 06.06.14  Original   By: ACRM
 - 10.06.14  Removed redundant .closest() from finding parent
 - 23.09.15  Changed "Sort from: xx to: xx" to "Region: positions xx to yy"
-- 24.09.15  Changed to using .html() instead of .text()</li>
+- 24.09.15  Changed to using .html() instead of .text()
+- 09.01.17      Now uses global start and stop instead of slider positions By: JH</li>
         </ul>
     </dd>
     
@@ -7073,7 +7608,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1163">line 1163</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1474">line 1474</a>
     </li></ul></dd>
     
     
@@ -7101,7 +7636,7 @@ Called as JSAV_showRange(divID), or as a callback from a slider event
         
             
 <dt>
-    <h4 class="name" id="JSAV_sortAndRefreshSequences"><span class="type-signature"></span>JSAV_sortAndRefreshSequences<span class="signature">(divId, sortable, selectable, border)</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    <h4 class="name" id="JSAV_sortAndRefreshSequences"><span class="type-signature"></span>JSAV_sortAndRefreshSequences<span class="signature">(divId)</span><span class="type-signature"> &rarr; {bool}</span></h4>
     
     
 </dt>
@@ -7166,75 +7701,6 @@ that sorts and refreshes the display.
         </tr>
 	
 	
-	
-        <tr>
-            
-                <td class="name"><code>sortable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Is the display sortable</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>selectable</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Are checkboxes shown next to sequences</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>border</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Should CSS be updated to show a border</td>
-        </tr>
-	
-	
 	</tbody>
 </table>
     
@@ -7260,7 +7726,8 @@ that sorts and refreshes the display.
 - 12.06.14 split out the JSAV_refresh() part
 - 16.06.14 Added dotify and nocolour options to refresh call
 - 17.06.14 Added consensus
-- 22.12.15 Added passing of labels</li>
+- 22.12.15 Added passing of labels
+- 09.01.17 Calls resetDisplayColumn to reset display status of datatabe columns after sequence sort By: JH</li>
         </ul>
     </dd>
     
@@ -7274,7 +7741,7 @@ that sorts and refreshes the display.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1704">line 1704</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2363">line 2363</a>
     </li></ul></dd>
     
     
@@ -7324,7 +7791,7 @@ that sorts and refreshes the display.
         
             
 <dt>
-    <h4 class="name" id="JSAV_sortSequences"><span class="type-signature"></span>JSAV_sortSequences<span class="signature">(sequences, start, stop)</span><span class="type-signature"> &rarr; {object[]}</span></h4>
+    <h4 class="name" id="JSAV_sortSequences"><span class="type-signature"></span>JSAV_sortSequences<span class="signature">(sequences, start, stop, divId)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -7438,6 +7905,29 @@ sequence
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
 	</tbody>
 </table>
     
@@ -7460,7 +7950,8 @@ sequence
         <ul>
             <li>- 29.05.14 Original   By: ACRM
 - 04.06.14 Added ignoreEnds (true) to JSAV_calcDifferenceMatrix() call
-         Range version</li>
+         Range version
+- 04.09.17 Now writes new sort order to gDisplayOrder[divId]  By: JH</li>
         </ul>
     </dd>
     
@@ -7474,7 +7965,7 @@ sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1512">line 1512</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2176">line 2176</a>
     </li></ul></dd>
     
     
@@ -7495,28 +7986,6 @@ sequence
     
     
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Sorted array of sequence objects
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">object[]</span>
-
-
-	</dd>
-</dl>
-
-        
     
     
 </dd>
@@ -7623,7 +8092,7 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line771">line 771</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line994">line 994</a>
     </li></ul></dd>
     
     
@@ -7659,7 +8128,7 @@ and then submits the form.
     
     
     <div class="description">
-        Read a checkbox and toggle the associated option, refreshing the display
+        Read a button and toggle the associated option, refreshing the display
     </div>
     
 
@@ -7781,7 +8250,9 @@ and then submits the form.
         <ul>
             <li>- 16.06.14 Original   By: ACRM
 - 17.06.14 Added consensus
-- 22.12.15 Added labels</li>
+- 22.12.15 Added labels
+- 09.01.17 Toggles options[theOption] and now uses class instead of checked
+           options.transpose added to JSAV_refresh parameter list By: JH</li>
         </ul>
     </dd>
     
@@ -7795,7 +8266,7 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line582">line 582</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line832">line 832</a>
     </li></ul></dd>
     
     
@@ -7816,6 +8287,393 @@ and then submits the form.
     
     
     
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_toggleOptionIcon"><span class="type-signature"></span>JSAV_toggleOptionIcon<span class="signature">(divId, theButton, theOption, activeText, inactiveText)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Read a button and toggle the button class between the two options activeText 
+and inactiveText, refreshing the display
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The div that we are working in</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>theButton</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The ID of the checkbox we are looking at</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>theOption</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The name of the option we are toggling</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>activeText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Class for active button</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>inactiveText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Class for inactive button</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 11.01.17 Original     By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line790">line 790</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_transposeSequencesHTML"><span class="type-signature"></span>JSAV_transposeSequencesHTML<span class="signature">(divId, sequences)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Takes an array of sequence objects and builds the HTML to display
+them as a coloured table in transposed (vertical) orientation
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">ID of div in which to print</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Array of sequence objects</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 02.12.16 Original  By: JH (based on original JSAV_buildSequencesHTML)</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1550">line 1550</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -7905,7 +8763,8 @@ and then submits the form.
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>- 09.06.14 Original   By: ACRM</li>
+            <li>- 09.06.14 Original   By: ACRM
+- 09.01.17 Removed 'input' from tag as this is not required By: JH</li>
         </ul>
     </dd>
     
@@ -7919,7 +8778,178 @@ and then submits the form.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line939">line 939</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1296">line 1296</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSAV_unsetDisplayrow"><span class="type-signature"></span>JSAV_unsetDisplayrow<span class="signature">(key, value, array)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets displayrow to false for each sequence row
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The key (item in an object or hash key) 
+                          to check</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The value to check</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>array</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The array of objects to manipulate</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original -  - based on ACRM_deleteItemByLabel</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1190">line 1190</a>
     </li></ul></dd>
     
     
@@ -8057,7 +9087,8 @@ function, passing the divId and an array of sequence objects
             <li>- 13.06.14  Original   By: ACRM
 - 11.02.16  Modified the push so that it pushes the whole object rather than
             just the selected fields. This allows additional information fields
-            to be passed around associated with a sequence but not displayed</li>
+            to be passed around associated with a sequence but not displayed
+- 09.01.17  Removed 'input' frm tag as this is not required By : JH</li>
         </ul>
     </dd>
     
@@ -8071,7 +9102,7 @@ function, passing the divId and an array of sequence objects
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line727">line 727</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line949">line 949</a>
     </li></ul></dd>
     
     
@@ -8092,6 +9123,1007 @@ function, passing the divId and an array of sequence objects
     
     
     
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSON2CSV"><span class="type-signature"></span>JSON2CSV<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Export sequences to CSV file
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 22.05.17 Original By : JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3216">line 3216</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="JSON2XML"><span class="type-signature"></span>JSON2XML<span class="signature">(divId)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Export sequences to XML file
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 2.08.17 Original By : JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3329">line 3329</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="mouseUpHandler"><span class="type-signature"></span>mouseUpHandler<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Initialises the global gMouseState
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2025">line 2025</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="numberedSequence"><span class="type-signature"></span>numberedSequence<span class="signature">(chainType, sequence)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Returns true if the sequence is numbered
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>chainType</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">type of chain</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequence</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">sequence object</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 15.10.17 Original  By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1742">line 1742</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    true if chain or either of the combined chains is numbered, otherwise returns false
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="printDataRow"><span class="type-signature"></span>printDataRow<span class="signature">(divId, sequence)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Displays a single row of the data table, where displayrow is true
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequence</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the sequence to display</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3643">line 3643</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    html          - HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="printDataTable"><span class="type-signature"></span>printDataTable<span class="signature">(divId, sequences)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Main function for printing the data table
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array of sequence objects</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2990">line 2990</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="printHighlightCell"><span class="type-signature"></span>printHighlightCell<span class="signature">(highlight, i, pref)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints a single highlight cell base on the highlight array
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>highlight</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the highlight array</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>i</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the element id of the cell</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>pref</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">class for display (different for transposed view)</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH (based on original section of JSAV_buildHighlightHTML)</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1522">line 1522</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    - text for td tag and class
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
     
     
 </dd>
@@ -8267,54 +10299,6 @@ optionally with a slider and sort button, delete button, etc
 	
         <tr>
             
-                <td class="name"><code>options.width</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The width of the selection slider with
-                                                    units (default: '400px')</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options.height</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">The height of the selection slider with
-                                                    units (default: '6pt')</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>options.selectable</code></td>
             
             
@@ -8356,6 +10340,76 @@ optionally with a slider and sort button, delete button, etc
             
             
             <td class="description last">Makes it possible to delete sequences</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.hideable</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Makes it possible to hide sequences and respective
+						    datatable rows</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.hideLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for hide button.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.showallLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for Show All button.</td>
         </tr>
 	
 	
@@ -8454,31 +10508,6 @@ optionally with a slider and sort button, delete button, etc
 	
         <tr>
             
-                <td class="name"><code>options.idSubmit</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">URL for submitting a single sequence where its
-                                                    id/label has been clicked. 
-                                                    See also options.idSubmitAttribute</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
                 <td class="name"><code>options.idSubmitClean</code></td>
             
             
@@ -8497,31 +10526,6 @@ optionally with a slider and sort button, delete button, etc
             
             <td class="description last">Remove non-alpha characters from sequence
                                                     before submitting</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options.idSubmitAttribute</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Specifies which attribute of the sequence
-                                                    object should be passed to a URL specified
-                                                    with options.idSubmit. Default is 'sequence'</td>
         </tr>
 	
 	
@@ -8739,7 +10743,7 @@ optionally with a slider and sort button, delete button, etc
 	
         <tr>
             
-                <td class="name"><code>options.fastaLabel</code></td>
+                <td class="name"><code>options.sortLabel</code></td>
             
             
             <td class="type">
@@ -8755,7 +10759,30 @@ optionally with a slider and sort button, delete button, etc
             
             
             
-            <td class="description last">Label for FASTA export button</td>
+            <td class="description last">Label for sort button</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.exportLabel</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Label for export buttons</td>
         </tr>
 	
 	
@@ -8855,29 +10882,6 @@ optionally with a slider and sort button, delete button, etc
             <td class="description last">Array of colour scheme names - only used
                                                     if the user has added to the CSS. This
                                                     can be in mixed case.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>options.plainTooltips</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Don't use JQuery tooltips</td>
         </tr>
 	
 	
@@ -9003,6 +11007,80 @@ optionally with a slider and sort button, delete button, etc
         </tr>
 	
 	
+	
+        <tr>
+            
+                <td class="name"><code>options.idSubmit</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">URL for submitting a single sequence where its
+                                                    id/label has been clicked. 
+                                                    See also options.idSubmitAttribute and options.idSubmitKey</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.idSubmitAttribute</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Specifies a colon-separated list of attribute values of the 
+                                                    sequence object which should be passed to a URL specified 
+                                                    with options.idSubmit. Default is 'sequence'.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>options.idSubmitKey</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Specifies a colon-separated list of attribute keys which 
+                                                    should be passed to the URL specified with options.idSubmit.</td>
+        </tr>
+	
+	
 	</tbody>
 </table></dl>
         
@@ -9049,7 +11127,23 @@ optionally with a slider and sort button, delete button, etc
            By: ACRM
 - 24.09.15 Added scrollX and scrollY
 - 22.12.15 Added labels and autolabels
-- 11.02.16 Added idSubmitAttribute</li>
+- 11.02.16 Added idSubmitAttribute
+- 09.01.17 Several modifications as follows By: JH 
+           - added global arrays gDisplayColumn for datatable column display
+             status, gDisplayOrder for reordering sequence and datatable rows
+             based on sort, displayRow (in sequence object) for indicating 
+             display status of sequences and datatable rows
+           - datatable functions added, writing to tag divId_Table
+           - added mousehandler for handling sort region
+           - added call to JSAV_transposeSequencesHTML, based on status of 
+             options.transpose, for displaying transposed (vertical) sequence
+             view
+           - reorganised button display order
+           - added options.iconButtons for option to display buttons as text 
+             or icons
+           - start and stop sort positions now global
+           - now uses Bootstrap tooltips instead of jQuery tooltips
+- 05.09.17 Removed scrollX - now 100% by default</li>
         </ul>
     </dd>
     
@@ -9063,7 +11157,7 @@ optionally with a slider and sort button, delete button, etc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line212">line 212</a>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line246">line 246</a>
     </li></ul></dd>
     
     
@@ -9116,6 +11210,1032 @@ accession code).</code></pre>
     
 </dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="printResidueCell"><span class="type-signature"></span>printResidueCell<span class="signature">(divId, aa, prevAa, isConsensus)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints a single resudue cell based on previous cell, colourscheme, consensuscell, etc.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>aa</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the residue code to print</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>prevAa</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the previous residue code
+param {string} consensusClass   - consensus class</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>isConsensus</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">status of global isConsensus property</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original taken from JSAV_buildASequenceHTML By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1334">line 1334</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    html                  - HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="printTableHeader"><span class="type-signature"></span>printTableHeader<span class="signature">(divId)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints the header for the table columns. Top line is the 'hide' icon, to toggle the column display to off.
+Second line is the Name and the sort icon, based on the respective field in gDisplayColumn.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3513">line 3513</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    html          - HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="resetDisplayColumn"><span class="type-signature"></span>resetDisplayColumn<span class="signature">(sequences, displayColumn)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        resets displayColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>sequences</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">object[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array of sequence objects</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>displayColumn</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int[]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">array of codes for indicating column sort status</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3056">line 3056</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="resetSortRegion"><span class="type-signature"></span>resetSortRegion<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Resets sort region to full width
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 15.09.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line2011">line 2011</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setSortRange"><span class="type-signature"></span>setSortRange<span class="signature">(divId, i)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Adjusts the stop position to current cell if mouse is depressed
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>i</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the sort region position</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1995">line 1995</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setSortStart"><span class="type-signature"></span>setSortStart<span class="signature">(divId, i)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Sets the start (and stop) position when mouse is depressed
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the divId we're dealing with</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>i</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the sort region position</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line1976">line 1976</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="truncateLabel"><span class="type-signature"></span>truncateLabel<span class="signature">(divId)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Prints the toggle list - the buttons for redisplaying columns where display is toggled off
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>divId</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">divId we're dealing with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>- 09.01.17 Original By: JH</li>
+        </ul>
+    </dd>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="JSAV.js.html">JSAV.js</a>, <a href="JSAV.js.html#line3471">line 3471</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    html          - HTML
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
         </dl>
     
     
@@ -9132,13 +12252,13 @@ accession code).</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_alert">ACRM_alert</a></li><li><a href="global.html#ACRM_array">ACRM_array</a></li><li><a href="global.html#ACRM_confirm">ACRM_confirm</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#ACRM_dialog">ACRM_dialog</a></li><li><a href="global.html#JSAV_autoLabels">JSAV_autoLabels</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildConsensus">JSAV_buildConsensus</a></li><li><a href="global.html#JSAV_buildFASTA">JSAV_buildFASTA</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildLabelsHTML">JSAV_buildLabelsHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_exportFASTA">JSAV_exportFASTA</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_initColourChoices">JSAV_initColourChoices</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printAction">JSAV_printAction</a></li><li><a href="global.html#JSAV_printColourSelector">JSAV_printColourSelector</a></li><li><a href="global.html#JSAV_printDelete">JSAV_printDelete</a></li><li><a href="global.html#JSAV_printFASTA">JSAV_printFASTA</a></li><li><a href="global.html#JSAV_printSlider">JSAV_printSlider</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_printToggleDotify">JSAV_printToggleDotify</a></li><li><a href="global.html#JSAV_printToggleNocolour">JSAV_printToggleNocolour</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_refreshSettings">JSAV_refreshSettings</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_setColourScheme">JSAV_setColourScheme</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_toggleOption">JSAV_toggleOption</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#printJSAV">printJSAV</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_alert">ACRM_alert</a></li><li><a href="global.html#ACRM_array">ACRM_array</a></li><li><a href="global.html#ACRM_confirm">ACRM_confirm</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#ACRM_dialog">ACRM_dialog</a></li><li><a href="global.html#compareVals">compareVals</a></li><li><a href="global.html#DT_toggleColumn">DT_toggleColumn</a></li><li><a href="global.html#initDisplayColumn">initDisplayColumn</a></li><li><a href="global.html#initDisplayOrder">initDisplayOrder</a></li><li><a href="global.html#initDisplayrow">initDisplayrow</a></li><li><a href="global.html#JSAV_autoLabels">JSAV_autoLabels</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildConsensus">JSAV_buildConsensus</a></li><li><a href="global.html#JSAV_buildFASTA">JSAV_buildFASTA</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildId">JSAV_buildId</a></li><li><a href="global.html#JSAV_buildLabelsHTML">JSAV_buildLabelsHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildTypeLabel">JSAV_buildTypeLabel</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_ControlButton">JSAV_ControlButton</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_exportFASTA">JSAV_exportFASTA</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_hideSelectedSequences">JSAV_hideSelectedSequences</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_initColourChoices">JSAV_initColourChoices</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printColourSelector">JSAV_printColourSelector</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_printToggleDotify">JSAV_printToggleDotify</a></li><li><a href="global.html#JSAV_printToggleNocolour">JSAV_printToggleNocolour</a></li><li><a href="global.html#JSAV_printToggleTranspose">JSAV_printToggleTranspose</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_refreshSettings">JSAV_refreshSettings</a></li><li><a href="global.html#JSAV_resetDisplayrow">JSAV_resetDisplayrow</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_setColourScheme">JSAV_setColourScheme</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_toggleOption">JSAV_toggleOption</a></li><li><a href="global.html#JSAV_toggleOptionIcon">JSAV_toggleOptionIcon</a></li><li><a href="global.html#JSAV_transposeSequencesHTML">JSAV_transposeSequencesHTML</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_unsetDisplayrow">JSAV_unsetDisplayrow</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#JSON2CSV">JSON2CSV</a></li><li><a href="global.html#JSON2XML">JSON2XML</a></li><li><a href="global.html#mouseUpHandler">mouseUpHandler</a></li><li><a href="global.html#numberedSequence">numberedSequence</a></li><li><a href="global.html#printDataRow">printDataRow</a></li><li><a href="global.html#printDataTable">printDataTable</a></li><li><a href="global.html#printHighlightCell">printHighlightCell</a></li><li><a href="global.html#printJSAV">printJSAV</a></li><li><a href="global.html#printResidueCell">printResidueCell</a></li><li><a href="global.html#printTableHeader">printTableHeader</a></li><li><a href="global.html#resetDisplayColumn">resetDisplayColumn</a></li><li><a href="global.html#resetSortRegion">resetSortRegion</a></li><li><a href="global.html#setSortRange">setSortRange</a></li><li><a href="global.html#setSortStart">setSortStart</a></li><li><a href="global.html#truncateLabel">truncateLabel</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Feb 11 2016 16:07:08 GMT-0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jul 06 2020 13:38:15 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
