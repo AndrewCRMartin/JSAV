@@ -1,6 +1,6 @@
 /** @preserve 
     @file
-    JSAV V2.0.1 06.07.20
+    JSAV V2.0.2 06.07.20
     Copyright:  (c) Prof. Andrew C.R. Martin, UCL, 2014-2020
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -8,7 +8,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V2.0.1
+   Version:    V2.0.2
    Date:       06.07.20
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -92,7 +92,10 @@
                       - Export to CSV and Excel.
    V2.0.1  06.07.20   General code tidy-up and fixed bug in 
                       JSAV_deleteSelectedSequences()
-                      gTableWidth initialized and now an array
+   V2.0.2  06.07.20   gTableWidth initialized and now an array
+                      Flagging of sorting now in a global array (gSorted)
+                      The options.submit code now works properly again
+                      The options.action code now works properly again
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -150,7 +153,7 @@ accession code).
 @property {bool}      options.idSubmitClean       - Remove non-alpha characters from sequence
                                                     before submitting
 @property {string}    options.action              - Function to call using selected sequences.
-                                                    This is passed the seqId and array of
+                                                    This is passed the divId and an array of
                                                     currently selected sequence objects
 @property {string}    options.actionLabel         - Label for action button
 @property {bool}      options.dotify              - Repeated amino acids in the sequence are
@@ -377,7 +380,7 @@ function printJSAV(divId, sequences, options)
          
          if(options.action != undefined)
          {
-            JSAV_ControlButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
+            JSAV_ActionButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
                                options.actionLabel, '', 'Process Sequences', options.action);
          }
          
@@ -614,6 +617,95 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    }
    
    html += "</button>";
+   $(parrenttag).append(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Calls a user-defined action, passing it the divId and an array of selected
+and visible sequences. Called from the button created by JSAV_ActionButton()
+
+@param  {string} action - The name of the function to be called
+        {string} divId  - The divId we're dealing with
+
+@author
+- 06.07.20 Original   By: ACRM
+*/
+function JSAV_RunAction(action, divId)
+{
+   var sequences         = gSequences[divId];
+   var selectedSequences = Array();
+
+   // See if any checkboxes are set
+   var count     = 0;
+   var toFASTA   = Array();
+   var dispOrder = gDisplayOrder[divId];
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectBox";
+   $(tag).each(function(index)
+               {
+                  if($(this).prop('checked'))
+                  {
+                     var id = $(this).attr('name').substr(7);
+                     toFASTA[id] = 1;
+                     count++;
+                  }
+               });
+   
+   for(var i=0; i<sequences.length; i++)
+   {
+      if(sequences[dispOrder[i]] == undefined)
+      {
+         alert("ERROR!!!! DispOrder[" + i + "] undefined");
+      }
+      else
+      {
+         if(sequences[dispOrder[i]].displayrow)
+         {
+            if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+            {
+               selectedSequences.push(sequences[i]);
+            }
+         }
+      }
+   }
+   
+   window[action](divId, selectedSequences);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints an action button with icons, action and tooltip
+
+@param  {string} divId     - The divId we're dealing with
+        {string} tooltip   - text for tooltip
+        {string} icon      - option item for icon class
+        {string} label     - extra text after icon
+        {string} textLabel - alternative text label
+        {string} action    - button onclick action
+
+@author
+- 06.07.20 Original based on JSAV_ControlButton    By: ACRM
+*/
+function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, action)
+{
+   var parrenttag = '#' + localDiv;
+   var options = gOptions[divId];
+   var ctype = options.chainType == undefined ? 'JSAV' : options.chainType;
+   var tooltipText = "title='"+tooltip+"'";
+   var html = "<button type='button' class='tooltip " + ctype+"button' " + tooltipText + " onclick='JSAV_RunAction(\"" + action + "\", \"" + divId + "\")'>";
+
+   if (options.iconButtons)
+   {
+      html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+   }
+   else
+   {
+      html +=  (icon != undefined) ? icon : textlabel;
+   }
+
+   html += "</button>";
+   
    $(parrenttag).append(html);
 }
 
@@ -1713,36 +1805,55 @@ Builds the label for the sequence row
 
 @author
 - 23.03.17 Original By: JH
+- 06.07.20 Fixed to recreate old default behaviour (i.e. the URL contains the ?key= part and
+           appends the sequence unless keys and attributes are set)
 */
 function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol, humanOrg)
 {
    var options = gOptions[divId];
    var html = "";
-   
+
    if ((idSubmit == null) || (attributeValue == undefined))
    {
       html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
    }
    else
    {
-      var url         = idSubmit;
-      var seperator = '?';
-      var attrArray = attributeValue.split(':');
-      var keyArray = idSubmitKey.split(':');
-      for (var a=0; a<attrArray.length; a++) 
+      if(idSubmitKey == '')
       {
-         var submitParam = attrArray[a];
-         var submitKey = keyArray[a];
+         var url       = idSubmit;
          
          if(options.idSubmitClean)
          {
             // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
             // It probably wouldn't make sense for IDs etc
-            submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            attributeValue = attributeValue.replace(/[^A-Za-z0-9]/g, '');
          }
-         url += seperator + submitKey + '=' + submitParam;
-         seperator = '&';
+         url += attributeValue;
       }
+      else
+      {
+         var url       = idSubmit;
+         var separator = '?';
+         var attrArray = attributeValue.split(':');
+         var keyArray  = idSubmitKey.split(':');
+         
+         for (var a=0; a<attrArray.length; a++) 
+         {
+            var submitParam = attrArray[a];
+            var submitKey = keyArray[a];
+            
+            if(options.idSubmitClean)
+            {
+               // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+               // It probably wouldn't make sense for IDs etc
+               submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            }
+            url += separator + submitKey + '=' + submitParam;
+            separator = '&';
+         }
+      }
+   
       if (humanOrg) 
       {
          url += '&humanorganism='+humanOrg;

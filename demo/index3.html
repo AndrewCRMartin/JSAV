@@ -79,7 +79,7 @@ MyOptions.sortable = true;
 MyOptions.selectable = true;
 MyOptions.deletable = true;
 MyOptions.highlight = [3,5,10,14];
-MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.submit = "http://www.bioinf.org.uk/software/jsav/echo.cgi";
 MyOptions.submitLabel = "Submit";
 MyOptions.action = "myAction";
 MyOptions.actionLabel = "Process";
@@ -94,7 +94,16 @@ MyOptions.colourScheme = "zappo";
 MyOptions.selectColour = true;
 MyOptions.callback = "enableTooltipster";
 MyOptions.colourChoices = ["Taylor", "Clustal", "Zappo", "HPhob"];
-MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl?seq=";
+
+// Simple default behaviour of just sending the sequence  
+//MyOptions.idSubmit = "http://www.bioinf.org.uk/software/jsav/echo.cgi?seq=";
+
+// More complex behaviour, specify what is passed and what the keys
+// are in the URL
+MyOptions.idSubmit = "http://www.bioinf.org.uk/software/jsav/echo.cgi";
+MyOptions.idSubmitAttribute = "sequence:id";
+MyOptions.idSubmitKey = "seq:myid";
+
 MyOptions.idSubmitClean = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
