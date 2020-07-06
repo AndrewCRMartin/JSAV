@@ -1,4 +1,4 @@
-JavaScript Sequence Alignment Viewer (JSAV) V2.0.1
+JavaScript Sequence Alignment Viewer (JSAV) V2.0.2
 ==================================================
 
 JSAV is a simple JavaScript sequence alignment viewer
