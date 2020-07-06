@@ -27,7 +27,7 @@
         <article>
             <pre class="prettyprint source"><code>/** @preserve 
     @file
-    JSAV V2.0.1 06.07.20
+    JSAV V2.0.2 06.07.20
     Copyright:  (c) Prof. Andrew C.R. Martin, UCL, 2014-2020
     This program is distributed under the Gnu Public Licence (GPLv2)
 */
@@ -35,7 +35,7 @@
    Program:    JSAV  
    File:       JSAV.js
    
-   Version:    V2.0.1
+   Version:    V2.0.2
    Date:       06.07.20
    Function:   JavaScript Sequence Alignment Viewier
    
@@ -119,6 +119,10 @@
                       - Export to CSV and Excel.
    V2.0.1  06.07.20   General code tidy-up and fixed bug in 
                       JSAV_deleteSelectedSequences()
+   V2.0.2  06.07.20   gTableWidth initialized and now an array
+                      Flagging of sorting now in a global array (gSorted)
+                      The options.submit code now works properly again
+                      The options.action code now works properly again
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -140,7 +144,7 @@ var options = Array();
 options.width = '400px';
 options.sortable = true;
 options.highlight = [3,5,10,14];
-options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+options.submit = "http://www.bioinf.org.uk/software/jsav/echo.cgi";
 options.submitLabel = "Submit sequences";
 options.action = "myAction";
 options.actionLabel = "My Action";
@@ -176,7 +180,7 @@ accession code).
 @property {bool}      options.idSubmitClean       - Remove non-alpha characters from sequence
                                                     before submitting
 @property {string}    options.action              - Function to call using selected sequences.
-                                                    This is passed the seqId and array of
+                                                    This is passed the divId and an array of
                                                     currently selected sequence objects
 @property {string}    options.actionLabel         - Label for action button
 @property {bool}      options.dotify              - Repeated amino acids in the sequence are
@@ -317,7 +321,10 @@ function printJSAV(divId, sequences, options)
    initDisplayrow(gSequences[divId]);
    gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
    gDisplayOrder[divId]              = initDisplayOrder(sequences);
-   gTableWidth                       = 20;
+   gTableWidth = Array();
+   gTableWidth[divId]                = 20;
+   gSorted = Array();
+   gSorted[divId]                    = false;
    
    // Sequence View
    if (sequences.length > 0)
@@ -400,7 +407,7 @@ function printJSAV(divId, sequences, options)
          
          if(options.action != undefined)
          {
-            JSAV_ControlButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
+            JSAV_ActionButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
                                options.actionLabel, '', 'Process Sequences', options.action);
          }
          
@@ -595,9 +602,9 @@ function JSAV_setColourScheme(divId, select)
    gOptions[divId].colourScheme = select.value;
    
    var options = gOptions[divId];
-   if(options.sorted)
+   if(gSorted[divId])
    {
-      JSAV_sortAndRefreshSequences(divId)
+      JSAV_sortAndRefreshSequences(divId);
    }
    else
    {
@@ -637,6 +644,95 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    }
    
    html += "&lt;/button>";
+   $(parrenttag).append(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Calls a user-defined action, passing it the divId and an array of selected
+and visible sequences. Called from the button created by JSAV_ActionButton()
+
+@param  {string} action - The name of the function to be called
+        {string} divId  - The divId we're dealing with
+
+@author
+- 06.07.20 Original   By: ACRM
+*/
+function JSAV_RunAction(action, divId)
+{
+   var sequences         = gSequences[divId];
+   var selectedSequences = Array();
+
+   // See if any checkboxes are set
+   var count     = 0;
+   var toFASTA   = Array();
+   var dispOrder = gDisplayOrder[divId];
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectBox";
+   $(tag).each(function(index)
+               {
+                  if($(this).prop('checked'))
+                  {
+                     var id = $(this).attr('name').substr(7);
+                     toFASTA[id] = 1;
+                     count++;
+                  }
+               });
+   
+   for(var i=0; i&lt;sequences.length; i++)
+   {
+      if(sequences[dispOrder[i]] == undefined)
+      {
+         alert("ERROR!!!! DispOrder[" + i + "] undefined");
+      }
+      else
+      {
+         if(sequences[dispOrder[i]].displayrow)
+         {
+            if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+            {
+               selectedSequences.push(sequences[i]);
+            }
+         }
+      }
+   }
+   
+   window[action](divId, selectedSequences);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints an action button with icons, action and tooltip
+
+@param  {string} divId     - The divId we're dealing with
+        {string} tooltip   - text for tooltip
+        {string} icon      - option item for icon class
+        {string} label     - extra text after icon
+        {string} textLabel - alternative text label
+        {string} action    - button onclick action
+
+@author
+- 06.07.20 Original based on JSAV_ControlButton    By: ACRM
+*/
+function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, action)
+{
+   var parrenttag = '#' + localDiv;
+   var options = gOptions[divId];
+   var ctype = options.chainType == undefined ? 'JSAV' : options.chainType;
+   var tooltipText = "title='"+tooltip+"'";
+   var html = "&lt;button type='button' class='tooltip " + ctype+"button' " + tooltipText + " onclick='JSAV_RunAction(\"" + action + "\", \"" + divId + "\")'>";
+
+   if (options.iconButtons)
+   {
+      html += "&lt;i class='"+icon+"' "+tooltipText+">&lt;/i> "+ label;
+   }
+   else
+   {
+      html +=  (icon != undefined) ? icon : textlabel;
+   }
+
+   html += "&lt;/button>";
+   
    $(parrenttag).append(html);
 }
 
@@ -831,7 +927,7 @@ function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactive
       $(tag).addClass(inactiveText);
    }
    
-   if(options.sorted)
+   if(gSorted[divId])
    {
       JSAV_sortAndRefreshSequences(divId)
    }
@@ -872,7 +968,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
       $(tag).removeClass("active");
    }
    
-   if(options.sorted)
+   if(gSorted[divId])
    {
       JSAV_sortAndRefreshSequences(divId)
    }
@@ -1063,16 +1159,23 @@ function JSAV_buildFASTA(divId)
    var sequences = gSequences[divId];
    for(var i=0; i&lt;sequences.length; i++)
    {
-      if (sequences[dispOrder[i]].displayrow)
+      if(sequences[dispOrder[i]] == undefined)
       {
-         if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+         alert("ERROR!!!! DispOrder[" + i + "] undefined");
+      }
+      else
+      {
+         if (sequences[dispOrder[i]].displayrow)
          {
-            sequenceText += ">" + sequences[i].id + "\n";
-            sequenceText += sequences[i].sequence + "\n";
+            if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+            {
+               sequenceText += ">" + sequences[i].id + "\n";
+               sequenceText += sequences[i].sequence + "\n";
+            }
          }
       }
    }
-   
+
    return(sequenceText);
 }
 
@@ -1138,7 +1241,7 @@ function JSAV_deleteSelectedSequences(divId)
                          }
 
                          // Refresh the display
-                         if(options.sorted)
+                         if(gSorted[divId])
                          {
                             JSAV_sortAndRefreshSequences(divId);
                          }
@@ -1196,8 +1299,14 @@ function JSAV_hideSelectedSequences(divId)
       }
       
       // Refresh the display
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-      options.sorted = false;
+      if(gSorted[divId])
+      {
+         JSAV_sortAndRefreshSequences(divId)
+      }
+      else
+      {
+         JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      }
    }
 }
 
@@ -1247,8 +1356,14 @@ function JSAV_resetDisplayrow(divId)
    }
    
    // Refresh the display
-   JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-   options.sorted = false;
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId);
+   }
+   else
+   {
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1282,6 +1397,9 @@ function JSAV_resetAllNone(divId, cboxname, cboxstatus)
    var tag = "." + divId + "_AllNone";
    $(tag).prop('checked', false);
    tag = "." + cboxname;
+
+   // *** BUG ERROR HERE *** $(tag) is invalid if the cboxname contains a | ***
+   // ACRM 06.07.20 I don't know what this code does!
    if (cboxstatus)
    {
       $(tag).prop('checked', true);
@@ -1714,36 +1832,55 @@ Builds the label for the sequence row
 
 @author
 - 23.03.17 Original By: JH
+- 06.07.20 Fixed to recreate old default behaviour (i.e. the URL contains the ?key= part and
+           appends the sequence unless keys and attributes are set)
 */
 function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol, humanOrg)
 {
    var options = gOptions[divId];
    var html = "";
-   
+
    if ((idSubmit == null) || (attributeValue == undefined))
    {
       html += "&lt;td colspan='" + colspan + "' class='" + bgcol + "'>&lt;div class='feint tooltip' title='" + id + "'>" + id + "&lt;/div>&lt;/td>";
    }
    else
    {
-      var url         = idSubmit;
-      var seperator = '?';
-      var attrArray = attributeValue.split(':');
-      var keyArray = idSubmitKey.split(':');
-      for (var a=0; a&lt;attrArray.length; a++) 
+      if(idSubmitKey == '')
       {
-         var submitParam = attrArray[a];
-         var submitKey = keyArray[a];
+         var url       = idSubmit;
          
          if(options.idSubmitClean)
          {
             // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
             // It probably wouldn't make sense for IDs etc
-            submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            attributeValue = attributeValue.replace(/[^A-Za-z0-9]/g, '');
          }
-         url += seperator + submitKey + '=' + submitParam;
-         seperator = '&';
+         url += attributeValue;
       }
+      else
+      {
+         var url       = idSubmit;
+         var separator = '?';
+         var attrArray = attributeValue.split(':');
+         var keyArray  = idSubmitKey.split(':');
+         
+         for (var a=0; a&lt;attrArray.length; a++) 
+         {
+            var submitParam = attrArray[a];
+            var submitKey = keyArray[a];
+            
+            if(options.idSubmitClean)
+            {
+               // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+               // It probably wouldn't make sense for IDs etc
+               submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            }
+            url += separator + submitKey + '=' + submitParam;
+            separator = '&';
+         }
+      }
+   
       if (humanOrg) 
       {
          url += '&humanorganism='+humanOrg;
@@ -2394,11 +2531,11 @@ function JSAV_sortAndRefreshSequences(divId)
    var range=JSAV_getRange(divId);
    JSAV_sortSequences(gSequences[divId], range[0], range[1], divId);
    resetDisplayColumn(gDisplayColumn[gOptions[divId].chaintype], gSequences[divId]);
-   
+
    JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
-   
+
    // Record the fact that the display has been sorted
-   gOptions[divId].sorted = true;
+   gSorted[divId] = true;
    
    return(false);
 }
@@ -2437,8 +2574,6 @@ function JSAV_refresh(divId, sequences, start, stop)
       var html = JSAV_buildSequencesHTML(divId, sequences);
    }
 
-
-   
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    $('#' + divId + ' .seqtable').css('width', seqtabWidth);
@@ -2456,7 +2591,10 @@ function JSAV_refresh(divId, sequences, start, stop)
       JSAV_showRange(divId);
    }
    
-   printDataTable(divId, sequences);                                            
+   if (options.displaydatatable != undefined)
+   {
+      printDataTable(divId, sequences);
+   }
    
    if(options.callback != undefined)
    {
@@ -3016,13 +3154,13 @@ Main function for printing the data table
 
 function printDataTable(divId, sequences)
 {
-   var options = gOptions[divId];
-   var ctype = options.chainType;
-   var dispOrder = gDisplayOrder[divId];
-   var tableDiv = divId + '_Table';
+   var options       = gOptions[divId];
+   var ctype         = options.chainType;
+   var dispOrder     = gDisplayOrder[divId];
+   var tableDiv      = divId + '_Table';
    var outerTableDiv = tableDiv + 'Outer';
-   var tableTag = "#" + tableDiv;
-   var html = '';
+   var tableTag      = "#" + tableDiv;
+   var html          = '';
    
    html += printToggleList(divId);
    html += "&lt;div id='"+outerTableDiv+"'>";
@@ -3060,9 +3198,9 @@ function printDataTable(divId, sequences)
                          options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
    }
 
-   $('#' + divId + "_tablebody").css('width',gTableWidth+6); 
-   $('#' + tableDiv + "_Outer").css('width',gTableWidth+24); 
-   $('#' + tableDiv + "_Inner").css('width',gTableWidth+8); 
+   $('#' + divId + "_tablebody").css('width',gTableWidth[divId]+6); 
+   $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+24); 
+   $('#' + tableDiv + "_Inner").css('width',gTableWidth[divId]+8); 
    $("#" + outerTableDiv).css("width","98vw");
    $("#" + outerTableDiv).css("margin-left","0.5em");
    $("#" + outerTableDiv).css("overflow-x","auto");
@@ -3318,7 +3456,7 @@ function JSON2CSV(divId)
    
    if (CSV == '')
    {
-      alert("Invalid data");
+      alert("ERROR!!! Invalid data");
       return;
    }
    
@@ -3458,7 +3596,7 @@ function JSON2XML(divId)
    XML += '&lt;/Table>&lt;/Worksheet>&lt;/Workbook>';
    if (XML == '')
    {
-      alert("Invalid data");
+      alert("ERROR!!! Invalid data");
       return;
    }
    
@@ -3562,7 +3700,7 @@ function printTableHeader(divId, selectable)
       var rowstart = true;
       var lastcell = "";
       var lasthtml = "";
-      gTableWidth  = 20;
+      gTableWidth[divId] = 20;
 
       for (var key in gDisplayColumn[gOptions[divId].chainType]) 
       {
@@ -3573,7 +3711,7 @@ function printTableHeader(divId, selectable)
             var colClass = colheaders[0]+"-col";
             var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
             var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
-            gTableWidth += (colWidth + 40);
+            gTableWidth[divId] += (colWidth + 40);
             
             for (var r=0;r&lt;=row;r++)
                colheader += colheaders[r];
@@ -3676,8 +3814,8 @@ function printDataRow(divId, sequence)
    if (sequence.displayrow) 
    {
       html += "&lt;tr id = 'table_" + sequence.id + "'>";
-      var name = "select_" + sequence.id;
-      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+      var name    = "select_" + sequence.id;
+      var cname   = name.replace(/\./g, "_").replace(/\//g, "_");
       var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
       var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
 
@@ -3771,13 +3909,13 @@ function printDataRow(divId, sequence)
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_alert">ACRM_alert</a></li><li><a href="global.html#ACRM_array">ACRM_array</a></li><li><a href="global.html#ACRM_confirm">ACRM_confirm</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#ACRM_dialog">ACRM_dialog</a></li><li><a href="global.html#compareVals">compareVals</a></li><li><a href="global.html#DT_toggleColumn">DT_toggleColumn</a></li><li><a href="global.html#initDisplayColumn">initDisplayColumn</a></li><li><a href="global.html#initDisplayOrder">initDisplayOrder</a></li><li><a href="global.html#initDisplayrow">initDisplayrow</a></li><li><a href="global.html#JSAV_autoLabels">JSAV_autoLabels</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildConsensus">JSAV_buildConsensus</a></li><li><a href="global.html#JSAV_buildFASTA">JSAV_buildFASTA</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildId">JSAV_buildId</a></li><li><a href="global.html#JSAV_buildLabelsHTML">JSAV_buildLabelsHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildTypeLabel">JSAV_buildTypeLabel</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_ControlButton">JSAV_ControlButton</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_exportFASTA">JSAV_exportFASTA</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_hideSelectedSequences">JSAV_hideSelectedSequences</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_initColourChoices">JSAV_initColourChoices</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printColourSelector">JSAV_printColourSelector</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_printToggleDotify">JSAV_printToggleDotify</a></li><li><a href="global.html#JSAV_printToggleNocolour">JSAV_printToggleNocolour</a></li><li><a href="global.html#JSAV_printToggleTranspose">JSAV_printToggleTranspose</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_refreshSettings">JSAV_refreshSettings</a></li><li><a href="global.html#JSAV_resetDisplayrow">JSAV_resetDisplayrow</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_setColourScheme">JSAV_setColourScheme</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_toggleOption">JSAV_toggleOption</a></li><li><a href="global.html#JSAV_toggleOptionIcon">JSAV_toggleOptionIcon</a></li><li><a href="global.html#JSAV_transposeSequencesHTML">JSAV_transposeSequencesHTML</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_unsetDisplayrow">JSAV_unsetDisplayrow</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#JSON2CSV">JSON2CSV</a></li><li><a href="global.html#JSON2XML">JSON2XML</a></li><li><a href="global.html#mouseUpHandler">mouseUpHandler</a></li><li><a href="global.html#numberedSequence">numberedSequence</a></li><li><a href="global.html#printDataRow">printDataRow</a></li><li><a href="global.html#printDataTable">printDataTable</a></li><li><a href="global.html#printHighlightCell">printHighlightCell</a></li><li><a href="global.html#printJSAV">printJSAV</a></li><li><a href="global.html#printResidueCell">printResidueCell</a></li><li><a href="global.html#printTableHeader">printTableHeader</a></li><li><a href="global.html#resetDisplayColumn">resetDisplayColumn</a></li><li><a href="global.html#resetSortRegion">resetSortRegion</a></li><li><a href="global.html#setSortRange">setSortRange</a></li><li><a href="global.html#setSortStart">setSortStart</a></li><li><a href="global.html#truncateLabel">truncateLabel</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#ACRM_alert">ACRM_alert</a></li><li><a href="global.html#ACRM_array">ACRM_array</a></li><li><a href="global.html#ACRM_confirm">ACRM_confirm</a></li><li><a href="global.html#ACRM_deleteItemByLabel">ACRM_deleteItemByLabel</a></li><li><a href="global.html#ACRM_dialog">ACRM_dialog</a></li><li><a href="global.html#compareVals">compareVals</a></li><li><a href="global.html#DT_toggleColumn">DT_toggleColumn</a></li><li><a href="global.html#initDisplayColumn">initDisplayColumn</a></li><li><a href="global.html#initDisplayOrder">initDisplayOrder</a></li><li><a href="global.html#initDisplayrow">initDisplayrow</a></li><li><a href="global.html#JSAV_ActionButton">JSAV_ActionButton</a></li><li><a href="global.html#JSAV_autoLabels">JSAV_autoLabels</a></li><li><a href="global.html#JSAV_buildASequenceHTML">JSAV_buildASequenceHTML</a></li><li><a href="global.html#JSAV_buildConsensus">JSAV_buildConsensus</a></li><li><a href="global.html#JSAV_buildFASTA">JSAV_buildFASTA</a></li><li><a href="global.html#JSAV_buildHighlightHTML">JSAV_buildHighlightHTML</a></li><li><a href="global.html#JSAV_buildId">JSAV_buildId</a></li><li><a href="global.html#JSAV_buildLabelsHTML">JSAV_buildLabelsHTML</a></li><li><a href="global.html#JSAV_buildMarkerHTML">JSAV_buildMarkerHTML</a></li><li><a href="global.html#JSAV_buildSelectAllHTML">JSAV_buildSelectAllHTML</a></li><li><a href="global.html#JSAV_buildSequencesHTML">JSAV_buildSequencesHTML</a></li><li><a href="global.html#JSAV_buildTypeLabel">JSAV_buildTypeLabel</a></li><li><a href="global.html#JSAV_calcDifference">JSAV_calcDifference</a></li><li><a href="global.html#JSAV_calcDifferenceMatrix">JSAV_calcDifferenceMatrix</a></li><li><a href="global.html#JSAV_chooseRepresentative">JSAV_chooseRepresentative</a></li><li><a href="global.html#JSAV_ControlButton">JSAV_ControlButton</a></li><li><a href="global.html#JSAV_deleteSelectedSequences">JSAV_deleteSelectedSequences</a></li><li><a href="global.html#JSAV_exportFASTA">JSAV_exportFASTA</a></li><li><a href="global.html#JSAV_findClosestSequences">JSAV_findClosestSequences</a></li><li><a href="global.html#JSAV_FindRealSequenceEnds">JSAV_FindRealSequenceEnds</a></li><li><a href="global.html#JSAV_getRange">JSAV_getRange</a></li><li><a href="global.html#JSAV_hideSelectedSequences">JSAV_hideSelectedSequences</a></li><li><a href="global.html#JSAV_init">JSAV_init</a></li><li><a href="global.html#JSAV_initColourChoices">JSAV_initColourChoices</a></li><li><a href="global.html#JSAV_markRange">JSAV_markRange</a></li><li><a href="global.html#JSAV_modifyCSS">JSAV_modifyCSS</a></li><li><a href="global.html#JSAV_printColourSelector">JSAV_printColourSelector</a></li><li><a href="global.html#JSAV_printSubmit">JSAV_printSubmit</a></li><li><a href="global.html#JSAV_printToggleDotify">JSAV_printToggleDotify</a></li><li><a href="global.html#JSAV_printToggleNocolour">JSAV_printToggleNocolour</a></li><li><a href="global.html#JSAV_printToggleTranspose">JSAV_printToggleTranspose</a></li><li><a href="global.html#JSAV_refresh">JSAV_refresh</a></li><li><a href="global.html#JSAV_refreshSettings">JSAV_refreshSettings</a></li><li><a href="global.html#JSAV_resetDisplayrow">JSAV_resetDisplayrow</a></li><li><a href="global.html#JSAV_RunAction">JSAV_RunAction</a></li><li><a href="global.html#JSAV_selectAll">JSAV_selectAll</a></li><li><a href="global.html#JSAV_selectAllOrNone">JSAV_selectAllOrNone</a></li><li><a href="global.html#JSAV_setColourScheme">JSAV_setColourScheme</a></li><li><a href="global.html#JSAV_showRange">JSAV_showRange</a></li><li><a href="global.html#JSAV_sortAndRefreshSequences">JSAV_sortAndRefreshSequences</a></li><li><a href="global.html#JSAV_sortSequences">JSAV_sortSequences</a></li><li><a href="global.html#JSAV_submitSequences">JSAV_submitSequences</a></li><li><a href="global.html#JSAV_toggleOption">JSAV_toggleOption</a></li><li><a href="global.html#JSAV_toggleOptionIcon">JSAV_toggleOptionIcon</a></li><li><a href="global.html#JSAV_transposeSequencesHTML">JSAV_transposeSequencesHTML</a></li><li><a href="global.html#JSAV_unselectAll">JSAV_unselectAll</a></li><li><a href="global.html#JSAV_unsetDisplayrow">JSAV_unsetDisplayrow</a></li><li><a href="global.html#JSAV_wrapAction">JSAV_wrapAction</a></li><li><a href="global.html#JSON2CSV">JSON2CSV</a></li><li><a href="global.html#JSON2XML">JSON2XML</a></li><li><a href="global.html#mouseUpHandler">mouseUpHandler</a></li><li><a href="global.html#numberedSequence">numberedSequence</a></li><li><a href="global.html#printDataRow">printDataRow</a></li><li><a href="global.html#printDataTable">printDataTable</a></li><li><a href="global.html#printHighlightCell">printHighlightCell</a></li><li><a href="global.html#printJSAV">printJSAV</a></li><li><a href="global.html#printResidueCell">printResidueCell</a></li><li><a href="global.html#printTableHeader">printTableHeader</a></li><li><a href="global.html#resetDisplayColumn">resetDisplayColumn</a></li><li><a href="global.html#resetSortRegion">resetSortRegion</a></li><li><a href="global.html#setSortRange">setSortRange</a></li><li><a href="global.html#setSortStart">setSortStart</a></li><li><a href="global.html#truncateLabel">truncateLabel</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jul 06 2020 13:38:15 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jul 06 2020 18:30:52 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
