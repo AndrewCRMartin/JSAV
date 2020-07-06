@@ -92,6 +92,7 @@
                       - Export to CSV and Excel.
    V2.0.1  06.07.20   General code tidy-up and fixed bug in 
                       JSAV_deleteSelectedSequences()
+                      gTableWidth initialized and now an array
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -113,7 +114,7 @@ var options = Array();
 options.width = '400px';
 options.sortable = true;
 options.highlight = [3,5,10,14];
-options.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+options.submit = "http://www.bioinf.org.uk/software/jsav/echo.cgi";
 options.submitLabel = "Submit sequences";
 options.action = "myAction";
 options.actionLabel = "My Action";
@@ -290,7 +291,10 @@ function printJSAV(divId, sequences, options)
    initDisplayrow(gSequences[divId]);
    gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
    gDisplayOrder[divId]              = initDisplayOrder(sequences);
-   gTableWidth                       = 20;
+   gTableWidth = Array();
+   gTableWidth[divId]                = 20;
+   gSorted = Array();
+   gSorted[divId]                    = false;
    
    // Sequence View
    if (sequences.length > 0)
@@ -568,9 +572,9 @@ function JSAV_setColourScheme(divId, select)
    gOptions[divId].colourScheme = select.value;
    
    var options = gOptions[divId];
-   if(options.sorted)
+   if(gSorted[divId])
    {
-      JSAV_sortAndRefreshSequences(divId)
+      JSAV_sortAndRefreshSequences(divId);
    }
    else
    {
@@ -804,7 +808,7 @@ function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactive
       $(tag).addClass(inactiveText);
    }
    
-   if(options.sorted)
+   if(gSorted[divId])
    {
       JSAV_sortAndRefreshSequences(divId)
    }
@@ -845,7 +849,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
       $(tag).removeClass("active");
    }
    
-   if(options.sorted)
+   if(gSorted[divId])
    {
       JSAV_sortAndRefreshSequences(divId)
    }
@@ -1036,16 +1040,23 @@ function JSAV_buildFASTA(divId)
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
-      if (sequences[dispOrder[i]].displayrow)
+      if(sequences[dispOrder[i]] == undefined)
       {
-         if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+         alert("ERROR!!!! DispOrder[" + i + "] undefined");
+      }
+      else
+      {
+         if (sequences[dispOrder[i]].displayrow)
          {
-            sequenceText += ">" + sequences[i].id + "\n";
-            sequenceText += sequences[i].sequence + "\n";
+            if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+            {
+               sequenceText += ">" + sequences[i].id + "\n";
+               sequenceText += sequences[i].sequence + "\n";
+            }
          }
       }
    }
-   
+
    return(sequenceText);
 }
 
@@ -1111,7 +1122,7 @@ function JSAV_deleteSelectedSequences(divId)
                          }
 
                          // Refresh the display
-                         if(options.sorted)
+                         if(gSorted[divId])
                          {
                             JSAV_sortAndRefreshSequences(divId);
                          }
@@ -1169,8 +1180,14 @@ function JSAV_hideSelectedSequences(divId)
       }
       
       // Refresh the display
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-      options.sorted = false;
+      if(gSorted[divId])
+      {
+         JSAV_sortAndRefreshSequences(divId)
+      }
+      else
+      {
+         JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      }
    }
 }
 
@@ -1220,8 +1237,14 @@ function JSAV_resetDisplayrow(divId)
    }
    
    // Refresh the display
-   JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-   options.sorted = false;
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId);
+   }
+   else
+   {
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1255,6 +1278,9 @@ function JSAV_resetAllNone(divId, cboxname, cboxstatus)
    var tag = "." + divId + "_AllNone";
    $(tag).prop('checked', false);
    tag = "." + cboxname;
+
+   // *** BUG ERROR HERE *** $(tag) is invalid if the cboxname contains a | ***
+   // ACRM 06.07.20 I don't know what this code does!
    if (cboxstatus)
    {
       $(tag).prop('checked', true);
@@ -2367,11 +2393,11 @@ function JSAV_sortAndRefreshSequences(divId)
    var range=JSAV_getRange(divId);
    JSAV_sortSequences(gSequences[divId], range[0], range[1], divId);
    resetDisplayColumn(gDisplayColumn[gOptions[divId].chaintype], gSequences[divId]);
-   
+
    JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
-   
+
    // Record the fact that the display has been sorted
-   gOptions[divId].sorted = true;
+   gSorted[divId] = true;
    
    return(false);
 }
@@ -2410,8 +2436,6 @@ function JSAV_refresh(divId, sequences, start, stop)
       var html = JSAV_buildSequencesHTML(divId, sequences);
    }
 
-
-   
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    $('#' + divId + ' .seqtable').css('width', seqtabWidth);
@@ -2429,7 +2453,10 @@ function JSAV_refresh(divId, sequences, start, stop)
       JSAV_showRange(divId);
    }
    
-   printDataTable(divId, sequences);                                            
+   if (options.displaydatatable != undefined)
+   {
+      printDataTable(divId, sequences);
+   }
    
    if(options.callback != undefined)
    {
@@ -2989,13 +3016,13 @@ Main function for printing the data table
 
 function printDataTable(divId, sequences)
 {
-   var options = gOptions[divId];
-   var ctype = options.chainType;
-   var dispOrder = gDisplayOrder[divId];
-   var tableDiv = divId + '_Table';
+   var options       = gOptions[divId];
+   var ctype         = options.chainType;
+   var dispOrder     = gDisplayOrder[divId];
+   var tableDiv      = divId + '_Table';
    var outerTableDiv = tableDiv + 'Outer';
-   var tableTag = "#" + tableDiv;
-   var html = '';
+   var tableTag      = "#" + tableDiv;
+   var html          = '';
    
    html += printToggleList(divId);
    html += "<div id='"+outerTableDiv+"'>";
@@ -3033,9 +3060,9 @@ function printDataTable(divId, sequences)
                          options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
    }
 
-   $('#' + divId + "_tablebody").css('width',gTableWidth+6); 
-   $('#' + tableDiv + "_Outer").css('width',gTableWidth+24); 
-   $('#' + tableDiv + "_Inner").css('width',gTableWidth+8); 
+   $('#' + divId + "_tablebody").css('width',gTableWidth[divId]+6); 
+   $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+24); 
+   $('#' + tableDiv + "_Inner").css('width',gTableWidth[divId]+8); 
    $("#" + outerTableDiv).css("width","98vw");
    $("#" + outerTableDiv).css("margin-left","0.5em");
    $("#" + outerTableDiv).css("overflow-x","auto");
@@ -3291,7 +3318,7 @@ function JSON2CSV(divId)
    
    if (CSV == '')
    {
-      alert("Invalid data");
+      alert("ERROR!!! Invalid data");
       return;
    }
    
@@ -3431,7 +3458,7 @@ function JSON2XML(divId)
    XML += '</Table></Worksheet></Workbook>';
    if (XML == '')
    {
-      alert("Invalid data");
+      alert("ERROR!!! Invalid data");
       return;
    }
    
@@ -3535,7 +3562,7 @@ function printTableHeader(divId, selectable)
       var rowstart = true;
       var lastcell = "";
       var lasthtml = "";
-      gTableWidth  = 20;
+      gTableWidth[divId] = 20;
 
       for (var key in gDisplayColumn[gOptions[divId].chainType]) 
       {
@@ -3546,7 +3573,7 @@ function printTableHeader(divId, selectable)
             var colClass = colheaders[0]+"-col";
             var colName = key.substring(6).replace(/ /g,"_").toLowerCase();
             var colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
-            gTableWidth += (colWidth + 40);
+            gTableWidth[divId] += (colWidth + 40);
             
             for (var r=0;r<=row;r++)
                colheader += colheaders[r];
@@ -3649,8 +3676,8 @@ function printDataRow(divId, sequence)
    if (sequence.displayrow) 
    {
       html += "<tr id = 'table_" + sequence.id + "'>";
-      var name = "select_" + sequence.id;
-      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+      var name    = "select_" + sequence.id;
+      var cname   = name.replace(/\./g, "_").replace(/\//g, "_");
       var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
       var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
 

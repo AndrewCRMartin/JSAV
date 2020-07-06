@@ -90,7 +90,8 @@ MySeqs.push({id :"2dqg_L|2dqg_H|mus", sequence :"-DIVLTQSPATLSVTPGNSVSLSCRASQSIG
 </div>
 <script type='text/javascript'>
 function myAction(divId, sequences)
-{
+  {
+     alert("myaction");
    var seqString = "";
    for(var i=0; i<sequences.length; i++)
    {
@@ -107,7 +108,7 @@ MyOptions.deletable = true;
 MyOptions.scrollX = "100%";
 MyOptions.scrollY = "400px";
 MyOptions.highlight = [24,34];
-MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.submit = "http://www.bioinf.org.uk/software/jsav/echo.cgi";
 MyOptions.action = "myAction";
 MyOptions.actionLabel = "My Action";
 MyOptions.toggleDotify = true;
