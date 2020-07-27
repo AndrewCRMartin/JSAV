@@ -4,14 +4,19 @@
 <title>JSAV</title>
 
 <!-- JQuery and JQuery-UI -->
-<link href="JSAV/external/jquery.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV/external/jquery-1.10.2.min.js'></script>
-<script type='text/javascript' src='JSAV/external/jquery-ui-1.10.4.custom.min.js'></script>
+<link href="../external/jquery.css" rel="stylesheet" />
+<script type='text/javascript' src='../external/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='../external/jquery-ui-1.10.4.custom.min.js'></script>
 
 <!-- JSAV -->
-<link href="JSAV/JSAV.css" rel="stylesheet" />
-<link href="../../../css/abysis.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV.min.js'></script>
+<link href="../JSAV.css" rel="stylesheet" />
+<script type='text/javascript' src='../JSAV.min.js'></script>
+
+<style>
+p, label {font: 12pt Arial,Helvetica,sans-serif;
+   color: #3333AA;
+}
+</style>
 
 </head>
 
@@ -19,16 +24,16 @@
 <script type='text/javascript'>
 var MySeqs = [];
 
-MySeqs.push({ id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY", Data :"first"});
-MySeqs.push({ id :"id1a.L",   sequence :"SASSSTNYMYACDEFGHIKLMNPQRSTVWY", Data :"second"});
-MySeqs.push({ id :"id2b1.L",  sequence :"SASSTCNYMTACDEEGHIKLMNP-RSTCWY", Data :"third"});
-MySeqs.push({ id :"id2a.L",   sequence :"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY", Data :"forth"});
-MySeqs.push({ id :"id2a1.L",  sequence :"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY", Data :"fifth"});
-MySeqs.push({ id :"id1.L",    sequence :"SASSSVNYMYACDEFGHIKLMNPQRSTVWY", Data :"sixth"});
-MySeqs.push({ id :"id1b.L",   sequence :"SASSSVNYMYACREFGHIKLMNPQRSTVWY", Data :"seventh"});
-MySeqs.push({ id :"id1a1.L",  sequence :"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY", Data :"eigth"});
-MySeqs.push({ id :"id2.L",    sequence :"SASSSCNYMTACDEHGHIKLMNP-RSTCWY", Data :"ninth"});
-MySeqs.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY", Data :"last"});
+MySeqs.push({ id:"id1b1.L",  sequence:"SASSSVNYMYACREFGHIKLMNPTRSTVWY", "Data 1":"0.625", Chemist:"PeterS"});
+MySeqs.push({ id:"id1a.L",   sequence:"SASSSTNYMYACDEFGHIKLMNPQRSTVWY", "Data 1":"0.291", Chemist:"JeffC"});
+MySeqs.push({ id:"id2b1.L",  sequence:"SASSTCNYMTACDEEGHIKLMNP-RSTCWY", "Data 1":"0.550", Chemist:"JeffC"});
+MySeqs.push({ id:"id2a.L",   sequence:"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY", "Data 1":"0.223", Chemist:"PeterS"});
+MySeqs.push({ id:"id2a1.L",  sequence:"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY", "Data 1":"0.383", Chemist:"RogerW"});
+MySeqs.push({ id:"id1.L",    sequence:"SASSSVNYMYACDEFGHIKLMNPQRSTVWY", "Data 1":"0.217", Chemist:"JeffC"});
+MySeqs.push({ id:"id1b.L",   sequence:"SASSSVNYMYACREFGHIKLMNPQRSTVWY", "Data 1":"0.124", Chemist:"PeterS"});
+MySeqs.push({ id:"id1a1.L",  sequence:"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY", "Data 1":"0.269", Chemist:"RogerW"});
+MySeqs.push({ id:"id2.L",    sequence:"SASSSCNYMTACDEHGHIKLMNP-RSTCWY", "Data 1":"0.323", Chemist:"TerryC"});
+MySeqs.push({ id:"id2b.L",   sequence:"SASSTCNYMTACDEHGHIKLMNP-RSTCWY", "Data 1":"0.546", Chemist:"TerryC"});
 </script>
 
 <h1>JavaScript Sequence Alignment Viewer (JSAV)</h1>
@@ -62,7 +67,7 @@ function myAction(divId, sequences)
 
 var MyOptions = Array();
 MyOptions.displaydatatable = true;
-MyOptions.defaultVisibleColumns = ['Data'];
+MyOptions.defaultVisibleColumns = ['Data 1'];
 MyOptions.sortable = true;
 MyOptions.selectable = true;
 MyOptions.deletable = true;
@@ -85,22 +90,22 @@ MyOptions.autoLabels = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);
 </script>
-
-<p>Input to the JavaScript is simply an array of sequences in
+<div style='padding-top:20px'>
+<p>Input to the JavaScript is simply an array of sequences and data items in
   the form:</p>
 <pre>
-sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY"};
+sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY", "Data 1":"0.635", Chemist:"PeterS"};
 </pre>
-<p>and the display and sorter is created with</p>
+<p>in which the data labels (e.g. 'Data 1') are user-defined. Any number of data items can be included, 
+ and missing data is allowed. Data labels containing spaces must be enclosed in quotation marks.
+ The display and sorter is created with</p>
 <pre>
 printJSAV('sequenceDisplay', sequences, options);
 sequenceDisplay - div in which to display the viewer
 sequences       - array of sequence objects
 options         - an object describing options
 </pre>
-
-
-
+</div>
 
 </body>
 </html>

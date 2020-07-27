@@ -67,7 +67,6 @@
    V1.8    24.09.15   Added options.scrollX and options.scrollY
 */
 
-
 /***********************************************************************/
 /*** Things the user is LIKELY to want to change                     ***/
 /***********************************************************************/
@@ -491,6 +490,95 @@
 .frequencyMax {background-color: #b3ffb3; color: #000000;}
 
 /* DATATABLE FUNCTION FORMATTING - Datatable itself uses table.results (abysis.css) */
+
+div.feint {
+   opacity:0.3;
+}
+div.truncated {
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+table.results {
+   font-family: Arial, Verdana, Helvetica, sans-serif;
+   font-size: 11px;
+   margin-bottom: 0.5em;
+   margin-left: 0.1em;
+   border-collapse: collapse;
+}
+table.results th {
+   vertical-align:middle;
+   padding: 0.1em 0.15em 0.1em 0.15em;
+   text-align: center;
+   font-weight: normal;
+   border: 1px solid #cccccc;
+   color:#000;
+   background-color: #c7d4e0;
+}
+
+table.results td {
+   vertical-align:middle;
+   padding: 0.1em 0.15em 0.1em 0.15em;
+   text-align: center;
+   border: 1px solid #cccccc;
+}
+
+table.results th.light-col {background-color:#999999;}
+table.results th.heavy-col {background-color:#333333;}
+
+table.results th.header {
+   padding-left: 5px;
+    padding-right: 5px;
+   border-top: none;
+    border-bottom: none;
+   color: #fff;
+}
+
+table.results th.lrborderheader {
+   border-top: none;
+   border-bottom: none;
+   color: #fff;
+}
+
+table.results th.headerSort {
+    padding: 0;
+    cursor: pointer;
+    min-width: 20px;
+    max-width: 20px;
+    border-left: none;
+    text-align: center;
+    border-top: none;
+    border-bottom: none;
+    color: #fff;
+}
+
+table.results th.headerText {
+    padding: 0;
+    border-left: none;
+    border-right: none;
+    text-align: center;
+    border-top: none;
+    border-bottom: none;
+    color: #fff;
+}
+
+table.results td.bodyText {
+    padding: 0;
+    text-align: center;
+    color: #000;
+}
+
+table.results th.headerHide {
+    padding: 0;
+    cursor: pointer;
+    min-width: 20px;
+    max-width: 20px;
+    text-align: center;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    color: #fff;
+}
 
 /* Toggle button and toggle list formatting */
 button.toggle-col { margin: 2px 4px 2px 2px;

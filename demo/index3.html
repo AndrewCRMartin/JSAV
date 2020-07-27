@@ -4,13 +4,13 @@
 <title>JSAV</title>
 
 <!-- JQuery and JQuery-UI -->
-<link href="JSAV/external/jquery.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV/external/jquery-1.10.2.min.js'></script>
-<script type='text/javascript' src='JSAV/external/jquery-ui-1.10.4.custom.min.js'></script>
+<link href="../external/jquery.css" rel="stylesheet" />
+<script type='text/javascript' src='../external/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='../external/jquery-ui-1.10.4.custom.min.js'></script>
 
 <!-- JSAV -->
-<link href="JSAV/JSAV.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV/JSAV.js'></script>
+<link href="../JSAV.css" rel="stylesheet" />
+<script type='text/javascript' src='../JSAV.min.js'></script>
 
 <style>
 p, label {font: 12pt Arial,Helvetica,sans-serif;
@@ -19,8 +19,8 @@ p, label {font: 12pt Arial,Helvetica,sans-serif;
 </style>
 
 <!-- If using tooltipster -->
-<link href="JSAV/external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
-<script type='text/javascript' src='JSAV/external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
+<link href="../external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
+<script type='text/javascript' src='../external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
 <script>
 function enableTooltipster()
 {
@@ -62,6 +62,7 @@ MySeqs.push({ id :"id2b.L",   sequence :"SASSTCNYMTACDEHGHIKLMNP-RSTCWY"});
 <p>Sequences are:</p>
 <div id='sequenceDisplay'>
 </div>
+
 <script type='text/javascript'>
 function myAction(divId, sequences)
 {
@@ -78,6 +79,7 @@ var MyOptions = Array();
 MyOptions.sortable = true;
 MyOptions.selectable = true;
 MyOptions.deletable = true;
+MyOptions.border = false;
 MyOptions.highlight = [3,5,10,14];
 MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
 MyOptions.submitLabel = "Submit";
@@ -94,7 +96,8 @@ MyOptions.colourScheme = "zappo";
 MyOptions.selectColour = true;
 MyOptions.callback = "enableTooltipster";
 MyOptions.colourChoices = ["Taylor", "Clustal", "Zappo", "HPhob"];
-MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl?seq=";
+MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.idSubmitKey = "seq";
 MyOptions.idSubmitClean = true;
 
 printJSAV('sequenceDisplay', MySeqs, MyOptions);

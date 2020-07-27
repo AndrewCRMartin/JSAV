@@ -1488,9 +1488,8 @@ function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence,
     for(var i=0; i<nResidues; i++) {
         pref = '';
         if (i == cc) { pref = 'br_'; }
-        var label = options.labels[i];
         var freq = undefined;
-        if (frequencies != undefined)
+        if ((frequencies != undefined) && (options.labels != undefined))
            freq = frequencies[options.labels[i]];
 	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
         tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, 
@@ -1832,7 +1831,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
    
    html += "<div class='header'><table border='0'>";
    html += "<tr><td class='idCell' colspan='10'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
-   var cc = chainChange(options.labels, divId);
+   var cc = chainChange(options.labels, options.autoLabels, divId);
    if (options.selectable)
 	{ 
         html += "<td class='idCell'>All/None</td>";
@@ -1849,7 +1848,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
        }		
     html += "</tr>";
 
-   if(options.labeltypecol != undefined)
+   if((options.labeltypecol != undefined) && (options.labels != undefined))
       {
       html += "<tr class='typeLabelRow'>";
       html += "<td></td><td></td>";
@@ -1924,7 +1923,7 @@ html += "</table></div>";
        html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
        html += "</tr>";
        }
-   if(options.labeltypecol != undefined)
+   if((options.labeltypecol != undefined) && (options.labels != undefined))
       {
       html += "<tr class='typeLabelRow'>";
       html += "<td></td><td></td>";
@@ -2791,17 +2790,18 @@ function ACRM_dialog(title, msg, width, pre)
 };
 
 
-function chainChange(labels, divId) {
+function chainChange(labels, autoLabels, divId) {
 
-if (labels != undefined) {
+if ((labels == undefined) || (autoLabels)) {
+  return gSequenceLengths[divId];
+	} else {
   var res = labels.length;
   for (var i=0; i < labels.length-1; i++)
     if (labels[i].substring(0,1) != labels[i+1].substring(0,1)) {
       res = i;
     }
   return res;
-} else {
-  return gSequenceLengths[divId];
+
 }
 }
 
@@ -2940,11 +2940,12 @@ for (var stype in stypes) {
   for (var s=0; s<=sequences.length; s++) {
     for (var key in sequences[s]) {
 	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
-           var colheaders = key.split('_');
-           var colname = '';
-           for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
-           colname = colname.trim();
-           if (colheaders[0] == stypes[stype]) {
+        var colheaders = key.split('_');
+        var colname = '';
+        for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '_';
+		colname = colname.replace(/_+$/,'');
+        colname = colname.trim();
+        if (colheaders[0] == stypes[stype]) {
       	      if (displayColumns && displayColumns.hasOwnProperty(key))
                   dispColumn[key] = displayColumns[key];
               else 
@@ -3354,6 +3355,7 @@ for (var t in columns) {
     for (var c=0; c<columns[t].length; c++)
 	XML += '  <Cell ss:StyleID="' + t + '"><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
     }
+if(options.labels != undefined)
 for (var s=0; s<options.labels.length; s++) {
     XML += '  <Cell><Data ss:Type="String">' + options.labels[s] + '</Data></Cell>\r\n';
     }
