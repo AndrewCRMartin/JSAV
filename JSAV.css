@@ -568,6 +568,16 @@ table.results td.bodyText {
     color: #000;
 }
 
+table.results td.idCell, table.results td.idCell a:link, table.results td.idCell a:visited {
+    text-align: left; 
+    color: #274c7b; 
+    width: 100px; 
+    min-width: 100px; 
+    max-width: 100px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    padding-left: 18px;}
+
 table.results th.headerHide {
     padding: 0;
     cursor: pointer;

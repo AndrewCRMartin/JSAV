@@ -283,12 +283,14 @@ function printJSAV(divId, sequences, options)
 	   options.sortDownText = '&#9660;';
 	   options.sortBothText = '&#9670;';
 	   options.hideText = '&#9747;'
+	   if(options.actionLabel == undefined)      { options.actionLabel 	      = 'Process Selected';       	   }
    }
    // Initialize globals if not yet done
    JSAV_init();
    document.onmouseup = mouseUpHandler;
    mouseState = 'up';	
    gOptions[divId]         = options;
+   gSorted[divId] 		   = false;
    tidySequences(divId, sequences);
    gSequences[divId]       = sequences;
    initDisplayrow(gSequences[divId]);
@@ -369,8 +371,7 @@ function printJSAV(divId, sequences, options)
 
         if(options.action != undefined)
         {
-	  JSAV_ControlButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected', 
-                            options.actionLabel, '', 'Process Sequences', options.action);
+		  JSAV_printAction(divId, options.action, options.actionLabel);
         }
 
         if(options.selectColour)
@@ -570,8 +571,7 @@ function JSAV_setColourScheme(divId, select)
        else
           $('#'+divId+'FrequencyControls').hide();
     }
-    var options = gOptions[divId];
-    if(options.sorted)
+    if(gSorted[divId])
     {
         JSAV_sortAndRefreshSequences(divId)
     }
@@ -783,7 +783,7 @@ function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactive
 		$(tag).addClass(inactiveText);
 	}
 
-    if(options.sorted)
+    if(gSorted[divId])
     {
 
         JSAV_sortAndRefreshSequences(divId)
@@ -818,7 +818,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
 		$(tag).addClass("active");
 	else
 		$(tag).removeClass("active");
-    if(options.sorted)
+    if(gSorted[divId])
     {
         JSAV_sortAndRefreshSequences(divId)
     }
@@ -896,6 +896,26 @@ function JSAV_printSubmit(divId, url, label)
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
    html += "</form></div>";
+   $(parrenttag).append(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints the action button
+
+@param {string}  divId   - The ID of the div to print in
+@param {string}  action  - Function to call
+@param {string}  label   - Label for action button
+
+@author 
+- 13.06.14 Original   By: ACRM
+- 18.06.14 Added tooltip
+*/
+function JSAV_printAction(divId, action, label)
+{
+   var parrenttag = '#' + divId + '_controls';
+   var ctype = gOptions[divId].chainType;
+   var html = "<button type='button' class='tooltip "+ctype+"button' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -1075,7 +1095,7 @@ function JSAV_deleteSelectedSequences(divId)
 
                 // Refresh the display
                 JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-                options.sorted = false;
+                gSorted[divId] = false;
             }
         });
     }
@@ -1126,7 +1146,7 @@ function JSAV_hideSelectedSequences(divId)
 
         // Refresh the display
         JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-        options.sorted = false;
+        gSorted[divId] = false;
     }
 }
 
@@ -1178,7 +1198,7 @@ function JSAV_resetDisplayrow(divId)
 
     // Refresh the display
     JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-    options.sorted = false;
+    gSorted[divId] = false;
 }
 
 // ---------------------------------------------------------------------
@@ -2414,7 +2434,7 @@ function JSAV_sortAndRefreshSequences(divId)
    JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
 
    // Record the fact that the display has been sorted
-   gOptions[divId].sorted = true;
+   gSorted[divId] = true;
 
    return(false);
 }
@@ -2534,6 +2554,7 @@ function JSAV_init()
    {
        gSequences       = Array();
        gOptions         = Array();
+	   gSorted			= Array();
        gStartPos        = Array();
        gStopPos         = Array();
        gConsensus       = Array();
@@ -2936,6 +2957,7 @@ function initDisplayColumn(divId, sequences, displayColumns) {
 	
 var stypes = ['heavy','light'];
 var dispColumn = {};
+//dispColumn['id'] = 1;
 for (var stype in stypes) {
   for (var s=0; s<=sequences.length; s++) {
     for (var key in sequences[s]) {
@@ -3386,7 +3408,6 @@ if (XML == '') {
 	alert("Invalid data");
 	return;
 	}
-
 var link = document.createElement("a");
 var browser = window.navigator.userAgent;
 var appStr = 'data:application/xml;charset=utf-8';
@@ -3498,12 +3519,18 @@ for (var key in gDisplayColumn[options.chainType])
 for (var row=0; row<maxrows; row++) {
   html += "<tr>";
   if (row > 0) 
+	{
      html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), '');
+	 html += "<td class='idCell'>";
+	 if (row==(maxrows-1))
+		 html += "All/None";
+	 html += "</td>";
+	}
   var colspan = 3;
   var rowstart = true;
   var lastcell = "";
   var lasthtml = "";
-  tableWidth = 20;
+  tableWidth = 140;
   for (var key in gDisplayColumn[options.chainType]) 
      {
      if (gDisplayColumn[options.chainType][key]) 
@@ -3602,6 +3629,7 @@ Displays a single row of the data table, where displayrow is true
 function printDataRow(divId, sequence) {
 
 var options = gOptions[divId];
+
 var html = "";
 var bgcol;
 if (sequence.displayrow) 
@@ -3612,6 +3640,14 @@ if (sequence.displayrow)
    var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
    var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
    html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+   
+   var attrArray = options.idSubmitAttribute.split(':');
+   var idSubmitAttr = '';
+   for (var a=0; a<attrArray.length; a++)
+       idSubmitAttr += sequence[attrArray[a]] + ':';
+   idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+   html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
+   
    for (var key in gDisplayColumn[gOptions[divId].chainType])
       if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
