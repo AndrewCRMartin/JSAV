@@ -1094,8 +1094,14 @@ function JSAV_deleteSelectedSequences(divId)
                 }
 
                 // Refresh the display
-                JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-                gSorted[divId] = false;
+                if(gSorted[divId])
+                {
+                    JSAV_sortAndRefreshSequences(divId)
+                }
+                else
+                {
+                    JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+                } 
             }
         });
     }
@@ -1988,7 +1994,7 @@ function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
    var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
 
    if (selectable) {
-	   html = "<td class='selectCell" + extraClass + "'>"+content+"</td>";
+	   html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
     }   
    return(html);
 }
@@ -3341,11 +3347,13 @@ XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
 XML += '  <Alignment ss:Horizontal="Center"/>\r\n';
 XML += '  <Font ss:Bold="1"/>\r\n';
 XML += ' </Style>\r\n';
+if (typeof(aaColours) !== 'undefined') {
 for (var c in aaColours[options.colourScheme]) {
    XML += ' <Style ss:ID="'+ c + '">';
    XML += '  <Interior ss:Color="' + aaColours[options.colourScheme][c] + '" ss:Pattern="Solid" />';
    XML += ' </Style>\r\n';
    }
+}
 XML += ' <Style ss:ID="heavy">';
 XML += '  <Interior ss:Color="#666666" ss:Pattern="Solid" />';
 XML += ' </Style>\r\n';
@@ -3397,7 +3405,11 @@ for (var i=0; i<sequence.length; i++) {
         }
 	}
          for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
-           row += '  <Cell ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          }
+           row += '  <Cell';
+		   if (typeof(aaColours) !== 'undefined') {
+               row += ' ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"';
+		   }
+			row += '><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          }
         row += '</Row>';
 	XML += row;
 	}
@@ -3512,22 +3524,24 @@ var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
 var options = gOptions[divId];
 var maxrows = 0;
 for (var key in gDisplayColumn[options.chainType]) 
-  if (gDisplayColumn[options.chainType][key]) {		
-	var numrows = key.split('_');
+  if (gDisplayColumn[options.chainType][key]) 
+  {		
+	 var numrows = key.split('_');
         if (numrows.length > maxrows) maxrows = numrows.length;
-	}
-for (var row=0; row<maxrows; row++) {
-  html += "<tr>";
-  if (row > 0) 
-	{
-     html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), '');
-	 html += "<td class='idCell'>";
-	 if (row==(maxrows-1))
-		 html += "All/None";
-	 html += "</td>";
-	}
-  var colspan = 3;
-  var rowstart = true;
+	 }
+     for (var row=0; row<maxrows; row++) 
+	 {
+        html += "<tr>";
+        if (row > 0) 
+	    {
+            html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), 'lrborderheader '+options.chainType+'-col');
+	        html += "<th class='idCell " +options.chainType+ "-col'>";
+	        if (row==2)
+		        html += "ID";
+	        html += "</th>";
+	    }
+      var colspan = 3;
+   var rowstart = true;
   var lastcell = "";
   var lasthtml = "";
   tableWidth = 140;
@@ -3536,7 +3550,7 @@ for (var row=0; row<maxrows; row++) {
      if (gDisplayColumn[options.chainType][key]) 
         {
         var colheaders = key.split('_');
-	var colheader = "";
+	    var colheader = "";
         var colName = '';
         for (var k=2; k<colheaders.length; k++) 
             colName += colheaders[k] + ' ';
@@ -3669,20 +3683,6 @@ if (sequence.displayrow)
             {
             html += "<td></td>";
 	    } 
-         else if (colName.toLowerCase() == 'accession') 
-            {
-            bgcol = "accession";
-            if (options.searchTerms['accession']) 
-               if (sequence[key].toLowerCase().indexOf(options.searchTerms['accession'].toLowerCase()) >= 0)
-                  bgcol += " highlight"; 
-            var attrArray = options.idSubmitAttribute.split(':');
-            var idSubmitAttr = '';
-            for (var a=0; a<attrArray.length; a++)
-               idSubmitAttr += sequence[attrArray[a]] + ':';
-            idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-            if (sequence[matchcol] == 'N') idSubmitAttr = null;
-	    html += JSAV_buildId(divId, idSubmitAttr, sequence[key], options.idSubmit, options.idSubmitKey, 1, bgcol, options.humanOrganism)
- 	    } 
          else 
             {                     
             var cellText = sequence[key];

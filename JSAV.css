@@ -534,7 +534,7 @@ table.results th.header {
    color: #fff;
 }
 
-table.results th.lrborderheader {
+table.results .lrborderheader {
    border-top: none;
    border-bottom: none;
    color: #fff;
@@ -551,6 +551,17 @@ table.results th.headerSort {
     border-bottom: none;
     color: #fff;
 }
+
+table.results th.idCell {
+    text-align: left; 
+    color: #fff; 
+    width: 80px; 
+    min-width: 80px; 
+    max-width: 80px; 
+    overflow: hidden; 
+	border: none;
+    text-overflow: ellipsis; 
+    padding-left: 38px;}
 
 table.results th.headerText {
     padding: 0;
