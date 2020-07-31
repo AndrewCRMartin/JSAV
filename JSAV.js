@@ -259,171 +259,185 @@ function printJSAV(divId, sequences, options)
    if(options.idSubmitAttribute   == undefined) { options.idSubmitAttribute   = "sequence";                }
    if(options.idSubmitKey         == undefined) { options.idSubmitKey         = "";                        }
    if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
-   if(options.chainType           == undefined) { options.chainType           = "heavy";                        }
-   if(options.iconButtons) {
-	  if(options.submitLabel == undefined)      { options.submitLabel 	      = 'far fa-check-square'; 		   }
+   if(options.chainType           == undefined) { options.chainType           = "heavy";                   }
+   if(options.iconButtons) 
+   {
+      if(options.submitLabel == undefined)      { options.submitLabel 	      = 'far fa-check-square'; 	   }
       if(options.actionLabel == undefined)      { options.actionLabel 	      = 'fa fa-cogs';       	   }
       if(options.exportLabel == undefined)      { options.exportLabel 	      = 'fas fa-share-square';     }
-      if(options.sortLabel   == undefined)      { options.sortLabel 	      = 'fa fa-sort-down';	       }  
+      if(options.sortLabel   == undefined)      { options.sortLabel 	      = 'fa fa-sort-down';	   }  
       if(options.sortUpLabel == undefined)      { options.sortUpLabel         = 'fas fa-sort-up';          } 
-      if(options.sortDownLabel == undefined)    { options.sortDownLabel       = 'fas fa-sort-down';       }
+      if(options.sortDownLabel == undefined)    { options.sortDownLabel       = 'fas fa-sort-down';        }
       if(options.sortBothLabel == undefined)    {  options.sortBothLabel       = 'fas fa-sort';            }
-      if(options.toggleDotifyLabel == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';        }
+      if(options.toggleDotifyLabel == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';       }
       if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = 'fa fa-th'; 		   }
       if(options.hideLabel     == undefined)    { options.hideLabel 	      = 'fa fa-eye-slash';	   }
       if(options.showallLabel  == undefined)    { options.showallLabel	      = 'fa fa-eye';		   }
       if(options.deleteLabel   == undefined)    { options.deleteLabel 	      = 'fa fa-window-close';	   }   
- 	   options.sortUpText = '';
-	   options.sortDownText = '';
-	   options.sortBothText = '';
-	   options.hideText = ''
+      options.sortUpText = '';
+      options.sortDownText = '';
+      options.sortBothText = '';
+      options.hideText = ''
    }
-   else {
-	   options.sortUpText = '&#9650;';
-	   options.sortDownText = '&#9660;';
-	   options.sortBothText = '&#9670;';
-	   options.hideText = '&#9747;'
-	   if(options.actionLabel == undefined)      { options.actionLabel 	      = 'Process Selected';       	   }
+   else 
+   {
+      options.sortUpText = '&#9650;';
+      options.sortDownText = '&#9660;';
+      options.sortBothText = '&#9670;';
+      options.hideText = '&#9747;'
+//      if(options.actionLabel == undefined)      { options.actionLabel 	      = 'Process Selected';        }
    }
+
    // Initialize globals if not yet done
    JSAV_init();
-   document.onmouseup = mouseUpHandler;
-   mouseState = 'up';	
-   gOptions[divId]         = options;
-   gSorted[divId] 		   = false;
+   mouseUpHandler();
+   document.onmouseup                = mouseUpHandler;
+   gOptions[divId]                   = options;
    tidySequences(divId, sequences);
-   gSequences[divId]       = sequences;
+   gSequences[divId]                 = sequences;
    initDisplayrow(gSequences[divId]);
    gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
-   gDisplayOrder[divId] = initDisplayOrder(sequences);
+   gDisplayOrder[divId]              = initDisplayOrder(sequences);
+   gSorted[divId] 		     = false;
+   gTableWidth[divId]                = 20;
 
    // Sequence View
-   if (sequences.length > 0) {
+   if (sequences.length > 0) 
+   {
       gSequenceLengths[divId] = sequences[0].sequence.length;
-      if (gSequenceLengths[divId] > 0) {
-        if(options.consensus)
-        {
-          gConsensus[divId] = JSAV_buildConsensus(sequences);
-        }
-        var div = '';
-        if($("#" + divId).length == 0) {
-          div = $('<div />').appendTo($('body'));
-          div.attr('id', divId);
-        }
-        else{
-          div = $("#" + divId);
-       }
-        var div_sortable = $('<div />').appendTo(div);
-        div_sortable.attr('id', divId + '_sortable');
-        div_sortable.css('margin-left', '0.5em');
-        div_sortable.css('overflow-x', 'auto');
-        div_sortable.css('white-space', 'nowrap');
+      if (gSequenceLengths[divId] > 0) 
+      {
+         if(options.consensus)
+         {
+            gConsensus[divId] = JSAV_buildConsensus(sequences);
+         }
+         var div = '';
+         if($("#" + divId).length == 0) 
+         {
+            div = $('<div />').appendTo($('body'));
+            div.attr('id', divId);
+         }
+         else
+         {
+            div = $("#" + divId);
+         }
+         var div_sortable = $('<div />').appendTo(div);
+         div_sortable.attr('id', divId + '_sortable');
+         div_sortable.css('margin-left', '0.5em');
+         div_sortable.css('overflow-x', 'auto');
+         div_sortable.css('white-space', 'nowrap');
    
-        if(options.scrollY != null)
-        {
-           div_sortable.css('overflow-y', 'hidden');
-           div_sortable.css('white-space', 'nowrap');
-        }
+         if(options.scrollY != null)
+         {
+            div_sortable.css('overflow-y', 'hidden');
+            div_sortable.css('white-space', 'nowrap');
+         }
    
+         if (options.transpose) 
+         {
+ 	    var html = JSAV_transposeSequencesHTML(divId, sequences);
+   	 } 
+         else 
+         {
+	    var html = JSAV_buildSequencesHTML(divId, sequences);
+	 }
 
-        if (options.transpose) {
- 	   var html = JSAV_transposeSequencesHTML(divId, sequences);
-   	} else {
-	   var html = JSAV_buildSequencesHTML(divId, sequences);
-	}
+         div_sortable.append(html);
+         $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+         $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+         $('#' + divId + ' .header').css('width', seqtabWidth);
+         $('#' + divId + ' .footer').css('width', seqtabWidth);
 
-        div_sortable.append(html);
-        $('#' + divId + ' .seqtable').css('width', seqtabWidth);
-        $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
-        $('#' + divId + ' .header').css('width', seqtabWidth);
-        $('#' + divId + ' .footer').css('width', seqtabWidth);
-
-        var div_controls = $('<div />').appendTo(div);
-        div_controls.attr('id', divId + '_controls');
-        div_controls.attr('class', 'JSAVControls');
-        div_controls.css('margin-left', '0.5em');
+         var div_controls = $('<div />').appendTo(div);
+         div_controls.attr('id', divId + '_controls');
+         div_controls.attr('class', 'JSAVControls');
+         div_controls.css('margin-left', '0.5em');
  
-        if(options.sortable)
-        {
-           resetSortRegion(divId);
-	   JSAV_ControlButton(divId, divId + '_controls', 'Sort the sequences based on the range specified in the Sort Region', 
-                             options.sortLabel, '', 'Sort Sequences', 'JSAV_sortAndRefreshSequences("' + divId + '")');
-        }
+         if(options.sortable)
+         {
+            resetSortRegion(divId);
+	    JSAV_ControlButton(divId, divId + '_controls', 'Sort the sequences based on the range specified in the Sort Region', 
+                              options.sortLabel, '', 'Sort Sequences', 'JSAV_sortAndRefreshSequences("' + divId + '")');
+         }
   
-        if(options.hideable)
-        {
-         JSAV_ControlButton(divId, divId + '_controls', 'Hide selected sequences', 
-                            options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
-         JSAV_ControlButton(divId, divId + '_controls', 'Show hidden sequences', 
-                            options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
-        }
+         if(options.hideable)
+         {
+            JSAV_ControlButton(divId, divId + '_controls', 'Hide selected sequences', 
+                               options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
+            JSAV_ControlButton(divId, divId + '_controls', 'Show hidden sequences', 
+                               options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
+         }
     
-        if(options.deletable)
-        {
-	  JSAV_ControlButton(divId, divId + '_controls', 'Delete the selected sequences', 
-                            options.deleteLabel, '', 'Delete Sequences', 'JSAV_deleteSelectedSequences("' + divId + '")');
-	}
+         if(options.deletable)
+         {
+	    JSAV_ControlButton(divId, divId + '_controls', 'Delete the selected sequences', 
+                               options.deleteLabel, '', 'Delete Sequences', 'JSAV_deleteSelectedSequences("' + divId + '")');
+	 }
 
-        if(options.submit != undefined)
-        {
-          JSAV_printSubmit(divId, options.submit, options.submitLabel);
-        }
+         if(options.submit != undefined)
+         {
+            JSAV_printSubmit(divId, options.submit, options.submitLabel);
+         }
 
-        if(options.action != undefined)
-        {
-		  JSAV_printAction(divId, options.action, options.actionLabel);
-        }
+         if(options.action != undefined)
+         {
+	    JSAV_ActionButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected',
+                               options.actionLabel, '', 'Process Sequences', options.action);
+         }
 
-        if(options.selectColour)
-        {
-          JSAV_printColourSelector(divId, options);
-        }
-        if(options.toggleDotify)
-        {
-          JSAV_printToggleDotify(divId, options);
-        }
-        if(options.toggleNocolour)										
-        {
-          JSAV_printToggleNocolour(divId, options);
-        }
+         if(options.selectColour)
+         {
+            JSAV_printColourSelector(divId, options);
+         }
+        
+         if(options.toggleDotify)
+         {
+            JSAV_printToggleDotify(divId, options);
+         }
 
-        if(options.toggleTranspose)										
-        {
-         JSAV_printToggleTranspose(divId, options);
-        }
+         if(options.toggleNocolour)										
+         {
+            JSAV_printToggleNocolour(divId, options);
+         }
 
-        if(options.fasta)
-        {
-	  JSAV_ControlButton(divId, divId + '_controls', 'Export the selected sequences, or all sequences if none selected', 
-                             options.exportLabel, 'Fasta', 'Export Fasta', 'JSAV_exportFASTA("' + divId + '")');
-        }
+         if(options.toggleTranspose)										
+         {
+            JSAV_printToggleTranspose(divId, options);
+         }
+
+         if(options.fasta)
+         {
+	    JSAV_ControlButton(divId, divId + '_controls', 'Export the selected sequences, or all sequences if none selected', 
+                               options.exportLabel, 'Fasta', 'Export Fasta', 'JSAV_exportFASTA("' + divId + '")');
+         }
          
-        if (options.exportable)
-        {
-          JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to CSV', 
-                             options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
-          JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
-                             options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
-        }
+         if (options.exportable)
+         {
+            JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to CSV', 
+                               options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
+            JSAV_ControlButton(divId, divId + '_controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
+                               options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
+         }
 
-        if (options.frequencies) 
-        {
-          JSAV_printFrequencyControls(divId, divId + '_controls', options);
-        }
+         if (options.frequencies) 
+         {
+            JSAV_printFrequencyControls(divId, divId + '_controls', options);
+         }
 
-        if(options.border)
-        {
-         JSAV_modifyCSS(divId);
-        }
+         if(options.border)
+         {
+            JSAV_modifyCSS(divId);
+         }
       }
   
       if (options.displaydatatable != undefined)
       {
- 	printDataTable(divId, sequences);
+ 	 printDataTable(divId, sequences);
       }
+
       if (options.sortColumn != undefined)
       {
-        DT_sortColumn(divId, options.sortDirection, options.sortColumn);
+         DT_sortColumn(divId, options.sortDirection, options.sortColumn);
       }
 
       // Ensure buttons etc match the data
@@ -431,9 +445,9 @@ function printJSAV(divId, sequences, options)
 
       if(options.callback != undefined)
       {
-        window[options.callback](divId);
+         window[options.callback](divId);
       }
-   $('#' + divId).css('width', '96vw');
+      $('#' + divId).css('width', '96vw');
    
    }
 }
@@ -449,8 +463,10 @@ Initialise the displayrow elements for all sequences
 
 function initDisplayrow(sequences)
 {
-	for (var s=0; s<sequences.length; s++)
-		sequences[s].displayrow = true;
+   for (var s=0; s<sequences.length; s++)
+   {
+      sequences[s].displayrow = true;
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -471,6 +487,7 @@ function JSAV_refreshSettings(divId)
         var tag = "#" + divId + "_selectColour";
         $(tag).val(gOptions[divId].colourScheme);
     }
+
     if(gOptions[divId].toggleDotify)
     {
         // Dotify option
@@ -484,6 +501,7 @@ function JSAV_refreshSettings(divId)
             $(tag).prop('checked', gOptions[divId].dotify);
         }
     }
+
     if(gOptions[divId].toggleNocolour)
     {
         // Dotify-nocolour option
@@ -497,13 +515,15 @@ function JSAV_refreshSettings(divId)
             $(tag).prop('checked', gOptions[divId].nocolour);
         }
     }
+
     if(gOptions[divId].selectable)
     {
         // Selectable
         var tag = "#" + divId + "_AllNone";
         $(tag).prop('checked', false);
-//        JSAV_unselectAll(divId);
+        //        JSAV_unselectAll(divId);
     }
+
     $("#"+divId+"_seqids").scrollLeft(0);
 }
 
@@ -518,6 +538,7 @@ Prints a pulldown menu to select a colour scheme
 - 17.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than writing to document  By: JHN
+- 31.07.20 Added option to display colour based on frequency By: JH
 */
 function JSAV_printColourSelector(divId, options)
 {
@@ -527,26 +548,32 @@ function JSAV_printColourSelector(divId, options)
       options.colourChoices = JSAV_initColourChoices();
    }
 
-    var id   = divId + "_selectColour";
-    var ctype = options.chainType;
-    var html = "<div style='float:left'><select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
-    for(var i=0; i<options.colourChoices.length; i++)
-    {
-        var lcChoice = options.colourChoices[i].toLowerCase();
-        var selected = "";
-        if(options.colourScheme == lcChoice)
-        {
-            selected = " selected='selected'";
-        }
-        html += "<option value='" + lcChoice + "'" + selected + ">" + 
+   var id   = divId + "_selectColour";
+   var ctype = options.chainType;
+   var html = "<div style='float:left'>";
+   html += "<select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+
+   for(var i=0; i<options.colourChoices.length; i++)
+   {
+      var lcChoice = options.colourChoices[i].toLowerCase();
+      var selected = "";
+      if(options.colourScheme == lcChoice)
+      {
+         selected = " selected='selected'";
+      }
+      html += "<option value='" + lcChoice + "'" + selected + ">" + 
                 options.colourChoices[i] + "</option>";
-    }
-    if (options.frequencies) {
-        html += "<option value='frequencies'>Frequencies</option>";
-    }
-    html += "</select></div>";
-    var parrenttag = '#' + divId + '_controls';
-    $(parrenttag).append(html);
+   }
+
+   if (options.frequencies) 
+   {
+      html += "<option value='frequencies'>Frequencies</option>";
+   }
+   
+   html += "</select></div>";
+   var parrenttag = '#' + divId + '_controls';
+
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -560,25 +587,32 @@ colour scheme and refreshes the display
 @author 
 - 17.06.14  Original   By: ACRM
 - 22.12.15  Added passing of labels
-- 09.01.17	Added options.transpose to JSAV+refresh parameter list By: JH
+- 09.01.17  Added options.transpose to JSAV+refresh parameter list By: JH
+- 31.07.20  Added show/hide for frequency sliders when frequencies selected By: JH
 */
 function JSAV_setColourScheme(divId, select)
 {
-    gOptions[divId].colourScheme = select.value;
-    if (gOptions[divId].frequencies) {
-       if (select.value == 'frequencies')
-          $('#'+divId+'FrequencyControls').show();
-       else
-          $('#'+divId+'FrequencyControls').hide();
-    }
-    if(gSorted[divId])
-    {
-        JSAV_sortAndRefreshSequences(divId)
-    }
-    else
-    {
-        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-    }
+   gOptions[divId].colourScheme = select.value;
+   if (gOptions[divId].frequencies) 
+   {
+      if (select.value == 'frequencies')
+      {
+         $('#'+divId+'FrequencyControls').show();
+      }
+      else
+      {
+         $('#'+divId+'FrequencyControls').hide();
+      }
+   }
+
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId)
+   }
+   else
+   {
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -603,12 +637,105 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    var tooltipText = "title='"+tooltip+"'";
    var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
 
-   if (options.iconButtons) {
+   if (options.iconButtons) 
+   {
       html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
-   } else {
+   } 
+   else 
+   {
       html +=  (icon != undefined) ? icon : textlabel;
    }
+
    html += "</button></div>";
+   $(parrenttag).append(html);
+}
+
+// ---------------------------------------------------------------------
+/**
+Calls a user-defined action, passing it the divId and an array of selected
+and visible sequences. Called from the button created by JSAV_ActionButton()
+
+@param {string} action - The name of the function to be called
+       {string} divId -  The divId we're dealing with
+
+@author 
+- 06.07.20 Original   By: ACRM
+*/
+function JSAV_RunAction(action, divId)
+{
+   var sequences        = gSequences[divId];
+   var seletedSequences = Array();
+
+   // See if any checkboxes are set
+   var count     = 0;
+   var toFASTA   = array();
+   var dispOrder = gDisplayOrder[divId];
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectBox";
+   $(tag).each(function(index)
+               {
+                  if($(this).prop('checked'))
+                  {
+                     var id = $(this).attr('name').substr(7);
+                     toFASTA[id] = 1;
+                     count++;
+                  }
+               });
+
+   for(var i=0; i<sequences.length; i++)
+   {
+      if(sequences[dispOrder[i]] == undefined)
+      {
+         alert("ERROR!!!! DispOrder[" + i + "] undefined");
+      }
+      else
+      {
+         if(sequences[dispOrder[i]].displayrow)
+         {
+            if((count ==0) || (count == sequence.length) || (toFASTA[sequences[i].id] == 1))
+            {
+               selectedSequences.push(sequences[i]);
+            }
+         }
+      }
+   }
+
+   window[action])divId, selectedSequences);
+}
+
+// ---------------------------------------------------------------------
+/**
+Prints an action button with icons, action and tooltip
+
+@param {string} divId     - The divId we're dealing with
+       {string} tooltip   - text for tooltip
+       {string} icon      - option item for icon class
+       {string} label     - extra text after icon
+       {string} textlabel - alternative text label
+       {string} action    - button onclick action
+
+@author 
+- 06.07.20 Original based on JSAV_ControlButton   By: ACRM
+*/
+function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, action)
+{
+   var parenttag = "#" + localDiv;
+   var options = gOptions[divId];
+   var ctype = options.chainType == undefined ? 'JSAV' : options.chainType;
+   var tooltipText = "title='"+tooltip+"'";
+   var html = "<button type='button' class='tooltip " + ctype+"button' " + tooltipText + " onclick='JSAV_RunAction(\"" + action +"\", \"" + divId + "\")'>";
+
+   if (options.iconButtons)
+   {
+      html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+   }
+   else
+   {
+      html += (icon != undefined) icon : textlabel;
+   }
+   
+   html += "</button>";
+
    $(parrenttag).append(html);
 }
 
@@ -644,22 +771,26 @@ Print a checkbox for toggling dotify mode
 */
 function JSAV_printToggleDotify(divId, options)
 {
-    var active = "";
-    var ctype = options.chainType;
-    if(options.dotify) { active = " active"; };
-    var id = divId + "_toggleDotify";
-	var label = options.toggleDotifyLabel;
-    var idText = " id='" + id + "'";
-    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
-    var title = "title='Replace repeated residues with dots'";
-    var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
-    if (gOptions[divId].iconButtons) {
-       html += "<i class='"+label+"'  "+title+"></i></button>";
-    } else {
-       html += "Dotify</button></div>";
-    }
-    var parrenttag = '#' + divId + '_controls';
-    $(parrenttag).append(html);
+   var active = "";
+   var ctype = options.chainType;
+   if(options.dotify) { active = " active"; };
+   var id = divId + "_toggleDotify";
+   var label = options.toggleDotifyLabel;
+   var idText = " id='" + id + "'";
+   var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
+   var title = "title='Replace repeated residues with dots'";
+   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
+   if (gOptions[divId].iconButtons) 
+   {
+      html += "<i class='"+label+"'  "+title+"></i></button>";
+   } 
+   else 
+   {
+      html += "Dotify</button></div>";
+   }
+
+   var parrenttag = '#' + divId + '_controls';
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -678,22 +809,25 @@ Print a checkbox for toggling nocolour-dotify mode
 */
 function JSAV_printToggleNocolour(divId, options) 
 {
-    var active = "";
-    var ctype = options.chainType;
-    if(options.nocolour) { active = " active"; };
-    var id = divId + "_toggleNocolour";
-    var idText = " id='" + id + "'";
-    var label = options.toggleNocolourLabel;
-    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
-    var title = "title='Do not colour repeated residues'";
-    var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
-    if (gOptions[divId].iconButtons) {
-       html += "<i class='"+label+"' "+title+"></i></button>";
-    } else {
-       html += "No Repeat Colour</button></div>";
-    }
-    var parrenttag = '#' + divId + '_controls';
-    $(parrenttag).append(html);
+   var active = "";
+   var ctype = options.chainType;
+   if(options.nocolour) { active = " active"; };
+   var id = divId + "_toggleNocolour";
+   var idText = " id='" + id + "'";
+   var label = options.toggleNocolourLabel;
+   var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
+   var title = "title='Do not colour repeated residues'";
+   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
+   if (gOptions[divId].iconButtons) 
+   {
+      html += "<i class='"+label+"' "+title+"></i></button>";
+   } 
+   else 
+   {
+      html += "No Repeat Colour</button></div>";
+   }
+   var parrenttag = '#' + divId + '_controls';
+   $(parrenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -709,56 +843,74 @@ Print a checkbox for toggling transposed sequence view
 */
 function JSAV_printToggleTranspose(divId, options) 
 {
-    var options = gOptions[divId];
-    var ctype = options.chainType;
-    var html = "<div style='float:left'>";
-    var activeText = "fas fa-reply";
-    var inactiveText = "fas fa-share";
-    var active = "";
-    if(options.transpose) 
-      { 
-        active = activeText; 
-      } 
-    else 
-      { 
-        active = inactiveText; 
-      } ;
-    var id = divId + "_toggleTranspose";
-    var idText = " id='" + id + "'";
-    var onclick = " onclick='JSAV_toggleTranspose(\"" + divId + "\", \"" + id + "\", \"transpose\", \"" +activeText+"\",  \"" +inactiveText+"\")'";
-    var tooltip = "Transpose sequence view";
-    if (options.iconButtons) {
-       html += "<button type='button' class='tooltip "+ctype+"button' title='"+tooltip+ "' "  + onclick + "><i " + idText + " class='"+active+"'></i></button>";
-    } else {
-       html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
-    }
-    html += "</div>";
-    var parrenttag = '#' + divId + '_controls';
-    $(parrenttag).append(html);
+   var options = gOptions[divId];
+   var ctype = options.chainType;
+   var html = "<div style='float:left'>";
+   var activeText = "fas fa-reply";
+   var inactiveText = "fas fa-share";
+   var active = "";
+   if(options.transpose) 
+   { 
+      active = activeText; 
+   } 
+   else 
+   { 
+      active = inactiveText; 
+   }
+
+   var id = divId + "_toggleTranspose";
+   var idText = " id='" + id + "'";
+   var onclick = " onclick='JSAV_toggleTranspose(\"" + divId + "\", \"" + id + "\", \"transpose\", \"" +activeText+"\",  \"" +inactiveText+"\")'";
+   var tooltip = "Transpose sequence view";
+
+   if (options.iconButtons) 
+   {
+      html += "<button type='button' class='tooltip "+ctype+"button' title='"+tooltip+ "' "  + onclick + "><i " + idText + " class='"+active+"'></i></button>";
+   }
+   else 
+   {
+      html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
+   }
+   html += "</div>";
+   var parrenttag = '#' + divId + '_controls';
+   $(parrenttag).append(html);
 }
 
+// ---------------------------------------------------------------------
+/** 
+Toggles between normal and transposed view, resetting height and width accordingly
+
+@param {string}  divId        The div that we're dealing with
+@param {object}  theButton    The transpose button object
+@param {string}  theOption    The options transpose element
+@param {string}  activeText   Icon for the active button
+@param {string}  inactiveText Icon for the inactive button
+
+@author 
+- 03.01.17 Original   By: JH
+
+*/
 function JSAV_toggleTranspose(divId, theButton, theOption, activeText, inactiveText) {
 
-    var div_sortable = $('#' + divId + '_sortable');
-    var options = gOptions[divId];
-    if(options[theOption]) 
-      { 
-        div_sortable.css('max-height', '');
-        $('#' + divId).css('width', '96vw');
-       } 
-    else //transposed
-      {
-        div_sortable.css('max-height', '1000px');
-      } ;
+   var div_sortable = $('#' + divId + '_sortable');
+   var options = gOptions[divId];
+   if(options[theOption]) 
+   { 
+      div_sortable.css('max-height', '');
+      $('#' + divId).css('width', '96vw');
+   } 
+   else //transposed
+   {
+      div_sortable.css('max-height', '1000px');
+   } ;
 
-JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactiveText);
+   JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactiveText);
 }
 
 // ---------------------------------------------------------------------
 /**
 Read a button and toggle the button class between the two options activeText 
 and inactiveText, refreshing the display
-
 
 @param {string}  divId     		The div that we are working in
 @param {string}  theButton 		The ID of the checkbox we are looking at
@@ -772,26 +924,29 @@ and inactiveText, refreshing the display
 
 function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactiveText)
 {
-    var tag     = "#" + theButton;
-    var options = gOptions[divId];
-    options[theOption] = !options[theOption];
-	if (options[theOption]) {
-		$(tag).removeClass(inactiveText);
-		$(tag).addClass(activeText);
-	} else {
-		$(tag).removeClass(activeText);
-		$(tag).addClass(inactiveText);
-	}
+   var tag     = "#" + theButton;
+   var options = gOptions[divId];
+   options[theOption] = !options[theOption];
 
-    if(gSorted[divId])
-    {
+   if (options[theOption]) 
+   {
+      $(tag).removeClass(inactiveText);
+      $(tag).addClass(activeText);
+   } 
+   else 
+   {
+      $(tag).removeClass(activeText);
+      $(tag).addClass(inactiveText);
+   }
 
-        JSAV_sortAndRefreshSequences(divId)
-    }
-    else
-    { 
-        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-    }
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId)
+   }
+   else
+   { 
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -811,21 +966,28 @@ Read a button and toggle the associated option, refreshing the display
 */
 function JSAV_toggleOption(divId, theButton, theOption)
 {
-    var tag     = "#" + theButton;
-    var options = gOptions[divId];
-    options[theOption] = !options[theOption];
-	if (options[theOption])
-		$(tag).addClass("active");
-	else
-		$(tag).removeClass("active");
-    if(gSorted[divId])
-    {
-        JSAV_sortAndRefreshSequences(divId)
-    }
-    else
-    {
-        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-    }
+   var tag     = "#" + theButton;
+   var options = gOptions[divId];
+
+   options[theOption] = !options[theOption];
+
+   if (options[theOption])
+   {
+      $(tag).addClass("active");
+   }
+   else
+   {
+      $(tag).removeClass("active");
+   }
+
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId)
+   }
+   else
+   {
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -847,19 +1009,20 @@ printHighlightCell to display each cell based on highlight  By: JH
 */
 function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight, cc)
 {
-    var html = "";
-    var pref;
+   var html = "";
+   var pref;
 
-//    html += "<tr class='highlightrow'></td>";
+   //    html += "<tr class='highlightrow'></td>";
 
-    for(var i=0; i<seqLen; i++)
-    {
-         pref = '';
-         if (i == cc) { pref = 'br_highlightrow'; }
-	 html += printHighlightCell(highlight, i, pref);
-    }
-    html += "<td class='rhcol'></td>\n";
-    return(html);
+   for(var i=0; i<seqLen; i++)
+   {
+      pref = '';
+      if (i == cc) { pref = 'br_highlightrow'; }
+      html += printHighlightCell(highlight, i, pref);
+   }
+
+   html += "<td class='rhcol'></td>\n";
+   return(html);
 }
 
 // ---------------------------------------------------------------------
@@ -881,9 +1044,12 @@ function JSAV_printSubmit(divId, url, label)
    var ctype = gOptions[divId].chainType;
    var title = "title='Submit the selected sequences, or all sequences if none selected'";
    var html = "<button type='button' class='tooltip "+ctype+"button' "+title+" onclick='JSAV_submitSequences(\"" + divId + "\")'>";
-   if (gOptions[divId].iconButtons) {
+   if (gOptions[divId].iconButtons) 
+   {
       html += "<i class='"+label+"' "+title+"></i>";
-   } else {
+   } 
+   else 
+   {
       html += "Submit Selected Sequences";
    }
    html += "</button>";
@@ -896,26 +1062,6 @@ function JSAV_printSubmit(divId, url, label)
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
    html += "</form></div>";
-   $(parrenttag).append(html);
-}
-
-// ---------------------------------------------------------------------
-/**
-Prints the action button
-
-@param {string}  divId   - The ID of the div to print in
-@param {string}  action  - Function to call
-@param {string}  label   - Label for action button
-
-@author 
-- 13.06.14 Original   By: ACRM
-- 18.06.14 Added tooltip
-*/
-function JSAV_printAction(divId, action, label)
-{
-   var parrenttag = '#' + divId + '_controls';
-   var ctype = gOptions[divId].chainType;
-   var html = "<button type='button' class='tooltip "+ctype+"button' title='Process the selected sequences, or all sequences if none selected' onclick='JSAV_wrapAction(\"" + divId + "\", \"" + action + "\")'>" + label + "</button>";
    $(parrenttag).append(html);
 }
 
@@ -944,14 +1090,15 @@ function JSAV_wrapAction(divId, action)
    var toSubmit = Array();
    // Find the selected sequences
    var tag = "#" + divId + " .selectBox";
-   $(tag).each(function(index) {
-       if($(this).prop('checked'))
-       {
-           var id = $(this).attr('name').substr(7);
-           toSubmit[id] = 1;
-           count++;
-       }
-   });
+   $(tag).each(function(index) 
+               {
+                  if($(this).prop('checked'))
+                  {
+                     var id = $(this).attr('name').substr(7);
+                     toSubmit[id] = 1;
+                     count++;
+                  }
+               });
 
    var textTag = "textarea#" + divId + "_submit";
    var sequenceText = "";
@@ -1010,27 +1157,28 @@ function JSAV_buildFASTA(divId)
    var dispOrder = gDisplayOrder[divId];
    // Find the selected sequences
    var tag = "#" + divId + " .selectBox";
-   $(tag).each(function(index) {
-       if($(this).prop('checked'))
-       {
-	   var id = $(this).attr('name').substr(7);
-           toFASTA[id] = 1;
-           count++;
-       }
-   });
+   $(tag).each(function(index) 
+               {
+                  if($(this).prop('checked'))
+                  {
+	             var id = $(this).attr('name').substr(7);
+                     toFASTA[id] = 1;
+                     count++;
+                  }
+               });
 
    var sequenceText = "";
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
-     if (sequences[dispOrder[i]].displayrow)
-     {
-       if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
-       {
-           sequenceText += ">" + sequences[i].id + "\n";
-           sequenceText += sequences[i].sequence + "\n";
-       }
-     }
+      if (sequences[dispOrder[i]].displayrow)
+      {
+         if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+         {
+            sequenceText += ">" + sequences[i].id + "\n";
+            sequenceText += sequences[i].sequence + "\n";
+         }
+      }
    }
 
    return(sequenceText);
@@ -1052,59 +1200,61 @@ Deletes a set of sequences that have been clicked
 */
 function JSAV_deleteSelectedSequences(divId)
 {
-    var count = 0;
-    var toDelete = Array();
-    // Find the selected sequences
-    var tag = "#" + divId + " .selectBox";
-    $(tag).each(function(index) {
-        if($(this).prop('checked'))
-        {
-	    var id = $(this).attr('name').substr(7);
-            toDelete.push(id);
-            count++;
-        }
-    });
+   var count = 0;
+   var toDelete = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectBox";
+   $(tag).each(function(index) 
+               {
+                  if($(this).prop('checked'))
+                  {
+	             var id = $(this).attr('name').substr(7);
+                     toDelete.push(id);
+                     count++;
+                  }
+               });
 
-    if(count == 0)
-    {
-        ACRM_alert("Error!","You must select some sequences!");
-    }
-    else if(count == gSequences[divId].length)
-    {
-        ACRM_alert("Error!","You can't delete all the sequences!");
-    }
-    else
-    {
-        var message = "Delete " + count + " selected sequences?";
-        ACRM_confirm("Confirm", message, function(confirm){
-            if(confirm)
-            {
-                // Run through the global sequence array deleting the selected objects
-                for(var i=0; i<toDelete.length; i++)
-                {
-                    ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
-                }
+   if(count == 0)
+   {
+       ACRM_alert("Error!","You must select some sequences!");
+   }
+   else if(count == gSequences[divId].length)
+   {
+       ACRM_alert("Error!","You can't delete all the sequences!");
+   }
+   else
+   {
+      var message = "Delete " + count + " selected sequences?";
+      ACRM_confirm("Confirm", message, function(confirm)
+                   {
+                      if(confirm)
+                      {
+                         // Run through the global sequence array deleting the selected objects
+                         for(var i=0; i<toDelete.length; i++)
+                         {
+                            ACRM_deleteItemByLabel('id', toDelete[i], gSequences[divId]);
+                         }
 
-                var options = gOptions[divId];
+                          var options = gOptions[divId];
 
-                // Update the consensus
-                if(options.consensus)
-                {
-                    gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
-                }
+                          // Update the consensus
+                          if(options.consensus)
+                          {
+                             gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+                          }
 
-                // Refresh the display
-                if(gSorted[divId])
-                {
-                    JSAV_sortAndRefreshSequences(divId)
-                }
-                else
-                {
-                    JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-                } 
-            }
-        });
-    }
+                          // Refresh the display
+                          if(gSorted[divId])
+                          {
+                             JSAV_sortAndRefreshSequences(divId)
+                          }
+                          else
+                          {
+                             JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+                          } 
+                       }
+                    });
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1118,42 +1268,49 @@ Hides a set of sequences that have been clicked
 */
 function JSAV_hideSelectedSequences(divId)
 {
-    var count = 0;
-    var toHide = Array();
-    // Find the selected sequences
-    var tag = "#" + divId + " .selectBox";
-    $(tag).each(function(index) {
-        if($(this).prop('checked'))
-        {
-	    var id = $(this).attr('name').substr(7);
-	    toHide.push(id);
-            count++;
-        }
-    });
+   var count = 0;
+   var toHide = Array();
+   // Find the selected sequences
+   var tag = "#" + divId + " .selectBox";
+   $(tag).each(function(index) 
+               {
+                  if($(this).prop('checked'))
+                  {
+	             var id = $(this).attr('name').substr(7);
+	             toHide.push(id);
+                     count++;
+                  }
+               });
 
-    if(count == 0)
-    {
-        ACRM_alert("Error!","You must select some sequences!");
-    }
-    else
-    {
-		// Run through the global sequence array undisplaying the selected objects
-        for(var i=0; i<toHide.length; i++)
-           {
-           JSAV_unsetDisplayrow('id', toHide[i], gSequences[divId]);
-           }
-        var options = gOptions[divId];
+   if(count == 0)
+   {
+      ACRM_alert("Error!","You must select some sequences!");
+   }
+   else
+   {
+      // Run through the global sequence array undisplaying the selected objects
+      for(var i=0; i<toHide.length; i++)
+      {
+         JSAV_unsetDisplayrow('id', toHide[i], gSequences[divId]);
+      }
+      var options = gOptions[divId];
 
-        // Update the consensus
-        if(options.consensus)
-            {
-            gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
-            }
+      // Update the consensus
+      if(options.consensus)
+      {
+         gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+      }
 
-        // Refresh the display
-        JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-        gSorted[divId] = false;
-    }
+      // Refresh the display
+      if(gSorted[divId])
+      {
+         JSAV_sortAndRefreshSequences(divId);
+      }
+      else
+      {
+         JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      }
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1172,13 +1329,13 @@ Sets displayrow to false for each sequence row
 function JSAV_unsetDisplayrow(key, value, array)
 
 {
-    for(var i=0; i<array.length; i++)
-    {
-       if(array[i][key] == value)
-       {
-           array[i].displayrow = false;
-	   }
-    }
+   for(var i=0; i<array.length; i++)
+   {
+      if(array[i][key] == value)
+      {
+         array[i].displayrow = false;
+      }
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1193,18 +1350,24 @@ Reinitialises displayrow for all sequences  to true. Recalculates consensus sequ
 
 function JSAV_resetDisplayrow(divId)
 {
-	initDisplayrow(gSequences[divId]);
-    // Update the consensus
-    var options = gOptions[divId];
+   initDisplayrow(gSequences[divId]);
+   // Update the consensus
+   var options = gOptions[divId];
 
-    if(options.consensus)
-        {
-        gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
-        }
+   if(options.consensus)
+   {
+      gConsensus[divId] = JSAV_buildConsensus(gSequences[divId]);
+   }
 
-    // Refresh the display
-    JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-    gSorted[divId] = false;
+   // Refresh the display
+   if(gSorted[divId])
+   {
+      JSAV_sortAndRefreshSequences(divId);
+   }
+   else
+   {
+      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -1222,13 +1385,13 @@ function JSAV_selectAllOrNone(divId, status)
 
    if (status)
    {
-       JSAV_selectAll(divId);
-       $(tag).prop('checked', true);
+      JSAV_selectAll(divId);
+      $(tag).prop('checked', true);
    }
    else
    {
-       JSAV_unselectAll(divId);
-       $(tag).prop('checked', false);   
+      JSAV_unselectAll(divId);
+      $(tag).prop('checked', false);   
    }
 }
 
@@ -1240,10 +1403,13 @@ function JSAV_resetAllNone(divId, cboxname, cboxstatus)
    var tag = "." + divId + "_AllNone";
    $(tag).prop('checked', false);
    tag = "." + cboxname;
-   if (cboxstatus) {
-     $(tag).prop('checked', true);
-   } else {
-     $(tag).prop('checked', false);
+   if (cboxstatus) 
+   {
+      $(tag).prop('checked', true);
+   } 
+   else 
+   {
+      $(tag).prop('checked', false);
    }
 }
 
@@ -1286,7 +1452,6 @@ function JSAV_unselectAll(divId)
 // ----------------------------------------------------------------------------------
 /**
 Prints the frequency slider and range boxes
-@param	{string}	uid		Global Id for the page
 @param  {string}     	divId		the div we're dealing with
 @param  {string}     	controlDiv	the div for the controls
 @param	{object}	opts		options object
@@ -1294,61 +1459,67 @@ Prints the frequency slider and range boxes
 @author 
 - 01.06.18 Original  By: JH
 */
-function printFrequencySlider(divId, controlDiv, opts) {
+function printFrequencySlider(divId, controlDiv, opts) 
+{
 
-var lowerlimit = '#' + controlDiv.toString() + 'lowerlimit';
-var upperlimit = '#' + controlDiv.toString() + 'upperlimit';
-var sliderrange = '#' + controlDiv.toString() + 'slider';
-var AboveMax = '#' + controlDiv.toString() + 'AboveMax';
-var initialPos = 100 * (opts.freqMax - opts.freqSlider2)/opts.freqMax;
-var AboveMaxDiv = '<div id="' + controlDiv.toString() + 'AboveMax" class="AboveMax" style="width: '+initialPos+'%"></div>';
+   var lowerlimit = '#' + controlDiv.toString() + 'lowerlimit';
+   var upperlimit = '#' + controlDiv.toString() + 'upperlimit';
+   var sliderrange = '#' + controlDiv.toString() + 'slider';
+   var AboveMax = '#' + controlDiv.toString() + 'AboveMax';
+   var initialPos = 100 * (opts.freqMax - opts.freqSlider2)/opts.freqMax;
+   var AboveMaxDiv = '<div id="' + controlDiv.toString() + 'AboveMax" class="AboveMax" style="width: '+initialPos+'%"></div>';
 
-
-$(sliderrange).slider({
-    range: true,
-    min: 0,
-    step: gOptions[divId].freqStep,
-    max: gOptions[divId].freqMax,
-    values: [gOptions[divId].freqSlider1, gOptions[divId].freqSlider2],
-    change: function (event, ui) {
-        var disabled = $(sliderrange).slider( "option", "disabled");
-        if (!disabled){
-            $(lowerlimit).val(ui.values[0]);
-            $(upperlimit).val(ui.values[1]);
-            gOptions[divId].freqSlider1 = ui.values[0];
-            gOptions[divId].freqSlider2 = ui.values[1];
-            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-	    var max = parseFloat($(sliderrange).slider( "option", "max"));
-            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
-        }
-    },
-    slide: function (event, ui) {
-        var disabled = $(sliderrange).slider( "option", "disabled");
-        if (!disabled){
-            $(lowerlimit).val(ui.values[0]);
-            $(upperlimit).val(ui.values[1]);
-            gOptions[divId].freqSlider1 = ui.values[0];
-            gOptions[divId].freqSlider2 = ui.values[1];
-            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
-	    var max = parseFloat($(sliderrange).slider( "option", "max"));
-            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
-        }
-    }
-}).append(AboveMaxDiv);
-$(sliderrange).slider().addClass("freq-slider");
-
-//Set initial values
-$(lowerlimit).change(function(){
-    var newlowerlim = parseFloat(this.value);
-    $(sliderrange).slider('values',0,newlowerlim);
-    gOptions[divId].freqSlider1 = newlowerlim;
-});
-
-$(upperlimit).change(function(){
-    var newupperlim = parseFloat(this.value);
-    $(sliderrange).slider('values',1,newupperlim);
-    gOptions[divId].freqSlider2 = newupperlim;
-});
+   $(sliderrange).slider({
+      range: true,
+      min: 0,
+      step: gOptions[divId].freqStep,
+      max: gOptions[divId].freqMax,
+      values: [gOptions[divId].freqSlider1, gOptions[divId].freqSlider2],
+      change: function(event, ui) 
+                      {
+                         var disabled = $(sliderrange).slider( "option", "disabled");
+                         if (!disabled)
+                         {
+                            $(lowerlimit).val(ui.values[0]);
+                            $(upperlimit).val(ui.values[1]);
+                            gOptions[divId].freqSlider1 = ui.values[0];
+                            gOptions[divId].freqSlider2 = ui.values[1];
+                            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+	                    var max = parseFloat($(sliderrange).slider( "option", "max"));
+                            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
+                         }
+                      },
+      slide: function(event, ui) 
+                     {
+                        var disabled = $(sliderrange).slider( "option", "disabled");
+                        if (!disabled)
+                        {
+                           $(lowerlimit).val(ui.values[0]);
+                           $(upperlimit).val(ui.values[1]);
+                           gOptions[divId].freqSlider1 = ui.values[0];
+                           gOptions[divId].freqSlider2 = ui.values[1];
+                           JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+	                   var max = parseFloat($(sliderrange).slider( "option", "max"));
+                           $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
+                        }
+                     }
+      }).append(AboveMaxDiv);
+   $(sliderrange).slider().addClass("freq-slider");
+   
+   //Set initial values
+   $(lowerlimit).change(function()
+                        {
+                           var newlowerlim = parseFloat(this.value);
+                           $(sliderrange).slider('values',0,newlowerlim);
+                           gOptions[divId].freqSlider1 = newlowerlim;
+                        });
+   
+   $(upperlimit).change(function()
+                        {
+                           var newupperlim = parseFloat(this.value);
+                           $(sliderrange).slider('values',1,newupperlim);
+                           gOptions[divId].freqSlider2 = newupperlim;
+                        });
  
 }
 
@@ -1362,22 +1533,23 @@ Prints the heatmap control divs and slider
 @author 
 - 01.06.18 Original  By: JH
 */
-function JSAV_printFrequencyControls(divId, controlDiv, opts) {
+function JSAV_printFrequencyControls(divId, controlDiv, opts) 
+{
 
-var html = '';
-html += "<div class='freqSlider' id='"+divId+"FrequencyControls'>";
-html += "<div class='freqSliderLabel'>Frequencies </div>";
-html += "<div class='freqSliderLimits'>Lower limit: ";
-html += "<input value='"+opts.freqSlider1+"' name='"+divId+"fsMin' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
-html += "id='"+controlDiv+"lowerlimit' class='freqSliderValue' /></div>";
-html += "<div class='freqSliderLimits'>Upper limit: ";
-html += "<input value='"+opts.freqSlider2+"' name='"+divId+"fsMax' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
-html += "id='"+controlDiv+"upperlimit' class='freqSliderValue' /></div>";
-html += "<div class='freqSliderLimits' id='" + controlDiv + "slider'></div></div>";
+   var html = '';
+   html += "<div class='freqSlider' id='"+divId+"FrequencyControls'>";
+   html += "<div class='freqSliderLabel'>Frequencies </div>";
+   html += "<div class='freqSliderLimits'>Lower limit: ";
+   html += "<input value='"+opts.freqSlider1+"' name='"+divId+"fsMin' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
+   html += "id='"+controlDiv+"lowerlimit' class='freqSliderValue' /></div>";
+   html += "<div class='freqSliderLimits'>Upper limit: ";
+   html += "<input value='"+opts.freqSlider2+"' name='"+divId+"fsMax' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
+   html += "id='"+controlDiv+"upperlimit' class='freqSliderValue' /></div>";
+   html += "<div class='freqSliderLimits' id='" + controlDiv + "slider'></div></div>";
 
-$('#' + controlDiv).append(html);
+   $('#' + controlDiv).append(html);
 
-printFrequencySlider(divId, controlDiv, opts);
+   printFrequencySlider(divId, controlDiv, opts);
 
 }
 
@@ -1392,70 +1564,84 @@ Change the <td> elements to have a white border
 */
 function JSAV_modifyCSS(divId)
 {
-    var selector = "#" + divId + " .JSAV td";
-    $(selector).css("border", "1px solid white");
+   var selector = "#" + divId + " .JSAV td";
+   $(selector).css("border", "1px solid white");
 }
 
 // ----------------------------------------------------------------
 /**
-Prints a single resudue cell based on previous cell, colourscheme, consensuscell, etc.
+Prints a single residue cell based on previous cell, colourscheme, consensuscell, etc.
 
-@param {string} divId			- the divId we're dealing with
-@param {string} aa				- the residue code to print
-@param {string} prevAa			- the previous residue code
-param {string} consensusClass	- consensus class
-@param {bool} isConsensus		- status of global isConsensus property
-@returns {string} html			- HTML
+@param {string} aa	       - the residue code to print
+@param {string} prevAa	       - the previous residue code
+@param {string} consensusClass - consensus class
+@param {bool} isConsensus      - status of global isConsensus property
+@param {bool} nocolour	       - status of global nocolour property
+@param {bool} dotify	       - status of global dotify property
+@param {string} colourScheme   -  current selected colour scheme
+@param {string} pref           - prefix for formatting residue cell (transposed or otherwise)
+@param {integer} freq          - residue's frequency value
+@param {integer} slider1       - value of slider1
+@param {integer} slider2       - value of slider2
+@returns {string} html	       - HTML
 
 @author
 - 09.01.17 Original taken from JSAV_buildASequenceHTML By: JH
+- 31.07.20 Added frequency value and slider limits for frequency colouring
 */
 
 function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, slider1, slider2) {
 
-var colourClass = colourScheme + aa.toUpperCase();
+   var colourClass = colourScheme + aa.toUpperCase();
         
-if ((colourScheme == 'frequencies') && (freq != undefined) && (slider1 != undefined)) 
+   if ((colourScheme == 'frequencies') && (freq != undefined) && (slider1 != undefined)) 
    {
-   colourClass = 'frequencyMed';
-   if (freq <= slider1) 
-      colourClass = 'frequencyMin';
-   else if (freq > slider2)
-      colourClass = 'frequencyMax';
+      colourClass = 'frequencyMed';
+      if (freq <= slider1) 
+      {
+         colourClass = 'frequencyMin';
+      }
+      else if (freq > slider2)
+      {
+         colourClass = 'frequencyMax';
+      }
    }
 
-if((dotify || nocolour) && !isConsensus)
-	{
-	if(nocolour)
-		{
-		if(aa == "-") 
-			{ 
-			colourClass = "aaDel"; 
-			}
-		}
-	if(aa == prevAa)
-		{
-		if(nocolour)
-			{
-			if(aa == '-')
-				{
-				colourClass = "aaDel";	
-				}
-			else
-				{
-				colourClass = "aaDot";	
-				}
-			}
-		if(dotify)
-			if(aa != '-') {aa = '.';}
-		}
-	var html = "<td class='"+pref+"seqCell " + colourClass + "'>" + aa + "</td>";
-	}
-else 
-        {
-	var html = "<td class='"+pref+"seqCell " + colourClass + consensusClass + "'>" + aa + "</td>";
-	}
-return(html);
+   if((dotify || nocolour) && !isConsensus)
+   {
+      if(nocolour)
+      {
+         if(aa == "-") 
+         { 
+            colourClass = "aaDel"; 
+         }
+      }
+      
+      if(aa == prevAa)
+      {
+         if(nocolour)
+         {
+            if(aa == '-')
+            {
+               colourClass = "aaDel";	
+            }
+            else
+            {
+               colourClass = "aaDot";	
+            }
+         }
+         if(dotify)
+         {
+            if(aa != '-') {aa = '.';}
+         }
+      }
+      var html = "<td class='"+pref+"seqCell " + colourClass + "'>" + aa + "</td>";
+   }
+   else 
+   {
+      var html = "<td class='"+pref+"seqCell " + colourClass + consensusClass + "'>" + aa + "</td>";
+   }
+   return(html);
 }
  
 // ---------------------------------------------------------------------
@@ -1468,9 +1654,11 @@ separate <td> tag with a class to indicate the amino acid type
 @param {string}   divId         The divId we're dealing with
 @param {string}   id            The identifier
 @param {string}   sequence      A string containing the sequence
+@param {array}    frequencies   Array of frequency values for the residues
 @param {string}   prevSequence  A string containing the previous sequence
 @param {bool}     isConsensus   This is the consensus sequence
 @param {string}   idSubmit      URL to visit when sequence label clicked
+@param {integer}  cc            Position for change from heavy to light chain
 @returns {string} tableline     HTML snippet
 
 @author 
@@ -1483,47 +1671,54 @@ separate <td> tag with a class to indicate the amino acid type
            the sequence and the id
 - 09.01.17 Changed first if statement to allow independent dotify or nocolour display
 		   Individual cell display now carried out by printResidueCell By: JH
+- 31.07.20 Added frequencies for call to printResidueCell By: JH
 */
 function JSAV_buildASequenceHTML(divId, id, sequence, frequencies, prevSequence, isConsensus, idSubmit, cc)
 {
-    var options = gOptions[divId];
-    var seqArray     = sequence.split("");
-    var prevSeqArray = undefined;
+   var options = gOptions[divId];
+   var seqArray     = sequence.split("");
+   var prevSeqArray = undefined;
 
-    if((options.dotify || options.nocolour) && (prevSequence != undefined))
-    {
-        prevSeqArray = prevSequence.split("");
-    }
+   if((options.dotify || options.nocolour) && (prevSequence != undefined))
+   {
+      prevSeqArray = prevSequence.split("");
+   }
 
-    var tableLine = "";
+   var tableLine = "";
 
-    var consensusClass = "";
-    if(isConsensus)
-    {
-        if (id == 'Consensus') {
-           consensusClass = " consensusCell";
-        } else {
-           consensusClass = " blastqueryCell";
-        }
-    }
+   var consensusClass = "";
+   if(isConsensus)
+   {
+      if (id == 'Consensus') 
+      {
+         consensusClass = " consensusCell";
+      } 
+      else 
+      {
+         consensusClass = " blastqueryCell";
+      }
+   }
 
-    var pref;
-    var nResidues = seqArray.length;
-    var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
-    var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
-    for(var i=0; i<nResidues; i++) {
-        pref = '';
-        if (i == cc) { pref = 'br_'; }
-        var freq = undefined;
-        if ((frequencies != undefined) && (options.labels != undefined))
-           freq = frequencies[options.labels[i]];
-	var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
-        tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, 
-                                      options.nocolour, options.dotify, options.colourScheme, pref, freq, slider1, slider2);
-	}
+   var pref;
+   var nResidues = seqArray.length;
+   var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
+   var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
+   for(var i=0; i<nResidues; i++) 
+   {
+      pref = '';
+      if (i == cc) { pref = 'br_'; }
+      var freq = undefined;
+      if ((frequencies != undefined) && (options.labels != undefined))
+      {
+         freq = frequencies[options.labels[i]];
+      }
+      var prevAa = (prevSeqArray != undefined) ? prevSeqArray[i] : '#';   
+      tableLine += printResidueCell(seqArray[i], prevAa, consensusClass, isConsensus, 
+                                    options.nocolour, options.dotify, options.colourScheme, pref, freq, slider1, slider2);
+      }
   
-    tableLine += "</td><td class='rhcol'></td></tr>";
-    return(tableLine);
+   tableLine += "</td><td class='rhcol'></td></tr>";
+   return(tableLine);
 }
 
 // --------------------------------------------------------------------
@@ -1537,16 +1732,18 @@ Displays thin row coloured by the label type (heavy or light)
 - 21.03.17  Original	By: JH
 */
 
-function JSAV_buildTypeLabel(labels) {
+function JSAV_buildTypeLabel(labels) 
+{
 
-var tableLine = "";
-tableLine += "<tr class='typeLabelRow'></td>";
-for (var l=0; l<labels.length; l++) {
-    var cellCol = (labels[l].substring(0,1) == 'L') ? "light-col" : "heavy-col";
-    tableLine += "<td class='" + cellCol + "'></td>";
-}
-tableLine += "<td class='rhcol'></td></tr>";
-return(tableLine);
+   var tableLine = "";
+   tableLine += "<tr class='typeLabelRow'></td>";
+   for (var l=0; l<labels.length; l++) 
+      {
+      var cellCol = (labels[l].substring(0,1) == 'L') ? "light-col" : "heavy-col";
+      tableLine += "<td class='" + cellCol + "'></td>";
+      }
+   tableLine += "<td class='rhcol'></td></tr>";
+   return(tableLine);
 }
 
 // ---------------------------------------------------------------------
@@ -1567,14 +1764,16 @@ Called as JSAV_showRange(divID)
 */
 function JSAV_showRange(divId)
 {
-    
-    // Display the range currently selected
+   // Display the range currently selected
    var parenttag = '#' + divId + '_controls';
    var span_showrange = $("<span id='" + divId + "_showrange'></span>").appendTo(parenttag);
    var tag = "#" + divId + "_showrange";
-   if (gOptions[divId].transpose) {
+   if (gOptions[divId].transpose) 
+   {
       $(tag).html('');
-   } else {
+   } 
+   else 
+   {
       var html = "<p>Region: positions " + gStartPos[divId] + " to " + gStopPos[divId] + "</p>";
       $(tag).html(html);
       JSAV_markRange(divId, gSequenceLengths[divId], gStartPos[divId]-1, gStopPos[divId]-1);
@@ -1612,20 +1811,20 @@ Prints a single highlight cell base on the highlight array
 - 09.01.17 Original By: JH (based on original section of JSAV_buildHighlightHTML)
 */
 
-function printHighlightCell(highlight, i, pref) {
-
-var displayClass = 'unhighlighted';
-for(var j=0; j<highlight.length; j+=2)
-	{
-	var start = highlight[j];
-	var stop  = highlight[j+1];
-	if((i >= start) && (i <= stop))
-		{
-		displayClass = 'highlighted';
-		break;
-		}
-	}
-	return("<td class='"+displayClass+" "+pref+"' /></td>");
+function printHighlightCell(highlight, i, pref) 
+{
+   var displayClass = 'unhighlighted';
+   for(var j=0; j<highlight.length; j+=2)
+   {
+      var start = highlight[j];
+      var stop  = highlight[j+1];
+      if((i >= start) && (i <= stop))
+      {
+         displayClass = 'highlighted';
+         break;
+      }
+   }
+   return("<td class='"+displayClass+" "+pref+"' /></td>");
 }
 
 // ---------------------------------------------------------------------
@@ -1644,109 +1843,136 @@ them as a coloured table in transposed (vertical) orientation
 function JSAV_transposeSequencesHTML(divId, sequences)
 
 {
-	var dispOrder = gDisplayOrder[divId];
-	var options = gOptions[divId]
-	var html = "";
-	html += "<div class='JSAV'>\n";
-        // Create id line
-
+   var dispOrder = gDisplayOrder[divId];
+   var options = gOptions[divId]
+   var html = "";
+   html += "<div class='JSAV'>\n";
+   
+   // Create id line
    var calcwidth = (sequences.length * 20) + 250;
    var tabwidth = calcwidth + 'px';
    $('#' + divId).css('width', tabwidth);
 
-	html += "<div id='"+divId+"tr_outerseqtable' class='tr_outerseqtable'>";
-	html += "<div class='tr_seqtable'>";
-        html += "<table border='0'>\n";
+   html += "<div id='"+divId+"tr_outerseqtable' class='tr_outerseqtable'>";
+   html += "<div class='tr_seqtable'>";
+   html += "<table border='0'>\n";
 
-	html += "<tr><th class='tr_labels tr_idCell rotate'><div>All/None</div></th>";
-	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
-	for (var i=0;i<sequences.length;i++) 
-		if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
-			{
-			var id = sequences[dispOrder[i]].id;
-			if(options.idSubmit == null)
-				{
-				html += "<th class='tr_seqCell tr_idCell rotate'><div>" + id + "</div></th>";
-				}
-			else
-				{
-             			var idSubmitAttribute = options.idSubmitAttribute;
-				var url         = options.idSubmit;
-				var submitParam = sequences[dispOrder[i]][idSubmitAttribute];
-				if(options.idSubmitClean)
-					{
-					submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
-					}
-       			        url += submitParam;
-				html += "<th class='tr_seqCell tr_idCell rotate'><div><a href='" + url + "'>" + id + "</a></div></th>";
-				}
-			}
-	if(options.consensus != undefined)
-		html += "<th class='tr_idCell rotate tr_consensusCell'><div>Consensus</div></th>";
-	if (options.selectable) html += "<td class='tr_highlightrow'></td>";
-	html += '</tr>';
-
-	// Create the selection button line
-	if (options.selectable) {
-		html += JSAV_buildSelectAllHTML(divId, options.selectable, true, 'tr_labels');
-		if (options.selectable) html += "<td class='tr_highlightrow'></td>";
-		for (var i=0;i<sequences.length;i++) 
-		    if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
-			{
-			var name = "select_" + sequences[dispOrder[i]].id;
-			var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-			html += "<td class='tr_seqCell tr_selectCell'><input class='selectBox "+cname+" tr_checkbox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\", \""+cname+"\",this.checked);'/></td>";
-			}
-		if(options.consensus != undefined)
-		    html += "<td class='tr_seqCell tr_consensusCell'></td>";
-		if (options.selectable) html += "<td class='tr_highlightrow'></td>";
-		html += '</tr>';
-	}
+   html += "<tr><th class='tr_labels tr_idCell rotate'><div>All/None</div></th>";
+   if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+   for (var i=0;i<sequences.length;i++) 
+   {
+      if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+      {
+         var id = sequences[dispOrder[i]].id;
+         if(options.idSubmit == null)
+         {
+            html += "<th class='tr_seqCell tr_idCell rotate'><div>" + id + "</div></th>";
+         }
+         else
+         {
+            var idSubmitAttribute = options.idSubmitAttribute;
+            var url         = options.idSubmit;
+            var submitParam = sequences[dispOrder[i]][idSubmitAttribute];
+            if(options.idSubmitClean)
+            {
+               submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            }
+            url += submitParam;
+            html += "<th class='tr_seqCell tr_idCell rotate'><div><a href='" + url + "'>" + id + "</a></div></th>";
+         }
+      }
+   }
+   if(options.consensus != undefined)
+   {
+      html += "<th class='tr_idCell rotate tr_consensusCell'><div>Consensus</div></th>";
+   }
 	
-	// Create transposed sequences
-        html += "<tr class='topline'><td></td></tr>";
+   if (options.selectable)
+   {
+      html += "<td class='tr_highlightrow'></td>";
+   }
+   html += '</tr>';
 
-        for (var i=0;i<gSequenceLengths[divId];i++)
-		{
-                var toplineStr = (i==0) ? "topborder" : "";
-		html += "<tr><th class='tr_labels idCell "+toplineStr+"'>"+options.labels[i]+"</th>";
-		if (options.selectable) {
-			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
-			}
-                var prevAa = '#';
-                var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
-                var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
-		for (var s=0; s<sequences.length; s++) 
-			if ((sequences[dispOrder[s]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[s]]))
-			{
-                        var label = options.labels[s];
-                        var freq = undefined;
-                        if (frequencies != undefined)
-                           freq = sequences[dispOrder[s]].frequencies[options.labels[i]];
-			var aa = sequences[dispOrder[s]].sequence[i];
-			html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, 
-                                                 options.colourScheme, 'tr_', freq, slider1, slider2);
-                        prevAa = sequences[dispOrder[s]].sequence[i];
-			}
-		if(options.consensus != undefined) {
-			var aa = gConsensus[divId][i];
-			var prevAa = '#';
-			html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, 
-                                                 options.colourScheme, 'tr_', undefined, undefined, undefined);
-			}
-		if (options.selectable) {
-			html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
-			}
+   // Create the selection button line
+   if (options.selectable) 
+   {
+      html += JSAV_buildSelectAllHTML(divId, options.selectable, true, 'tr_labels');
+      if (options.selectable) html += "<td class='tr_highlightrow'></td>";
+      for (var i=0;i<sequences.length;i++)
+      {
+         if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+         {
+	    var name = "select_" + sequences[dispOrder[i]].id;
+            var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+            html += "<td class='tr_seqCell tr_selectCell'><input class='selectBox "+cname+" tr_checkbox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\", \""+cname+"\",this.checked);'/></td>";
+         }
+      }
+
+      if(options.consensus != undefined)
+      {
+         html += "<td class='tr_seqCell tr_consensusCell'></td>";
+      }
+
+      if (options.selectable)
+      {
+         html += "<td class='tr_highlightrow'></td>";
+      }
+      html += '</tr>';
+   }
+	
+   // Create transposed sequences
+   html += "<tr class='topline'><td></td></tr>";
+
+   for (var i=0;i<gSequenceLengths[divId];i++)
+   {
+      var toplineStr = (i==0) ? "topborder" : "";
+      html += "<tr><th class='tr_labels idCell "+toplineStr+"'>"+options.labels[i]+"</th>";
+      if (options.selectable) 
+      {
+         html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
+      }
+
+      var prevAa = '#';
+      var slider1 = (options.freqSlider1) ? options.freqSlider1 : undefined;
+      var slider2 = (options.freqSlider2) ? options.freqSlider2 : undefined;
+      for (var s=0; s<sequences.length; s++)
+      {
+         if ((sequences[dispOrder[s]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[s]]))
+         {
+            var label = options.labels[s];
+            var freq = undefined;
+            if (frequencies != undefined)
+            {
+               freq = sequences[dispOrder[s]].frequencies[options.labels[i]];
+            }
+            var aa = sequences[dispOrder[s]].sequence[i];
+            html += printResidueCell(aa, prevAa, "", false, options.nocolour, options.dotify, 
+                                     options.colourScheme, 'tr_', freq, slider1, slider2);
+            prevAa = sequences[dispOrder[s]].sequence[i];
+         }
+      }
+      if(options.consensus != undefined) 
+      {
+         var aa = gConsensus[divId][i];
+         var prevAa = '#';
+         html += printResidueCell(aa, prevAa, " tr_consensusCell", true, options.nocolour, options.dotify, 
+                                  options.colourScheme, 'tr_', undefined, undefined, undefined);
+      }
+      if (options.selectable) 
+      {
+         html += printHighlightCell(options.highlight, i, 'tr_highlightrow');
+      }
 		
-		html += "</tr>";
-		}
-	html += "</table>\n";
-        html += "</div>\n";
-        html += "</div>\n";
-	html += "</div>\n";
-        $('#'+divId+'tr_outerseqtable').css('direction','rtl');
-	return(html);
+      html += "</tr>";
+   }
+   html += "</table>\n";
+   html += "</div>\n";
+   html += "</div>\n";
+   html += "</div>\n";
+   $('#'+divId+'tr_outerseqtable').css('direction','rtl');
+   return(html);
 }
+
 // ----------------------------------------------------------------
 /**
 Builds the label for the sequence row
@@ -1754,51 +1980,71 @@ Builds the label for the sequence row
 @param 		{string}	divId		ID of the div we're dealing with
 @param 		{string}	attributeValue 	value of idSubmitAttribute for the id
 @param 		{string}	id		sequence's id
-@param 		{string}	idSubmit	text for label link
+@param 		{string}	idSubmit	text for submit values
+@param          {string}        idSubmitKey     text for submit parameters
 @param		{number}	colspan		number of table columns to span	
+@param          {string}        bgcol           formatting class for the cell
+@param          {string}        humanOrg        human organism option
 @returns	{string}	html		HTML for the label
 
 @author
 - 23.03.17 Original By: JH
+- 06.07.20 Fixed to recreate old default behaviour (i.e. the URL contains the ?key= part and
+           appends the sequence unless keys and attributes are set)
 */
 
-function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol, humanOrg) {
+function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan, bgcol, humanOrg) 
+{
 
-    var options = gOptions[divId];
-    var html = "";
+   var options = gOptions[divId];
+   var html = "";
 
-    if ((idSubmit == null) || (attributeValue == undefined))
-    {
-       html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
-    }
-    else
-    {
-       var url         = idSubmit;
-       var seperator = '?';
-       var attrArray = attributeValue.split(':');
-       var keyArray = idSubmitKey.split(':');
-       for (var a=0; a<attrArray.length; a++) 
-          {
-          var submitParam = attrArray[a];
-          var submitKey = keyArray[a];
+   if ((idSubmit == null) || (attributeValue == undefined))
+   {
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
+   }
+   else
+   {
+      if(idSubmitKey == '')
+      {
+         var url       = idSubmit;
+
+         if(options.idSubmitClean)
+         {
+            // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+            // It probably wouldn't make sense for IDs etc
+            attributeValue = attributeValue.replace(/[^A-Za-z0-9]/g, '');
+         }
+      url += attributeValue;
+   }
+   else
+   {
+      var url         = idSubmit;
+      var seperator = '?';
+      var attrArray = attributeValue.split(':');
+      var keyArray = idSubmitKey.split(':');
+      for (var a=0; a<attrArray.length; a++) 
+         {
+         var submitParam = attrArray[a];
+         var submitKey = keyArray[a];
  
-          if(options.idSubmitClean)
-             {
-             // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
-             // It probably wouldn't make sense for IDs etc
-             submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
-             }
-          url += seperator + submitKey + '=' + submitParam;
-          seperator = '&';
-          }
-       if (humanOrg) 
-          {
-          url += '&humanorganism='+humanOrg;
-          }
-       html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
-    }
+         if(options.idSubmitClean)
+         {
+            // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+            // It probably wouldn't make sense for IDs etc
+            submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+         }
+         url += seperator + submitKey + '=' + submitParam;
+         seperator = '&';
+      }
+      if (humanOrg) 
+      {
+         url += '&humanorganism='+humanOrg;
+      }
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
+   }
 
-return(html);
+   return(html);
 }
 
 // ---------------------------------------------------------------------
@@ -1815,12 +2061,17 @@ Returns true if the sequence is numbered
 
 function numberedSequence(chainType, sequence)
 {
-   if (chainType == 'heavy') {
-     return (sequence.heavy_Numbered != 'N');
-   } else if (chainType == 'light') {
-     return (sequence.light_Numbered != 'N');
-   } else {
-     return ((sequence.light_Numbered != 'N') || (sequence.heavy_Numbered != 'N'));
+   if (chainType == 'heavy') 
+   {
+      return (sequence.heavy_Numbered != 'N');
+   } 
+   else if (chainType == 'light') 
+   {
+      return (sequence.light_Numbered != 'N');
+   } 
+   else 
+   {
+      return ((sequence.light_Numbered != 'N') || (sequence.heavy_Numbered != 'N'));
    }
 }
 
@@ -1843,6 +2094,7 @@ them as a coloured table
 - 22.12.15 Added labels
 - 09.01.17 Added empty string format parameter to JSAV_buildSelectAllHTML 
 		   Uses displayOrder to display sequences in sorted order	By: JH
+- 07.04.20 Added blast query row if it exists By: JH
 */
 
 function JSAV_buildSequencesHTML(divId, sequences)
@@ -1853,53 +2105,56 @@ function JSAV_buildSequencesHTML(divId, sequences)
    var html = "";
    html += "<div class='JSAV'>\n";
 
-//------------------ Header Columns --------------------------
+   //------------------ Header Columns --------------------------
    
    html += "<div class='header'><table border='0'>";
    html += "<tr><td class='idCell' colspan='10'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
    var cc = chainChange(options.labels, options.autoLabels, divId);
    if (options.selectable)
-	{ 
-        html += "<td class='idCell'>All/None</td>";
-        html += JSAV_buildSelectAllHTML(divId, options.selectable, true, '');
-        }
+   { 
+      html += "<td class='idCell'>All/None</td>";
+      html += JSAV_buildSelectAllHTML(divId, options.selectable, true, '');
+   }
    else
-        { html += "<td>&nbsp;</td><td class='selectCell'>&nbsp;</td>"; }
+   {
+      html += "<td>&nbsp;</td><td class='selectCell'>&nbsp;</td>"; 
+   }
 
 
    if(options.labels != undefined)
-       {
-       html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels, cc);
-       html += "<td class='rhcol'></td>";
-       }		
-    html += "</tr>";
+   {
+      html += JSAV_buildLabelsHTML(divId,  gSequenceLengths[divId], options.labels, cc);
+      html += "<td class='rhcol'></td>";
+   }		
+   html += "</tr>";
 
    if((options.labeltypecol != undefined) && (options.labels != undefined))
-      {
+   {
       html += "<tr class='typeLabelRow'>";
       html += "<td></td><td></td>";
       html += JSAV_buildTypeLabel(options.labels);
       html += "</tr>";
-      }
+   }
 
-  if(options.highlight != undefined)
-       {
-       html += "<tr class='highlightrow'>";
-       html += "<th class='idCell'>CDRs</th><td>&nbsp;</td>";
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
-       html += "</tr>";
-       }
+   if(options.highlight != undefined)
+   {
+      html += "<tr class='highlightrow'>";
+      html += "<th class='idCell'>CDRs</th><td>&nbsp;</td>";
+      html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+      html += "</tr>";
+   }
 
    if((options.blastaaquery != undefined) && (options.blastaaquery != ''))
-       {
-       html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
-       html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildASequenceHTML(divId, 'BlastQuery', options.blastaaquery, undefined, undefined, true, null, cc) + "\n";
-       html += "</tr>";
-       }
+   {
+      html += "<tr class='tooltip blastqueryCell seqrow' title='This row shows the blast query sequence.'>";
+      html += "<th class='idCell'>Query</th><th class='selectCell'>&nbsp;</th>";
+      html += JSAV_buildASequenceHTML(divId, 'BlastQuery', options.blastaaquery, undefined, undefined, true, null, cc) + "\n";
+      html += "</tr>";
+   }
 
-html += "</table></div>";
-//---------------- Central Section ------------------------
+   html += "</table></div>";
+   
+   //---------------- Central Section ------------------------
 
    html += "<div class='outerseqtable'>";
    html += "<div class='seqtable'>";
@@ -1907,62 +2162,68 @@ html += "</table></div>";
 
    var prevSequence = undefined;
    for(var i=0; i<sequences.length; i++) 
-	if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
+   {
+      if(sequences[disporder[i]].displayrow != undefined)
+      {
+	 if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
   	 {
-	 html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
+	    html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
 
-         var attrArray = options.idSubmitAttribute.split(':');
-         var idSubmitAttr = '';
-         for (var a=0; a<attrArray.length; a++)
-             idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
-         idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-     	 html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
-  	 var name = "select_" + sequences[dispOrder[i]].id;
-	 var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-         html += "<th class='selectCell'>";
-         html += (options.selectable) ? "<input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/>" : "";
-         html +="</th>";
-         html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, 
-                                         sequences[dispOrder[i]].frequencies, prevSequence, false, options.idSubmit, cc) + "\n";
-         prevSequence = sequences[dispOrder[i]].sequence;
-         html += "</tr>";
+            var attrArray = options.idSubmitAttribute.split(':');
+            var idSubmitAttr = '';
+            for (var a=0; a<attrArray.length; a++)
+               idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
+            idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+     	    html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
+  	    var name = "select_" + sequences[dispOrder[i]].id;
+	    var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+            html += "<th class='selectCell'>";
+            html += (options.selectable) ? "<input class='"+cname+" selectBox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'/>" : "";
+            html +="</th>";
+            html += JSAV_buildASequenceHTML(divId, sequences[dispOrder[i]].id, sequences[dispOrder[i]].sequence, 
+                                            sequences[dispOrder[i]].frequencies, prevSequence, false, options.idSubmit, cc) + "\n";
+            prevSequence = sequences[dispOrder[i]].sequence;
+            html += "</tr>";
   	 }
+      }
+   }
  
-    html += "</table>";
-    html += "</div>";
-    html += "</div>";
+   html += "</table>";
+   html += "</div>";
+   html += "</div>";
 
-//------------ Footer section -----------------
+   //------------ Footer section -----------------
    html += "<div class='footer'>";
    html += "<table border='0'>";
    if(options.consensus)
-       {
-       html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'>";
-       html += "<th class='idCell'>Consensus</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildASequenceHTML(divId, 'Consensus', gConsensus[divId], undefined, undefined, true, null, cc) + "\n";
-       html += "</tr>";
-       }
-  if(options.highlight != undefined)
-       {
-       html += "<tr class='highlightrow'>";
-       html += "<th class='idCell'>CDRs</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
-       html += "</tr>";
-       }
+   {
+      html += "<tr class='tooltip consensusCell seqrow' title='The consensus shows the most frequent amino acid. This is lower case if &le;50% of the  sequences have that residue.'>";
+      html += "<th class='idCell'>Consensus</th><th class='selectCell'>&nbsp;</th>";
+      html += JSAV_buildASequenceHTML(divId, 'Consensus', gConsensus[divId], undefined, undefined, true, null, cc) + "\n";
+      html += "</tr>";
+   }
+   if(options.highlight != undefined)
+   {
+      html += "<tr class='highlightrow'>";
+      html += "<th class='idCell'>CDRs</th><th class='selectCell'>&nbsp;</th>";
+      html += JSAV_buildHighlightHTML(divId, gSequenceLengths[divId], options.selectable, options.highlight, cc);
+      html += "</tr>";
+   }
    if((options.labeltypecol != undefined) && (options.labels != undefined))
-      {
+   {
       html += "<tr class='typeLabelRow'>";
       html += "<td></td><td></td>";
       html += JSAV_buildTypeLabel(options.labels);
       html += "</tr>";
-      }
+   }
 
-   if(options.sortable) {
-       html += "<tr class='tooltip markerrow' title='Select region for sorting - click here to reset sort region'>";
+   if(options.sortable) 
+   {
+      html += "<tr class='tooltip markerrow' title='Select region for sorting - click here to reset sort region'>";
       html += "<th class='idCell' onclick='resetSortRegion(\""+divId+"\")';>Sort Region</th><th class='selectCell'>&nbsp;</th>";
-       html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], options.selectable);
-       html += "</tr>";
-      }
+      html += JSAV_buildMarkerHTML(divId, gSequenceLengths[divId], options.selectable);
+      html += "</tr>";
+   }
 
    html += "</table></div>";
    html += "</div>\n";
@@ -1993,9 +2254,10 @@ function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
    var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
    var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
 
-   if (selectable) {
-	   html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
-    }   
+   if (selectable) 
+   {
+      html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
+   }   
    return(html);
 }
 
@@ -2018,19 +2280,19 @@ residues to be used for sorting
 */
 function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
-    var html = "";
+   var html = "";
 
-//    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
+   //    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
 
-    for(var i=0; i<seqLen; i++)
-    {
-        var id = divId + "_JSAVMarker" + i;
-		var onmousedown = "setSortStart(\""+divId+"\", "+(i)+");";
-		var onmouseover = "setSortRange(\""+divId+"\", "+i+");";
-        html += "<td id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
-    }
-    html += "<td class='rhcol'></td>\n";
-    return(html);
+   for(var i=0; i<seqLen; i++)
+   {
+      var id = divId + "_JSAVMarker" + i;
+      var onmousedown = "setSortStart(\""+divId+"\", "+(i)+");";
+      var onmouseover = "setSortRange(\""+divId+"\", "+i+");";
+      html += "<td id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
+   }
+   html += "<td class='rhcol'></td>\n";
+   return(html);
 }
 
 // ---------------------------------------------------------------------	
@@ -2044,12 +2306,13 @@ Sets the start (and stop) position when mouse is depressed
 - 09.01.17 Original By: JH
 */
 
-function setSortStart(divId, i) {
+function setSortStart(divId, i) 
+{
 	
-gStartPos[divId] = i+1;
-gStopPos[divId] = i+1;
-mouseState = "down";
-JSAV_showRange(divId);
+   gStartPos[divId] = i+1;
+   gStopPos[divId] = i+1;
+   mouseState = "down";
+   JSAV_showRange(divId);
 }
 
 // -----------------------------------------------------------------------
@@ -2063,11 +2326,14 @@ Adjusts the stop position to current cell if mouse is depressed
 - 09.01.17 Original By: JH
 */
 
-function setSortRange(divId, i) {
-if (mouseState=="down") {
-	gStopPos[divId] = i+1;
-	JSAV_showRange(divId);
-	}
+function setSortRange(divId, i) 
+
+{
+   if (mouseState=="down") 
+   {
+      gStopPos[divId] = i+1;
+      JSAV_showRange(divId);
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -2077,11 +2343,11 @@ Resets sort region to full width
 @author
 - 15.09.17 Original By: JH
 */
-function resetSortRegion(divId) {
-
-gStartPos[divId] = 1;
-gStopPos[divId] = gSequenceLengths[divId];
-JSAV_showRange(divId);
+function resetSortRegion(divId) 
+{
+   gStartPos[divId] = 1;
+   gStopPos[divId] = gSequenceLengths[divId];
+   JSAV_showRange(divId);
 }
 
 // ---------------------------------------------------------------------
@@ -2092,8 +2358,9 @@ Initialises the global mouseState
 - 09.01.17 Original By: JH
 */
 
-function mouseUpHandler() {
-mouseState = "up";
+function mouseUpHandler() 
+{
+   mouseState = "up";
 }
 
 // ---------------------------------------------------------------------
@@ -2468,12 +2735,15 @@ Also updates the marked range and the CSS if the border option is set
 */
 function JSAV_refresh(divId, sequences, start, stop)
 {
-	var options = gOptions[divId];
-	if (options.transpose) {
-		var html = JSAV_transposeSequencesHTML(divId, sequences)
-	} else {
-		var html = JSAV_buildSequencesHTML(divId, sequences);
-	}
+   var options = gOptions[divId];
+   if (options.transpose) 
+   {
+      var html = JSAV_transposeSequencesHTML(divId, sequences)
+   }
+   else 
+   {
+      var html = JSAV_buildSequencesHTML(divId, sequences);
+   }
 									  
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
@@ -2482,17 +2752,20 @@ function JSAV_refresh(divId, sequences, start, stop)
    $('#' + divId + ' .header').css('width', seqtabWidth);
    $('#' + divId + ' .footer').css('width', seqtabWidth);
 
- if(options.border)
+   if(options.border)
    {
-       JSAV_modifyCSS(divId);
+      JSAV_modifyCSS(divId);
    }
 
    if (options.sortable)
    {	  
-	   JSAV_showRange(divId);
+      JSAV_showRange(divId);
    }
    
-   printDataTable(divId, sequences);						
+   if(options.displaydatatable != undefined)
+   {
+      printDataTable(divId, sequences);						
+   }
 
    if(options.callback != undefined)
     {
@@ -2522,16 +2795,16 @@ function JSAV_markRange(divId, seqLen, start, stop)
 {
    for(var i=0; i<seqLen; i++)
    {
-       var id = divId + "_JSAVMarker" + i;
-       document.getElementById(id).className = 'unmarked';
+      var id = divId + "_JSAVMarker" + i;
+      document.getElementById(id).className = 'unmarked';
    }
   
    if((start >= 0) && (stop >= 0))
    {
       for(var i=start; i<=stop; i++)
       {
-          var id = divId + "_JSAVMarker" + i;
-          document.getElementById(id).className = 'marked';
+         var id = divId + "_JSAVMarker" + i;
+         document.getElementById(id).className = 'marked';
       }
    }
 }
@@ -2545,6 +2818,7 @@ Initializes global arrays
 - 12.06.14 Added more arrays
 - 17.06.14 Added gConsensus array
 - 01.09.17 Added gDisplayOrder and gDisplayColumn  By: JH
+- 31.07.20 Added gSorted and gTableWidth By: JH
 */
 function JSAV_init()
 {
@@ -2560,7 +2834,8 @@ function JSAV_init()
    {
        gSequences       = Array();
        gOptions         = Array();
-	   gSorted			= Array();
+       gSorted		= Array();
+       gTableWidth      = Array();
        gStartPos        = Array();
        gStopPos         = Array();
        gConsensus       = Array();
@@ -2583,8 +2858,8 @@ file
 */
 function JSAV_initColourChoices()
 {
-    return(['Taylor', 'Clustal', 'Zappo', 'HPhob', 'Helix', 'Strand',
-            'Turn', 'Buried']);
+   return(['Taylor', 'Clustal', 'Zappo', 'HPhob', 'Helix', 'Strand',
+           'Turn', 'Buried']);
 }
 
 // ---------------------------------------------------------------------
@@ -2816,20 +3091,35 @@ function ACRM_dialog(title, msg, width, pre)
     });
 };
 
+// ---------------------------------------------------------------------
+/**
+Returns the position of the change from heavy to light chain - for combined sequences
+
+@param {array}   labels     - array of residue labels ('H1',..)
+@param {bool}    autoLabels - the autoLabels option
+@param {string}  divId      - the divId we're dealing with
+@returns {int}              - position of the change from heavy to light chain
+
+@author 
+- 18.06.17 Original   By: JH
+*/
 
 function chainChange(labels, autoLabels, divId) {
 
-if ((labels == undefined) || (autoLabels)) {
-  return gSequenceLengths[divId];
-	} else {
-  var res = labels.length;
-  for (var i=0; i < labels.length-1; i++)
-    if (labels[i].substring(0,1) != labels[i+1].substring(0,1)) {
-      res = i;
-    }
-  return res;
-
-}
+   if ((labels == undefined) || (autoLabels)) 
+   {
+      return gSequenceLengths[divId];
+   } 
+   else 
+   {
+      var res = labels.length;
+      for (var i=0; i < labels.length-1; i++)
+      if (labels[i].substring(0,1) != labels[i+1].substring(0,1)) 
+         {
+         res = i;
+         }
+      return res;
+   }
 }
 
 // ---------------------------------------------------------------------
@@ -2849,60 +3139,63 @@ Create the HTML for a label row in the sequence display
 
 function JSAV_buildLabelsHTML(divId,  seqLen, labels, cc)
 {
-    var html = "";
-    var pref;
-    var labelNumbers = "";
-    for(var i=0; i<labels.length; i++)
-    {
-        pref = '';
-        if (i == cc) { pref = 'br_'; }
-        // Make a copy of the label and remove the chain label
-        var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
-        var labelText = labels[i].replace(/^[A-Za-z]/g, '');
-        var lastChar = labelText.substring(labelText.length-1,labelText.length);
-	html += "<td class='"+pref+cellCol+"'>";
-        if (lastChar == "0") {
-           labelNumbers = labelText;
-	   }
-	if (labelNumbers.length > 0) {
-	   html += labelNumbers[0];
-	   labelNumbers = labelNumbers.substring(1,labelNumbers.length)
-	   }
-	html += "</td>";
-	}
-   html += "<td class='rhcol'></td></tr><tr class='labelrow'><td>&nbsp;</td><td>&nbsp;</td></td>";
+   var html = "";
+   var pref;
+   var labelNumbers = "";
    for(var i=0; i<labels.length; i++)
-    {
-        pref = '';
-        if (i == cc) { pref = 'br_'; }
-        var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
-        var labelText = labels[i].replace(/^[A-Za-z]/g, '');
+   {
+      pref = '';
+      if (i == cc) { pref = 'br_'; }
+      // Make a copy of the label and remove the chain label
+      var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
+      var labelText = labels[i].replace(/^[A-Za-z]/g, '');
+      var lastChar = labelText.substring(labelText.length-1,labelText.length);
+      html += "<td class='"+pref+cellCol+"'>";
+      if (lastChar == "0") 
+      {
+         labelNumbers = labelText;
+      }
+      if (labelNumbers.length > 0) 
+      {
+	 html += labelNumbers[0];
+	 labelNumbers = labelNumbers.substring(1,labelNumbers.length)
+      }
+      html += "</td>";
+   }
+   html += "<td class='rhcol'></td></tr><tr class='labelrow'><td>&nbsp;</td><td>&nbsp;</td></td>";
+   
+   for(var i=0; i<labels.length; i++)
+   {
+      pref = '';
+      if (i == cc) { pref = 'br_'; }
+      var cellCol = (labels[i].substring(0,1) == 'l') ? "light-txt" : "heavy-txt";
+      var labelText = labels[i].replace(/^[A-Za-z]/g, '');
 
-        // Find the last character
-        var lastChar = labelText.substring(labelText.length-1,labelText.length);
+      // Find the last character
+      var lastChar = labelText.substring(labelText.length-1,labelText.length);
 
-        // Open a table cell with the label as a tooltip
-        html += "<td class='tooltip "+pref+cellCol+"' title='" + labels[i] + "'>";
+      // Open a table cell with the label as a tooltip
+      html += "<td class='tooltip "+pref+cellCol+"' title='" + labels[i] + "'>";
 
-        // Insert the appropriate character
-        if (lastChar == "0")   // 0 - do a '|'
-        {
-			html += "|";
-        }
-        else if (lastChar.match(/[A-Za-z]/))  // Insert code - show the code
-        {
-            html += lastChar;
-        }
-        else                                  // Otherwise do a '.'
-        {
-            html += ".";
-        }
+      // Insert the appropriate character
+      if (lastChar == "0")   // 0 - do a '|'
+      {
+         html += "|";
+      }
+      else if (lastChar.match(/[A-Za-z]/))  // Insert code - show the code
+      {
+         html += lastChar;
+      }
+      else                                  // Otherwise do a '.'
+      {
+         html += ".";
+      }
 
-        // And finish the table cell
-        html += "</td>";
-    }
+      // And finish the table cell
+      html += "</td>";
+   }
 
-    return html;
+   return html;
 }
 
 
@@ -2918,13 +3211,13 @@ Create an array of labels
 */
 function JSAV_autoLabels(sequences)
 {
-    var seqLen = sequences[0].sequence.length;
-    var labels = Array();
-    for(var i=1; i<=seqLen; i++)
-    {
-        labels.push(i.toString());
-    }
-    return labels;
+   var seqLen = sequences[0].sequence.length;
+   var labels = Array();
+   for(var i=1; i<=seqLen; i++)
+   {
+       labels.push(i.toString());
+   }
+   return labels;
 }
 
 // -----------------------------------------------------------------
@@ -2938,13 +3231,16 @@ Initialises dispOrder to initial sequence ordering
 - 09.01.17 Original By: JH
 */
 
-function initDisplayOrder(sequences) {
+function initDisplayOrder(sequences) 
+{
 
-var dispOrder = [];
-for (var r=0; r<sequences.length; r++) {
-	dispOrder[r] = r;
-	}
-return(dispOrder);
+   var dispOrder = [];
+   for (var r=0; r<sequences.length; r++) 
+   {
+      dispOrder[r] = r;
+   }
+
+   return(dispOrder);
 }
 
 // -----------------------------------------------------------------
@@ -2953,65 +3249,92 @@ Initialises dispColumn to default code 1 (unsorted) for each data table column (
 
 @param {string} divId		- divId we're dealing with
 @param {object[]} sequences 	- array of sequence objects
+@param {object} displayColumns  - original displayColumn object
 @returns {int[]} dispColumn	- array of codes for indicating column sort status
 
 @author
 - 09.01.17 Original By: JH
+- 20.03.19 Adapted to use underscore delimiter for grouping of column labels
 */
 
-function initDisplayColumn(divId, sequences, displayColumns) {
+function initDisplayColumn(divId, sequences, displayColumns) 
+{
 	
-var stypes = ['heavy','light'];
-var dispColumn = {};
-//dispColumn['id'] = 1;
-for (var stype in stypes) {
-  for (var s=0; s<=sequences.length; s++) {
-    for (var key in sequences[s]) {
-	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) {
-        var colheaders = key.split('_');
-        var colname = '';
-        for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '_';
-		colname = colname.replace(/_+$/,'');
-        colname = colname.trim();
-        if (colheaders[0] == stypes[stype]) {
-      	      if (displayColumns && displayColumns.hasOwnProperty(key))
-                  dispColumn[key] = displayColumns[key];
-              else 
-		if ( gOptions[divId].defaultVisibleColumns.indexOf(colname) >= 0 )
+   var stypes = ['heavy','light'];
+   var dispColumn = {};
+   for (var stype in stypes) 
+   {
+      for (var s=0; s<=sequences.length; s++) 
+      {
+         for (var key in sequences[s]) 
+         {
+	    if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) 
+            {
+               var colheaders = key.split('_');
+               var colname = '';
+               for (k=2; k<colheaders.length; k++) 
+               {
+                  colname += colheaders[k] + '_';
+               }
+	       colname = colname.replace(/_+$/,'');
+               colname = colname.trim();
+               if (colheaders[0] == stypes[stype]) 
+               {
+      	          if (displayColumns && displayColumns.hasOwnProperty(key))
+                  {
+                     dispColumn[key] = displayColumns[key];
+                  }
+                  else if ( gOptions[divId].defaultVisibleColumns.indexOf(colname) >= 0 )
 		  { 
                      dispColumn[key] = 1;
-		  } else {
+		  } 
+                  else 
+                  {
                      dispColumn[key] = 0;
                   }
-                }
+               }
             }
-	}
-    }
-  }
-for (var term in gOptions[divId].searchTerms) {
-  for (var stype in stypes) {
-    for (var s=0; s<=sequences.length; s++) {
-      for (var key in sequences[s]) {
-        var colheaders = key.split('_');
-        var colname = '';
-        for (k=2; k<colheaders.length; k++) colname += colheaders[k] + '';
-        colname = colname.trim();
-	if ((colname.toLowerCase() == term) || (term == 'simple')) {
-           if (colheaders[0] == stypes[stype]) {
-	      if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
-		{ 
-      	        if (displayColumns && displayColumns.hasOwnProperty(key))
-                       dispColumn[key] = displayColumns[key];
-                else
- 		  dispColumn[key] = 0; 
-                }
+	 }
+      }
+   }
+
+  for (var term in gOptions[divId].searchTerms) 
+  {
+     for (var stype in stypes) 
+     {
+        for (var s=0; s<=sequences.length; s++) 
+        {
+           for (var key in sequences[s]) 
+           {
+              var colheaders = key.split('_');
+              var colname = '';
+              for (k=2; k<colheaders.length; k++) 
+              {
+                 colname += colheaders[k] + '';
               }
-           }
+              colname = colname.trim();
+	      if ((colname.toLowerCase() == term) || (term == 'simple')) 
+              {
+                 if (colheaders[0] == stypes[stype]) 
+                 {
+	            if ( sequences[s][key].toLowerCase().indexOf(gOptions[divId].searchTerms[term].toLowerCase()) >= 0 ) 
+		    { 
+      	               if (displayColumns && displayColumns.hasOwnProperty(key))
+                       {
+                          dispColumn[key] = displayColumns[key];
+                       }
+                       else
+                       {
+                          dispColumn[key] = 0; 
+                       }
+                    }
+                 }
+               }
+            }
          }
       }
-    }
-  }
-return(dispColumn);
+   }
+   return(dispColumn);
 }
 
 // -----------------------------------------------------------------
@@ -3028,87 +3351,124 @@ Main function for printing the data table
 - 09.01.17 Original By: JH
 */
 
-function printDataTable(divId, sequences) {
+function printDataTable(divId, sequences) 
+{
 
-var options = gOptions[divId];
-var ctype = options.chainType;
-var dispOrder = gDisplayOrder[divId];
-var tableDiv = divId + '_Table';
-var outerTableDiv = tableDiv + 'Outer';
-var tableTag = "#" + tableDiv;
-var html = '';
-tableWidth = 20;
-html += printToggleList(divId);
-html += "<div id='"+outerTableDiv+"'>";
-html += "<div class='header' style='padding-left:16px;'>";
-html += printTableHeader(divId, options.selectable);
-html += "</div>";
-html += "<div id='" + tableDiv + "_Outer' class='outertablebody'>";
-html += "<div id='" + tableDiv + "_Inner' class='innertablebody'>";
-html += "<table class='results' border='1' id='" + divId + "_tablebody'>";
-for (var s=0;s<sequences.length;s++)
-	html += printDataRow(divId, sequences[dispOrder[s]]);
-html += '</table>';
-html += "</div></div></div>";
-html += "<div id='" + tableDiv + "_Controls' class='JSAVControls'>";
-html += "</div>";
-$("#" + tableDiv).html(html);
+   var options = gOptions[divId];
+   var ctype = options.chainType;
+   var dispOrder = gDisplayOrder[divId];
+   var tableDiv = divId + '_Table';
+   var outerTableDiv = tableDiv + 'Outer';
+   var tableTag = "#" + tableDiv;
+   var html = '';
+   tableWidth = 20;
 
-if (options.hideable)
-  {
-  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Hide selected sequences', 
-                     options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
-  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Show hidden sequences', 
-                     options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
-  }
+   html += printToggleList(divId);
+   html += "<div id='"+outerTableDiv+"'>";
+   html += "<div class='header' style='padding-left:16px;'>";
+   html += printTableHeader(divId, options.selectable);
+   html += "</div>";
+   html += "<div id='" + tableDiv + "_Outer' class='outertablebody'>";
+   html += "<div id='" + tableDiv + "_Inner' class='innertablebody'>";
+   html += "<table class='results' border='1' id='" + divId + "_tablebody'>";
+   for (var s=0;s<sequences.length;s++)
+   {
+      html += printDataRow(divId, sequences[dispOrder[s]]);
+   }
+   html += '</table>';
+   html += "</div></div></div>";
+   html += "<div id='" + tableDiv + "_Controls' class='JSAVControls'>";
+   html += "</div>";
+   $("#" + tableDiv).html(html);
 
-if (options.exportable)
-  {
-  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to CSV', 
-                     options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
-  JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
-                     options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
-  }
-$('#' + divId + "_tablebody").css('width',tableWidth+6); 
-$('#' + tableDiv + "_Outer").css('width',tableWidth+24); 
-$('#' + tableDiv + "_Inner").css('width',tableWidth+8); 
-$("#" + outerTableDiv).css("width","98vw");
-$("#" + outerTableDiv).css("margin-left","0.5em");
-$("#" + outerTableDiv).css("overflow-x","auto");
+   if (options.hideable)
+   {
+      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Hide selected sequences', 
+                         options.hideLabel, '', 'Hide Sequences', 'JSAV_hideSelectedSequences("' + divId + '")');	
+      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Show hidden sequences', 
+                         options.showallLabel, '', 'Show Hidden Sequences', 'JSAV_resetDisplayrow("' + divId + '")');	
+   }
+
+   if (options.exportable)
+   {
+      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to CSV', 
+                         options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
+      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
+                         options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
+   }
+   $('#' + divId + "_tablebody").css('width',tableWidth+6); 
+   $('#' + tableDiv + "_Outer").css('width',tableWidth+24); 
+   $('#' + tableDiv + "_Inner").css('width',tableWidth+8); 
+   $("#" + outerTableDiv).css("width","98vw");
+   $("#" + outerTableDiv).css("margin-left","0.5em");
+   $("#" + outerTableDiv).css("overflow-x","auto");
 }
 
-function notColumnGroup(col) {
+// -----------------------------------------------------------------
+/**
+Returns true if column is not a main group for selection boxes
 
-var colGroups = ['General','PTMs','CDRs','Canonical Classes','Structural Environment','Modelled Structural Environment',
-                'Regions(Chothia definition)','Regions(AbM definition)','Regions(Kabat definition)','Regions(Contact definition)',
-                'Regions(IMGT definition)','Positions','Blast'];
-return (colGroups.indexOf(col) == -1) ? true : false;
+@param {string} col 		- column name
+@returns                        - true of false
+
+@author
+- 09.01.20 Original By: JH
+*/
+function notColumnGroup(col) 
+{
+
+   var colGroups = ['General','PTMs','CDRs','Canonical Classes','Structural Environment','Modelled Structural Environment',
+                   'Regions(Chothia definition)','Regions(AbM definition)','Regions(Kabat definition)','Regions(Contact definition)',
+                   'Regions(IMGT definition)','Positions','Blast'];
+   return (colGroups.indexOf(col) == -1) ? true : false;
 
 }
 
-function tidySequences(divId, sequences) {
+// -----------------------------------------------------------------
+/**
+Replaces key with suitable format with underscore separating chain type, groupings and rows
 
-var section;
-var stypes = ['heavy','light'];
-for (var s=0;s<sequences.length;s++) {
-   for (var key in sequences[s]) 
+@param {string} divId 		- the divId we're dealing with
+@param {array} sequences        - sequence array
+
+@author
+- 09.01.20 Original By: JH
+*/
+function tidySequences(divId, sequences) 
+{
+
+   var section;
+   var stypes = ['heavy','light'];
+   for (var s=0;s<sequences.length;s++) 
+   {
+      for (var key in sequences[s]) 
       {
-      var row = key.split('_');
-      var newkey = key;
-      section = (stypes.includes(row[0])) ? 1 : 0;
-      if ((row[section]) && (row[section] != 'Chain id') && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
-         if (notColumnGroup(row[section]))
-            newkey = key.replace(row[section],'_' + row[section]);
-      if ((row[section]) && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
-         if (!stypes.includes(row[0])) 
-            newkey = 'heavy_' + newkey;
-      if (newkey != key) {
-         sequences[s][newkey] = sequences[s][key];
-         delete sequences[s][key];
+         var row = key.split('_');
+         var newkey = key;
+         section = (stypes.includes(row[0])) ? 1 : 0;
+         if ((row[section]) && (row[section] != 'Chain id') && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
+         {
+            if (notColumnGroup(row[section]))
+            {
+               newkey = key.replace(row[section],'_' + row[section]);
+            }
+         }
+         if ((row[section]) && (row[section] != 'sequence') && (row[section] != 'id') && (row[section] != 'frequencies'))
+         {
+            if (!stypes.includes(row[0])) 
+            {
+               newkey = 'heavy_' + newkey;
+            }
+         }
+         if (newkey != key) 
+         {
+            sequences[s][newkey] = sequences[s][key];
+            delete sequences[s][key];
          }
       }
    }
 }
+
 // -----------------------------------------------------------------
 /**
 resets displayColumn to default code 1 (unsorted) for each data table column (except sequence, displayrow, id and Chain id)
@@ -3120,11 +3480,50 @@ resets displayColumn to default code 1 (unsorted) for each data table column (ex
 - 09.01.17 Original By: JH
 */
 
-function resetDisplayColumn(displayColumn, sequences) {
-for (var key in displayColumn) 
-	if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id'))
-		if (displayColumn[key] >0)
-			displayColumn[key] = 1;
+function resetDisplayColumn(displayColumn, sequences) 
+{
+   for (var key in displayColumn) 
+   {
+      if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id'))
+      {
+	 if (displayColumn[key] >0)
+         {
+	    displayColumn[key] = 1;
+         }
+      }
+   }
+}
+
+// -----------------------------------------------------------------
+/**
+Compares the hiVal and colVal to return a comparative value -1, 0 or 1 
+
+@param {integer} colVal - the divId we're dealing with
+@param {integer} hiVal	- the sort direction
+@param {bool} numeric	- name of the column on which the sort is based
+
+@author
+- 09.01.17 Original By: JH
+*/
+
+function compareVals(colVal, hiVal, numeric) 
+{
+   if (numeric) 
+   {
+      if (Number(colVal) > Number(hiVal))
+         return 1;
+      else if (Number(colVal) < Number(hiVal))
+         return -1;
+      else return 0;
+   } 
+   else 
+   {
+      if (colVal > hiVal)
+         return 1; 
+      else if (colVal < hiVal)
+         return -1;
+      else return 0;
+   }
 }
 
 // -----------------------------------------------------------------
@@ -3140,80 +3539,79 @@ Calls JSAV_refresh to redraw the sequences and table
 @author
 - 09.01.17 Original By: JH
 */
+function DT_sortColumn(divId, direction, colName) 
+{
+   var options = gOptions[divId];
+   var sequence = gSequences[divId];
+   var numeric = true;	
+   var idxFree = [];
+   var hV = -1;
+   gStartPos[divId] = 1;
+   gStopPos[divId] = gSequenceLengths[divId];
 
-function compareVals(colVal, hiVal, numeric) {
+   for (var r1=0; r1<sequence.length; r1++) 
+   {
+      idxFree[r1] = true;
+      if (isNaN(sequence[r1][colName])) 
+      {
+         hV = ''; 
+         numeric = false;
+      }
+   }
+   if (direction == 'asc') 
+   {
+      for (var r1=sequence.length-1; r1>=0; r1--) 
+      {
+         var hiVal = hV;
+         var idx = 0;
+         for (var r2=0; r2<sequence.length; r2++)
+         {
+            if (idxFree[r2]) 
+            {
+               if (compareVals(sequence[r2][colName], hiVal, numeric) >=0 ) 
+               {
+                  hiVal = sequence[r2][colName];
+                  idx = r2;
+               }
+            }
+         }
+         idxFree[idx] = false;
+         gDisplayOrder[divId][r1] = idx;
+      }
+   gDisplayColumn[gOptions[divId].chainType][colName] = 2;
+   } 
+   else 
+   {
+      for (var r1=0; r1<sequence.length; r1++) 
+      {
+         var hiVal = hV;
+         var idx = 0;
+         for (var r2=0; r2<sequence.length; r2++)
+         {
+            if (idxFree[r2]) 
+            {
+               if (compareVals(sequence[r2][colName], hiVal, numeric) >0) 
+               {
+                  hiVal = sequence[r2][colName];
+                  idx = r2;
+               }
+            }
+         }
+         idxFree[idx] = false;
+         gDisplayOrder[divId][r1] = idx;
+      }
+      gDisplayColumn[gOptions[divId].chainType][colName] = 3;
+   }
 
-if (numeric) {
-    if (Number(colVal) > Number(hiVal))
-       return 1;
-    else if (Number(colVal) < Number(hiVal))
-       return -1;
-    else return 0;
-} else {
-     if (colVal > hiVal)
-       return 1; 
-     else if (colVal < hiVal)
-       return -1;
-     else return 0;
-}
-}
+   for (var key in gDisplayColumn[gOptions[divId].chainType])
+   {
+      if ((key != colName) && (gDisplayColumn[gOptions[divId].chainType][key] != 0))
+      {
+         gDisplayColumn[gOptions[divId].chainType][key] = 1;
+      }
+   }
 
-function DT_sortColumn(divId, direction, colName) {
-	
-var options = gOptions[divId];
-var sequence = gSequences[divId];
-var numeric = true;	
-var idxFree = [];
-var hV = -1;
-gStartPos[divId] = 1;
-gStopPos[divId] = gSequenceLengths[divId];
-
-for (var r1=0; r1<sequence.length; r1++) {
-	idxFree[r1] = true;
-	if (isNaN(sequence[r1][colName])) {
-		hV = ''; 
-		numeric = false;
-		}
-	}
-if (direction == 'asc') {
-	for (var r1=sequence.length-1; r1>=0; r1--) 
-		{
-		var hiVal = hV;
-		var idx = 0;
-		for (var r2=0; r2<sequence.length; r2++)
-			if (idxFree[r2]) {
-				if (compareVals(sequence[r2][colName], hiVal, numeric) >=0 ) {
-					hiVal = sequence[r2][colName];
-					idx = r2;
-					}
-			}
-		idxFree[idx] = false;
-		gDisplayOrder[divId][r1] = idx;
-		}
-	gDisplayColumn[gOptions[divId].chainType][colName] = 2;
-} else {
-	for (var r1=0; r1<sequence.length; r1++) 
-		{
-		var hiVal = hV;
-		var idx = 0;
-		for (var r2=0; r2<sequence.length; r2++)
-			if (idxFree[r2]) {
-				if (compareVals(sequence[r2][colName], hiVal, numeric) >0) {
-					hiVal = sequence[r2][colName];
-					idx = r2;
-					}
-			}
-		idxFree[idx] = false;
-		gDisplayOrder[divId][r1] = idx;
-		}
-	gDisplayColumn[gOptions[divId].chainType][colName] = 3;
-}
-for (var key in gDisplayColumn[gOptions[divId].chainType])
-	if ((key != colName) && (gDisplayColumn[gOptions[divId].chainType][key] != 0))
-		gDisplayColumn[gOptions[divId].chainType][key] = 1;
-
-JSAV_refresh(divId, gSequences[divId], 0, gSequences[divId][0].sequence.length-1);
-
+   JSAV_refresh(divId, gSequences[divId], 0, gSequences[divId][0].sequence.length-1);
 } 
  
 // -----------------------------------------------------------------
@@ -3226,16 +3624,17 @@ Toggles display of the column then recalls printDataTable
 - 09.01.17 Original By: JH
 */
 
-function DT_toggleColumn(divId, colName) {
-		
-        if (gDisplayColumn[gOptions[divId].chainType][colName]) {
-		gDisplayColumn[gOptions[divId].chainType][colName] = 0;
-	}
-	else {
-		gDisplayColumn[gOptions[divId].chainType][colName] = 1;
-	}
-        printDataTable(divId, gSequences[divId]);
-		
+function DT_toggleColumn(divId, colName) 
+{
+   if (gDisplayColumn[gOptions[divId].chainType][colName]) 
+   {
+      gDisplayColumn[gOptions[divId].chainType][colName] = 0;
+   }
+   else 
+   {
+      gDisplayColumn[gOptions[divId].chainType][colName] = 1;
+   }
+   printDataTable(divId, gSequences[divId]);		
 }
 
 // -----------------------------------------------------------------
@@ -3247,77 +3646,99 @@ Export sequences to CSV file
 - 22.05.17 Original By : JH
 */
 
-function JSON2CSV(divId) {
-
-var sequence = gSequences[divId];
-var dispOrder = gDisplayOrder[divId];
-var CSV = '';
-var row = '';
-var columns = [];
-columns['heavy'] = new Array();
-columns['light'] = new Array();
-for (var s in sequence[0]) {
-    if (gDisplayColumn[gOptions[divId].chainType][s]) {
-	columns[s.substring(0,5)].push(s);
-	}
-    }
-for (var t in columns) 
-   if (columns[t].length > 0) {
-   row += '"' + t.toUpperCase() + '",';
-   for (var d=1; d<columns[t].length; d++)
-     row += ",";
-}
-CSV += row.slice(0,-1) + '\r\n';
-row = '';
-for (var t in columns) {
-    for (var c=0; c<columns[t].length; c++)
-	row += columns[t][c].substring(6) + ',';
-    }
-for (var s=0; s<gOptions[divId].labels.length; s++) {
-    row += gOptions[divId].labels[s] + ',';
-    }
-CSV += row.slice(0,-1) + '\r\n';
-for (var i=0; i<sequence.length; i++) {
-    if (sequence[dispOrder[i]].displayrow) {
-        row = '';
-	for (var t in columns) {
-        for (var c=0; c<columns[t].length; c++) {
-           if (sequence[dispOrder[i]][columns[t][c]] == undefined) {
-	      row += ',';
-           } else {
-              row += '"' + sequence[dispOrder[i]][columns[t][c]] + '",';
-	   }
-        }
-	}
-        for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
-           row += sequence[dispOrder[i]].sequence[s] + ',';
-           }
-	CSV += row.slice(0,-1) + '\r\n';
-	}
-    }
-if (CSV == '') {
-	alert("Invalid data");
-	return;
-	}
-var link = document.createElement("a");
-var browser = window.navigator.userAgent;
-var appStr = 'data:text/csv;charset=utf-8';
-var fileName = "JSAV_Export.csv";
-if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
-   { 
-   var blob = new Blob([CSV], {type: appStr });
-   window.navigator.msSaveBlob(blob, fileName);
-   }
-else
+function JSON2CSV(divId) 
+{
+   var sequence = gSequences[divId];
+   var dispOrder = gDisplayOrder[divId];
+   var CSV = '';
+   var row = '';
+   var columns = [];
+   columns['heavy'] = new Array();
+   columns['light'] = new Array();
+   for (var s in sequence[0]) 
    {
-   link.href = appStr + ',' + encodeURIComponent(CSV);
-   link.style = "visibility:hidden";
-   link.download = fileName;
-   document.body.appendChild(link);
-   link.click();
-   document.body.removeChild(link);
+      if (gDisplayColumn[gOptions[divId].chainType][s]) 
+      {
+	 columns[s.substring(0,5)].push(s);
+      }
+   }
+   for (var t in columns)
+   { 
+      if (columns[t].length > 0) 
+      {
+         row += '"' + t.toUpperCase() + '",';
+         for (var d=1; d<columns[t].length; d++)
+            row += ",";
+      }
+   }
+   CSV += row.slice(0,-1) + '\r\n';
+   row = '';
+   for (var t in columns) 
+   {
+      for (var c=0; c<columns[t].length; c++)
+      {
+	 row += columns[t][c].substring(6) + ',';
+      }
+   }
+   
+   for (var s=0; s<gOptions[divId].labels.length; s++) 
+   {
+      row += gOptions[divId].labels[s] + ',';
    }
 
+   CSV += row.slice(0,-1) + '\r\n';
+
+   for (var i=0; i<sequence.length; i++) 
+   {
+      if (sequence[dispOrder[i]].displayrow) 
+      {
+         row = '';
+	 for (var t in columns) 
+         {
+            for (var c=0; c<columns[t].length; c++) 
+            {
+               if (sequence[dispOrder[i]][columns[t][c]] == undefined) 
+               {
+	          row += ',';
+               } 
+               else 
+               {
+                   row += '"' + sequence[dispOrder[i]][columns[t][c]] + '",';
+	       }
+            }
+	 }
+
+         for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) 
+         {
+            row += sequence[dispOrder[i]].sequence[s] + ',';
+         }
+	 CSV += row.slice(0,-1) + '\r\n';
+      }
+   }
+
+   if (CSV == '') 
+   {
+      alert("Invalid data");
+      return;
+   }
+   var link = document.createElement("a");
+   var browser = window.navigator.userAgent;
+   var appStr = 'data:text/csv;charset=utf-8';
+   var fileName = "JSAV_Export.csv";
+   if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
+   { 
+      var blob = new Blob([CSV], {type: appStr });
+      window.navigator.msSaveBlob(blob, fileName);
+   }
+   else
+   {
+      link.href = appStr + ',' + encodeURIComponent(CSV);
+      link.style = "visibility:hidden";
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+   }
 }
 
 
@@ -3330,113 +3751,143 @@ Export sequences to XML file
 - 2.08.17 Original By : JH
 */
 
-function JSON2XML(divId) {
+function JSON2XML(divId) 
+{
+   var sequence = gSequences[divId];
+   var dispOrder = gDisplayOrder[divId];
+   var options = gOptions[divId];
+   var columns = [];
 
-var sequence = gSequences[divId];
-var dispOrder = gDisplayOrder[divId];
-var options = gOptions[divId];
-var columns = [];
-columns['heavy'] = new Array();
-columns['light'] = new Array();
-var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
-XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
-XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
-XML += '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"></DocumentProperties>\r\n';
-XML += '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"></ExcelWorkbook>\r\n';
-XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
-XML += '  <Alignment ss:Horizontal="Center"/>\r\n';
-XML += '  <Font ss:Bold="1"/>\r\n';
-XML += ' </Style>\r\n';
-if (typeof(aaColours) !== 'undefined') {
-for (var c in aaColours[options.colourScheme]) {
-   XML += ' <Style ss:ID="'+ c + '">';
-   XML += '  <Interior ss:Color="' + aaColours[options.colourScheme][c] + '" ss:Pattern="Solid" />';
+   columns['heavy'] = new Array();
+   columns['light'] = new Array();
+
+   var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
+   XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
+   XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
+   XML += '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"></DocumentProperties>\r\n';
+   XML += '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"></ExcelWorkbook>\r\n';
+   XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
+   XML += '  <Alignment ss:Horizontal="Center"/>\r\n';
+   XML += '  <Font ss:Bold="1"/>\r\n';
    XML += ' </Style>\r\n';
-   }
-}
-XML += ' <Style ss:ID="heavy">';
-XML += '  <Interior ss:Color="#666666" ss:Pattern="Solid" />';
-XML += ' </Style>\r\n';
-XML += ' <Style ss:ID="light">';
-XML += '  <Interior ss:Color="#999999" ss:Pattern="Solid" />';
-XML += ' </Style>\r\n';
-XML += '</Styles>\r\n';
-XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
 
-for (var s in sequence[0]) {
-    if (gDisplayColumn[gOptions[divId].chainType][s]) {
-	XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
-	columns[s.substring(0,5)].push(s);
-	}
-    }
-for (var s=0; s<sequence[0].sequence.length; s++) {
-    XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
-    }
-
-
-XML += '<Row ss:StyleID="columnHeader">\r\n';
-for (var t in columns) 
-   if (columns[t].length > 0) {
-   XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase() + '</Data></Cell>\r\n';
-}
-XML += '</Row>\r\n';
-XML += '<Row ss:StyleID="columnHeader">\r\n';
-for (var t in columns) {
-    for (var c=0; c<columns[t].length; c++)
-	XML += '  <Cell ss:StyleID="' + t + '"><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
-    }
-if(options.labels != undefined)
-for (var s=0; s<options.labels.length; s++) {
-    XML += '  <Cell><Data ss:Type="String">' + options.labels[s] + '</Data></Cell>\r\n';
-    }
-
-XML += '</Row>\r\n';
-
-for (var i=0; i<sequence.length; i++) {
-    if (sequence[dispOrder[i]].displayrow) {
-        row = '<Row>\r\n';
-	for (var t in columns) {
-        for (var c=0; c<columns[t].length; c++) {
-           if (sequence[dispOrder[i]][columns[t][c]] == undefined) {
-	      row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
-           } else {
-              row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]][columns[t][c]] + '</Data></Cell>\r\n';
-	   }
-        }
-	}
-         for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) {
-           row += '  <Cell';
-		   if (typeof(aaColours) !== 'undefined') {
-               row += ' ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"';
-		   }
-			row += '><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          }
-        row += '</Row>';
-	XML += row;
-	}
-    }
-
-XML += '</Table></Worksheet></Workbook>';
-if (XML == '') {
-	alert("Invalid data");
-	return;
-	}
-var link = document.createElement("a");
-var browser = window.navigator.userAgent;
-var appStr = 'data:application/xml;charset=utf-8';
-var fileName = "JSAV_Export.xml";
-if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
-   { 
-   var blob = new Blob([XML], {type: appStr });
-   window.navigator.msSaveBlob(blob, fileName);
-   }
-else
+   if (typeof(aaColours) !== 'undefined') 
    {
-   link.href = appStr + ',' + encodeURIComponent(XML);
-   link.style = "visibility:hidden";
-   link.download = fileName;
-   document.body.appendChild(link);
-   link.click();
-   document.body.removeChild(link);
+      for (var c in aaColours[options.colourScheme]) 
+      {
+         XML += ' <Style ss:ID="'+ c + '">';
+         XML += '  <Interior ss:Color="' + aaColours[options.colourScheme][c] + '" ss:Pattern="Solid" />';
+         XML += ' </Style>\r\n';
+      }
+   }
+
+   XML += ' <Style ss:ID="heavy">';
+   XML += '  <Interior ss:Color="#666666" ss:Pattern="Solid" />';
+   XML += ' </Style>\r\n';
+   XML += ' <Style ss:ID="light">';
+   XML += '  <Interior ss:Color="#999999" ss:Pattern="Solid" />';
+   XML += ' </Style>\r\n';
+   XML += '</Styles>\r\n';
+   XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+
+   for (var s in sequence[0]) 
+   {
+      if (gDisplayColumn[gOptions[divId].chainType][s]) 
+      {
+	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
+	 columns[s.substring(0,5)].push(s);
+      }
+   }
+
+   for (var s=0; s<sequence[0].sequence.length; s++) 
+   {
+      XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
+   }
+   XML += '<Row ss:StyleID="columnHeader">\r\n';
+
+   for (var t in columns) 
+   {
+      if (columns[t].length > 0) 
+      {
+      XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase() + '</Data></Cell>\r\n';
+      }
+   }
+   XML += '</Row>\r\n';
+   XML += '<Row ss:StyleID="columnHeader">\r\n';
+
+   for (var t in columns) 
+   {
+      for (var c=0; c<columns[t].length; c++)
+      {
+	 XML += '  <Cell ss:StyleID="' + t + '"><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
+      }
+   }
+
+   if(options.labels != undefined)
+   {
+      for (var s=0; s<options.labels.length; s++) 
+      {
+         XML += '  <Cell><Data ss:Type="String">' + options.labels[s] + '</Data></Cell>\r\n';
+      }
+   }
+   XML += '</Row>\r\n';
+
+   for (var i=0; i<sequence.length; i++) 
+   {
+      if (sequence[dispOrder[i]].displayrow) 
+      {
+         row = '<Row>\r\n';
+	 for (var t in columns) 
+         {
+            for (var c=0; c<columns[t].length; c++) 
+            {
+               if (sequence[dispOrder[i]][columns[t][c]] == undefined) 
+               {
+	          row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
+               } 
+               else 
+               {
+                  row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]][columns[t][c]] + '</Data></Cell>\r\n';
+	       }
+            }
+	 }
+         for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) 
+         {
+            row += '  <Cell';
+	    if (typeof(aaColours) !== 'undefined') 
+            {
+               row += ' ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"';
+            }
+	    row += '><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          
+         }
+         row += '</Row>';
+	 XML += row;
+      }
+   }
+
+   XML += '</Table></Worksheet></Workbook>';
+   if (XML == '') 
+   {
+      alert("Invalid data");
+      return;
+   }
+   var link = document.createElement("a");
+   var browser = window.navigator.userAgent;
+   var appStr = 'data:application/xml;charset=utf-8';
+   var fileName = "JSAV_Export.xml";
+   if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
+   { 
+      var blob = new Blob([XML], {type: appStr });
+      window.navigator.msSaveBlob(blob, fileName);
+   }
+   else
+   {
+      link.href = appStr + ',' + encodeURIComponent(XML);
+      link.style = "visibility:hidden";
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
    }
 }
 
@@ -3450,56 +3901,62 @@ Prints the toggle list - the buttons for redisplaying columns where display is t
 
 @author
 - 09.01.17 Original By: JH
+- 20.08.19 Changed to include groupings for separate selection boxes
 */
-
-function truncateLabel(lbl, num) {
-
-var lblarr = lbl.split(' ');
-if (lblarr.length <= num) {
-   var lblsht = lbl;
-   } else {
-   var lblsht = lblarr.slice(lblarr.length-(num+2)).join(" ");
+function printToggleList(divId) 
+{
+   var stypes = ['heavy','light'];
+   var html = "<div class='toggle-col-list'>Show hidden columns: ";
+   var grpList = [];
+   for (var stype in stypes)
+   {
+      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
+         {
+            var keyList = key.split('_');
+            if (keyList[0] == stypes[stype]) 
+            {
+               var grpGroup = keyList[0] + '_' + keyList[1];
+               if (grpList.indexOf(grpGroup) == -1) 
+               {
+       	          grpList.push(grpGroup);
+               }
+            }
+         }
+      }
    }
-return lblsht;
-}
 
-function printToggleList(divId) {
-
-var stypes = ['heavy','light'];
-var html = "<div class='toggle-col-list'>Show hidden columns: ";
-var grpList = [];
-for (var stype in stypes)
-  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
-      var keyList = key.split('_');
-      if (keyList[0] == stypes[stype]) {
-        var grpGroup = keyList[0] + '_' + keyList[1];
-        if (grpList.indexOf(grpGroup) == -1) {
-       	  grpList.push(grpGroup);
-          }
-        }
+   for (var i=0; i<grpList.length; i++) 
+   {
+      var grpType = grpList[i].split('_');
+      html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+      var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
+      html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
+      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
+         {
+            var keyList = key.split('_');
+            if (grpList[i] == (keyList[0] + '_' + keyList[1])) 
+            {
+               var keyText = '';
+               for (var k=2; k<keyList.length; k++) 
+               {
+                  keyText += keyList[k] + ' ';
+               }
+	       keyText = keyText.trim();
+               var desc = keyText;
+               if (gOptions[divId].ptmLabels)
+               {
+                  desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
+               }
+               html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
+            }
+         }
       }
-
-for (var i=0; i<grpList.length; i++) {
-  var grpType = grpList[i].split('_');
-  html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
-  var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
-  html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
-  for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-    if (gDisplayColumn[gOptions[divId].chainType][key] == false) {
-      var keyList = key.split('_');
-      if (grpList[i] == (keyList[0] + '_' + keyList[1])) {
-        var keyText = '';
-        for (var k=2; k<keyList.length; k++) 
-            keyText += keyList[k] + ' ';
-	keyText = keyText.trim();
-        var desc = keyText;
-        if (gOptions[divId].ptmLabels)
-          desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
-        html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
-      }
-    }
-  html += "</select>";
+      html += "</select>";
+   }
 } 
 html += '</div>';
 return(html);
@@ -3511,121 +3968,142 @@ Prints the header for the table columns. Top line is the 'hide' icon, to toggle 
 Second line is the Name and the sort icon, based on the respective field in gDisplayColumn.
 
 @param {string} divId 		- divId we're dealing with
+@param {bool} selectable	- global options selectable variable
 @returns {string} html		- HTML
 
 @author
 - 09.01.17 Original By: JH
+- 20.08.19 Changed to include groupings
 */
 
-function printTableHeader(divId, selectable) {
-	
-var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
+function printTableHeader(divId, selectable) 
+{
+   var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
 
-var options = gOptions[divId];
-var maxrows = 0;
-for (var key in gDisplayColumn[options.chainType]) 
-  if (gDisplayColumn[options.chainType][key]) 
-  {		
+   var options = gOptions[divId];
+   var maxrows = 0;
+   for (var key in gDisplayColumn[options.chainType]) 
+   {
+      if (gDisplayColumn[options.chainType][key]) 
+      {		
 	 var numrows = key.split('_');
-        if (numrows.length > maxrows) maxrows = numrows.length;
-	 }
-     for (var row=0; row<maxrows; row++) 
-	 {
-        html += "<tr>";
-        if (row > 0) 
-	    {
-            html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), 'lrborderheader '+options.chainType+'-col');
-	        html += "<th class='idCell " +options.chainType+ "-col'>";
-	        if (row==2)
-		        html += "ID";
-	        html += "</th>";
-	    }
+         if (numrows.length > maxrows) maxrows = numrows.length;
+      }
+   }
+   for (var row=0; row<maxrows; row++) 
+   {
+      html += "<tr>";
+      if (row > 0) 
+      {
+         html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), 'lrborderheader '+options.chainType+'-col');
+	 html += "<th class='idCell " +options.chainType+ "-col'>";
+	 if (row==2) html += "ID";
+	 html += "</th>";
+      }
       var colspan = 3;
-   var rowstart = true;
-  var lastcell = "";
-  var lasthtml = "";
-  tableWidth = 140;
-  for (var key in gDisplayColumn[options.chainType]) 
-     {
-     if (gDisplayColumn[options.chainType][key]) 
-        {
-        var colheaders = key.split('_');
-	    var colheader = "";
-        var colName = '';
-        for (var k=2; k<colheaders.length; k++) 
-            colName += colheaders[k] + ' ';
-	colName = colName.trim();
-	var colClass = colheaders[0]+"-col";
-        var colDesc = colName;
-        if (options.ptmLabels) 
-           colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
-        var colWidth = 50;
-        if (options.formattedCols)
-           colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
-        tableWidth += (colWidth + 40);
-	for (var r=0;r<=row;r++)
-	   colheader += colheaders[r];
-        var htmlcell = "";
-	if (colheader == lastcell) {
-	    colspan +=3;
-	} else {
-	    colspan = 3;
-	}
-        if (row==0) 
-           {
-           var seqtype = colheaders[0];
-           }
-        else if (row==colheaders.length-1) 
-           {
-	   switch (gDisplayColumn[options.chainType][key]) 
-                { 
-		case 2: var icon = options.sortDownLabel;
-		    var textLbl = options.sortDownText;
-			var direction = "desc";
-			break;
-		case 3: var icon = options.sortUpLabel;
-		    var textLbl = options.sortUpText;
-			var direction = "asc";
-			break;
-		default: var icon = options.sortBothLabel;
-		    var textLbl = options.sortBothText;
-			 var direction = "asc";
-		}
-	   var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
-	   var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
-	   htmlcell += "<th class='"+colClass+" headerHide'>";
-           htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
-           htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-           htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
-           htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
-	   } 
-        else 
-           {
-           if (row < colheaders.length-1)
-              var colSpread = ((colWidth * colspan)/3);
-           else
-              var colSpread = colWidth;
-           htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colSpread+"px;'>";
-           htmlcell += "<div class='truncated'>";
-           if (row < colheaders.length) htmlcell += colheaders[row]; 
-           htmlcell += "</div></th>";
-           }
-        if (rowstart) 
-           {
-           rowstart = false;
-	   } 
-        else if (colheader != lastcell) 
-           {
-           html += lasthtml;
-           }
-	lasthtml = htmlcell;
-	lastcell = colheader;
-        }
-     }
-  html += lasthtml + "</tr>";
-  }
-html += "</table>";
-return(html);
+      var rowstart = true;
+      var lastcell = "";
+      var lasthtml = "";
+      gTableWidth[divId] = 140;
+      for (var key in gDisplayColumn[options.chainType]) 
+      {
+         if (gDisplayColumn[options.chainType][key]) 
+         {
+            var colheaders = key.split('_');
+            var colheader = "";
+            var colName = '';
+            for (var k=2; k<colheaders.length; k++) 
+            {
+               colName += colheaders[k] + ' ';
+            }
+	    colName = colName.trim();
+	    var colClass = colheaders[0]+"-col";
+            var colDesc = colName;
+            if (options.ptmLabels) 
+            {
+               colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
+            }
+            var colWidth = 50;
+            if (options.formattedCols)
+            {
+               colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+            }
+            gTableWidth[divId] += (colWidth + 40);
+	    for (var r=0;r<=row;r++)
+            {
+	       colheader += colheaders[r];
+            }
+ 
+            var htmlcell = "";
+	    if (colheader == lastcell) {
+	       colspan +=3;
+	    }
+            else
+            {
+	       colspan = 3;
+	    }
+            if (row==0) 
+            {
+               var seqtype = colheaders[0];
+            }
+            else if (row==colheaders.length-1) 
+            {
+	       switch (gDisplayColumn[options.chainType][key]) 
+               { 
+                   case 2: var icon = options.sortDownLabel;
+		      var textLbl = options.sortDownText;
+                      var direction = "desc";
+                      break;
+                   case 3: var icon = options.sortUpLabel;
+                      var textLbl = options.sortUpText;
+                      var direction = "asc";
+                      break;
+                   default: var icon = options.sortBothLabel;
+                      var textLbl = options.sortBothText;
+                      var direction = "asc";
+               }
+
+               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
+	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
+	       htmlcell += "<th class='"+colClass+" headerHide'>";
+               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
+               htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
+               htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
+               htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
+	    } 
+         else 
+            {
+            if (row < colheaders.length-1)
+            {
+               var colSpread = ((colWidth * colspan)/3);
+            }
+            else
+            {
+               var colSpread = colWidth;
+            }
+            htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colSpread+"px;'>";
+            htmlcell += "<div class='truncated'>";
+            if (row < colheaders.length) htmlcell += colheaders[row]; 
+            htmlcell += "</div></th>";
+            }
+
+            if (rowstart) 
+            {
+               rowstart = false;
+	    } 
+            else if (colheader != lastcell) 
+            {
+               html += lasthtml;
+            }
+
+	    lasthtml = htmlcell;
+	    lastcell = colheader;
+         }
+      }
+      html += lasthtml + "</tr>";
+   }
+   html += "</table>";
+   return(html);
 }
 
 // -----------------------------------------------------------------
@@ -3638,79 +4116,91 @@ Displays a single row of the data table, where displayrow is true
 
 @author
 - 09.01.17 Original By: JH
+- 28.07.20 Removed use of accession for link - now used id
 */
 
-function printDataRow(divId, sequence) {
+function printDataRow(divId, sequence) 
+{
+   var options = gOptions[divId];
+   var html = "";
+   var bgcol;
 
-var options = gOptions[divId];
-
-var html = "";
-var bgcol;
-if (sequence.displayrow) 
+   if (sequence.displayrow) 
    {
-   html += "<tr id = 'table_" + sequence.id + "'>";
-   var name = "select_" + sequence.id;
-   var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-   var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
-   var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
-   html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+      html += "<tr id = 'table_" + sequence.id + "'>";
+      var name = "select_" + sequence.id;
+      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+      var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
+      var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
+
+      html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
    
-   var attrArray = options.idSubmitAttribute.split(':');
-   var idSubmitAttr = '';
-   for (var a=0; a<attrArray.length; a++)
-       idSubmitAttr += sequence[attrArray[a]] + ':';
-   idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-   html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
+      var attrArray = options.idSubmitAttribute.split(':');
+      var idSubmitAttr = '';
+      for (var a=0; a<attrArray.length; a++)
+      {
+         idSubmitAttr += sequence[attrArray[a]] + ':';
+      }
+      idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
    
-   for (var key in gDisplayColumn[gOptions[divId].chainType])
-      if (gDisplayColumn[gOptions[divId].chainType][key])
+      for (var key in gDisplayColumn[gOptions[divId].chainType])
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
-         var colheaders = key.split('_');
-	 var matchcol = colheaders[0] + '_Numbered';
-         var colName = '';
-         for (var k=2; k<colheaders.length; k++) 
-            colName += colheaders[k] + ' ';
-	 colName = colName.trim();
-         var lcColName = 'other';
-         var colWidth = 90;
-         if (options.formattedCols) {
-            lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
-            colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
-            }
-         var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
-         bgcol = '';
- 	 if (typeof(sequence[key]) == 'undefined') 
+            var colheaders = key.split('_');
+	    var matchcol = colheaders[0] + '_Numbered';
+            var colName = '';
+            for (var k=2; k<colheaders.length; k++) 
+               colName += colheaders[k] + ' ';
+	    colName = colName.trim();
+            var lcColName = 'other';
+            var colWidth = 90;
+            if (options.formattedCols) 
             {
-            html += "<td></td>";
+               lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
+               colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+            }
+            var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
+            bgcol = '';
+ 	    if (typeof(sequence[key]) == 'undefined') 
+            {
+               html += "<td></td>";
 	    } 
-         else 
+            else 
             {                     
-            var cellText = sequence[key];
-            for (var term in options.searchTerms) 
+               var cellText = sequence[key];
+
+               for (var term in options.searchTerms) 
                {
-               if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
+                  if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
                   {
-                  var re = new RegExp(options.searchTerms[term], 'i');
-                  if (sequence[key].search(re) != -1) {
-                     var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
-                     cellText = '';
-                     for (var c=0; c<cellArr.length; c++) {
-                        var cellWord = cellArr[c] + ' ';
-                        if (cellWord.search(re) != -1) {
-                           cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
-                           }
-                        cellText += cellWord;
+                     var re = new RegExp(options.searchTerms[term], 'i');
+                     if (sequence[key].search(re) != -1) 
+                     {
+                        var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
+                        cellText = '';
+                        for (var c=0; c<cellArr.length; c++) 
+                        {
+                           var cellWord = cellArr[c] + ' ';
+                           if (cellWord.search(re) != -1) 
+                              {
+                                 cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
+                              }
+                           cellText += cellWord;
                         }
                      }
                   }
                }
-	    html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
-            html += cellText + "</div></td>";
-	    }
-	}
-	html += "</tr>";
+
+	       html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
+               html += cellText + "</div></td>";
+            }
+	 }
+      }
+      html += "</tr>";
    }
-return(html);
+   return(html);
 }
 
 // --------------------- END OF FILE ------------------------------------/
