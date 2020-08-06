@@ -284,8 +284,7 @@ function printJSAV(divId, sequences, options)
       options.sortUpText = '&#9650;';
       options.sortDownText = '&#9660;';
       options.sortBothText = '&#9670;';
-      options.hideText = '&#9747;'
-//      if(options.actionLabel == undefined)      { options.actionLabel 	      = 'Process Selected';        }
+      options.hideText = '&#9747';
    }
 
    // Initialize globals if not yet done
@@ -299,7 +298,6 @@ function printJSAV(divId, sequences, options)
    gDisplayColumn[options.chainType] = initDisplayColumn(divId, sequences, gDisplayColumn[options.chainType]);
    gDisplayOrder[divId]              = initDisplayOrder(sequences);
    gSorted[divId] 		     = false;
-   gTableWidth[divId]                = 20;
 
    // Sequence View
    if (sequences.length > 0) 
@@ -700,7 +698,7 @@ function JSAV_RunAction(action, divId)
       }
    }
 
-   window[action])divId, selectedSequences);
+   window[action](divId, selectedSequences);
 }
 
 // ---------------------------------------------------------------------
@@ -731,7 +729,7 @@ function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, act
    }
    else
    {
-      html += (icon != undefined) icon : textlabel;
+      html += (icon != undefined) ? icon : textlabel;
    }
    
    html += "</button>";
@@ -890,7 +888,8 @@ Toggles between normal and transposed view, resetting height and width according
 - 03.01.17 Original   By: JH
 
 */
-function JSAV_toggleTranspose(divId, theButton, theOption, activeText, inactiveText) {
+function JSAV_toggleTranspose(divId, theButton, theOption, activeText, inactiveText) 
+{
 
    var div_sortable = $('#' + divId + '_sortable');
    var options = gOptions[divId];
@@ -1590,8 +1589,8 @@ Prints a single residue cell based on previous cell, colourscheme, consensuscell
 - 31.07.20 Added frequency value and slider limits for frequency colouring
 */
 
-function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, slider1, slider2) {
-
+function printResidueCell(aa, prevAa, consensusClass, isConsensus, nocolour, dotify, colourScheme, pref, freq, slider1, slider2) 
+{
    var colourClass = colourScheme + aa.toUpperCase();
         
    if ((colourScheme == 'frequencies') && (freq != undefined) && (slider1 != undefined)) 
@@ -2007,7 +2006,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
    {
       if(idSubmitKey == '')
       {
-         var url       = idSubmit;
+         var url = idSubmit;
 
          if(options.idSubmitClean)
          {
@@ -2015,28 +2014,30 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
             // It probably wouldn't make sense for IDs etc
             attributeValue = attributeValue.replace(/[^A-Za-z0-9]/g, '');
          }
-      url += attributeValue;
-   }
-   else
-   {
-      var url         = idSubmit;
-      var seperator = '?';
-      var attrArray = attributeValue.split(':');
-      var keyArray = idSubmitKey.split(':');
-      for (var a=0; a<attrArray.length; a++) 
-         {
-         var submitParam = attrArray[a];
-         var submitKey = keyArray[a];
- 
-         if(options.idSubmitClean)
-         {
-            // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
-            // It probably wouldn't make sense for IDs etc
-            submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
-         }
-         url += seperator + submitKey + '=' + submitParam;
-         seperator = '&';
+         url += attributeValue;
       }
+      else
+      {
+         var url = idSubmit;
+         var seperator = '?';
+         var attrArray = attributeValue.split(':');
+         var keyArray = idSubmitKey.split(':');
+         for (var a=0; a<attrArray.length; a++) 
+         {
+            var submitParam = attrArray[a];
+            var submitKey = keyArray[a];
+ 
+            if(options.idSubmitClean)
+            {
+               // This would only normally be done in the default case where idSubmitAttribute is 'sequence'
+               // It probably wouldn't make sense for IDs etc
+               submitParam = submitParam.replace(/[^A-Za-z0-9]/g, '');
+            }
+            url += seperator + submitKey + '=' + submitParam;
+            seperator = '&';
+         }
+      }
+
       if (humanOrg) 
       {
          url += '&humanorganism='+humanOrg;
@@ -2163,7 +2164,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
    var prevSequence = undefined;
    for(var i=0; i<sequences.length; i++) 
    {
-      if(sequences[disporder[i]].displayrow != undefined)
+      if(sequences[dispOrder[i]].displayrow != undefined)
       {
 	 if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
   	 {
@@ -3104,7 +3105,8 @@ Returns the position of the change from heavy to light chain - for combined sequ
 - 18.06.17 Original   By: JH
 */
 
-function chainChange(labels, autoLabels, divId) {
+function chainChange(labels, autoLabels, divId) 
+{
 
    if ((labels == undefined) || (autoLabels)) 
    {
@@ -3361,7 +3363,6 @@ function printDataTable(divId, sequences)
    var outerTableDiv = tableDiv + 'Outer';
    var tableTag = "#" + tableDiv;
    var html = '';
-   tableWidth = 20;
 
    html += printToggleList(divId);
    html += "<div id='"+outerTableDiv+"'>";
@@ -3396,9 +3397,9 @@ function printDataTable(divId, sequences)
       JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export visible sequences to XML for Excel - your Excel must support XML import', 
                          options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'")');
    }
-   $('#' + divId + "_tablebody").css('width',tableWidth+6); 
-   $('#' + tableDiv + "_Outer").css('width',tableWidth+24); 
-   $('#' + tableDiv + "_Inner").css('width',tableWidth+8); 
+   $('#' + divId + "_tablebody").css('width',gTableWidth[divId]+6); 
+   $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+24); 
+   $('#' + tableDiv + "_Inner").css('width',gTableWidth[divId]+8); 
    $("#" + outerTableDiv).css("width","98vw");
    $("#" + outerTableDiv).css("margin-left","0.5em");
    $("#" + outerTableDiv).css("overflow-x","auto");
@@ -3427,6 +3428,7 @@ function notColumnGroup(col)
 // -----------------------------------------------------------------
 /**
 Replaces key with suitable format with underscore separating chain type, groupings and rows
+e.g. heavy_General_Data Source, heavy_CDRs_H1_CDR, or heavy__MyData
 
 @param {string} divId 		- the divId we're dealing with
 @param {array} sequences        - sequence array
@@ -3635,6 +3637,354 @@ function DT_toggleColumn(divId, colName)
       gDisplayColumn[gOptions[divId].chainType][colName] = 1;
    }
    printDataTable(divId, gSequences[divId]);		
+}
+
+
+// -----------------------------------------------------------------
+/**
+Prints the toggle list - the buttons for redisplaying columns where display is toggled off
+
+@param {string} divId 		- divId we're dealing with
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+- 20.08.19 Changed to include groupings for separate selection boxes
+*/
+function printToggleList(divId) 
+{
+
+   // Create the list of groups which will each generate a selection box
+   var stypes = ['heavy','light'];
+   var html = "<div class='toggle-col-list'>Show hidden columns: ";
+   var grpList = [];
+   for (var stype in stypes)
+   {
+      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
+         {
+            var keyList = key.split('_');
+            if (keyList[0] == stypes[stype]) 
+            {
+               var grpGroup = keyList[0] + '_' + keyList[1];
+               if (grpList.indexOf(grpGroup) == -1) 
+               {
+       	          grpList.push(grpGroup);
+               }
+            }
+         }
+      }
+   }
+
+   // For each group, create a selection box and add, as options, the column headers which are not displayed in the table
+   for (var i=0; i<grpList.length; i++) 
+   {
+      var grpType = grpList[i].split('_');
+      html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
+      var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
+      html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
+      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
+         {
+            var keyList = key.split('_');
+            if (grpList[i] == (keyList[0] + '_' + keyList[1])) 
+            {
+               var keyText = '';
+               for (var k=2; k<keyList.length; k++) 
+               {
+                  keyText += keyList[k] + ' ';
+               }
+	       keyText = keyText.trim();
+               var desc = keyText;
+               if (gOptions[divId].ptmLabels)
+               {
+                  desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
+               }
+               html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
+            }
+         }
+      }
+      html += "</select>";
+   }
+
+   html += '</div>';
+   return(html);
+}
+
+// -----------------------------------------------------------------
+/**
+Prints the header for the table columns. Top line is the 'hide' icon, to toggle the column display to off.
+Second line is the Name and the sort icon, based on the respective field in gDisplayColumn.
+
+@param {string} divId 		- divId we're dealing with
+@param {bool} selectable	- global options selectable variable
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+- 20.08.19 Changed to include groupings
+*/
+
+function printTableHeader(divId, selectable) 
+{
+   var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
+
+   var options = gOptions[divId];
+
+   // Deduce number of column header rows (includes chainType and group for selection box, so actual rows + 2) 
+   var maxrows = 0;
+   for (var key in gDisplayColumn[options.chainType]) 
+   {
+      if (gDisplayColumn[options.chainType][key]) 
+      {		
+	 var numrows = key.split('_');
+         if (numrows.length > maxrows) maxrows = numrows.length;
+      }
+   }
+
+   // Build header row by row
+   for (var row=0; row<maxrows; row++) 
+   {
+      html += "<tr>";
+
+      // Build selectAll checkbox cell and ID header cell
+      if (row > 0) 
+      {
+         var bgcol = (options.chainType == 'combined') ? 'heavy-col' : options.chainType+'-col';
+         html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), 'lrborderheader '+bgcol);
+	 html += "<th class='idCell " +bgcol+ "'>";
+	 if (row==2) html += "ID";
+	 html += "</th>";
+      }
+
+      var colspan = 3;
+      var rowstart = true;
+      var lastcell = "";
+      var lasthtml = "";
+      gTableWidth[divId] = 140;
+
+      // Build each row cell for the column 
+      for (var key in gDisplayColumn[options.chainType]) 
+      {
+         if (gDisplayColumn[options.chainType][key]) 
+         {
+            // colName is the cell name minus the chainType and group label, colheaders is the text for each row
+            var colheaders = key.split('_');
+            var colheader = "";
+            var colName = '';
+            for (var k=2; k<colheaders.length; k++) 
+            {
+               colName += colheaders[k] + ' ';
+            }
+	    colName = colName.trim();
+	    var colClass = colheaders[0]+"-col";
+
+            // colDesc is the column text for the tooltip (colName except for PTMS)
+            var colDesc = colName;
+            if (options.ptmLabels) 
+            {
+               colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
+            }
+
+            // Set column width and add this to the table width
+            var colWidth = 50;
+            if (options.formattedCols)
+            {
+               colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
+            }
+            gTableWidth[divId] += (colWidth + 40);
+	    for (var r=0;r<=row;r++)
+            {
+	       colheader += colheaders[r];
+            }
+ 
+            // colspan increases if the column header for the row does not change 
+            var htmlcell = "";
+	    if (colheader == lastcell) 
+            {
+	       colspan +=3;
+	    }
+            else
+            {
+	       colspan = 3;
+	    }
+
+            // Build the cell
+            if (row==0) 
+            {
+               var seqtype = colheaders[0]; // does nothing as this is the chainType row
+            }
+            else if (row==colheaders.length-1) 
+            {
+            // The last row of the column - includes the hide and sort icons
+	       switch (gDisplayColumn[options.chainType][key]) 
+               { 
+                   case 2: var icon = options.sortDownLabel;
+		      var textLbl = options.sortDownText;
+                      var direction = "desc";
+                      break;
+                   case 3: var icon = options.sortUpLabel;
+                      var textLbl = options.sortUpText;
+                      var direction = "asc";
+                      break;
+                   default: var icon = options.sortBothLabel;
+                      var textLbl = options.sortBothText;
+                      var direction = "asc";
+               }
+
+               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
+	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
+	       htmlcell += "<th class='"+colClass+" headerHide'>";
+               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
+               htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
+               htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
+               htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
+	    } 
+            else 
+            {
+            // non-last row cell - may be multiple column, so set the column width accordingly (colSpread)
+               if (row < colheaders.length-1)
+               {
+                  var colSpread = ((colWidth * colspan)/3);
+               }
+               else
+               {
+                  var colSpread = colWidth;
+               }
+               htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colSpread+"px;'>";
+               htmlcell += "<div class='truncated'>";
+               if (row < colheaders.length) htmlcell += colheaders[row]; 
+               htmlcell += "</div></th>";
+            }
+
+            // Need to read ahead as first column has no lasthtml. 
+            // We actuall write the lasthtml (previous column) and add the final lasthtml at the end.
+            if (rowstart) 
+            {
+               rowstart = false;
+	    } 
+            else if (colheader != lastcell) 
+            {
+               html += lasthtml;
+            }
+
+	    lasthtml = htmlcell;
+	    lastcell = colheader;
+         }
+      }
+      html += lasthtml + "</tr>";
+   }
+   html += "</table>";
+   return(html);
+}
+
+// -----------------------------------------------------------------
+/**
+Displays a single row of the data table, where displayrow is true
+
+@param {string} divId 		- the divId we're dealing with
+@param {object} sequence	- the sequence to display
+@returns {string} html		- HTML
+
+@author
+- 09.01.17 Original By: JH
+- 28.07.20 Removed use of accession for link - now used id
+*/
+
+function printDataRow(divId, sequence) 
+{
+   var options = gOptions[divId];
+   var html = "";
+
+   if (sequence.displayrow) 
+   {
+      html += "<tr id = 'table_" + sequence.id + "'>";
+
+      // Add the initial select row checkbox cell. It's name is 'select_' and the id with decimal points and underscores removed.
+      var name = "select_" + sequence.id;
+      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+      var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
+      var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
+      html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+   
+      // Build the id cell
+      var attrArray = options.idSubmitAttribute.split(':');
+      var idSubmitAttr = '';
+      for (var a=0; a<attrArray.length; a++)
+      {
+         idSubmitAttr += sequence[attrArray[a]] + ':';
+      }
+      idSubmitAttr = idSubmitAttr.replace(/:$/,'');
+      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
+
+      // Build the data cells
+      for (var key in gDisplayColumn[gOptions[divId].chainType])
+      {
+         if (gDisplayColumn[gOptions[divId].chainType][key])
+	 {
+            // colName is the cell name minus the chainType and group label, colheaders is the text for each row
+            var colheaders = key.split('_');
+            var colName = '';
+            for (var k=2; k<colheaders.length; k++) 
+               colName += colheaders[k] + ' ';
+	    colName = colName.trim();
+
+            // Set column width and lower-case Colname based on the formattedCols object
+            var lcColName = 'other';
+            var colWidth = 90;
+            if (options.formattedCols) 
+            {
+               lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
+               colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+            }
+
+            // Add feint class if sequence not matched.
+	    var matchcol = colheaders[0] + '_Numbered';
+            var feint = (sequence[matchcol] == 'N') ? ' feint' : '';
+
+            // Build the cell (or empty cell if no data)
+ 	    if (typeof(sequence[key]) == 'undefined') 
+            {
+               html += "<td></td>";
+	    } 
+            else 
+            {                     
+               var cellText = sequence[key];
+
+               // Check search terms as, if found in the cellText, the word will be upper-cased and highlighted
+               for (var term in options.searchTerms) 
+               {
+                  if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
+                  {
+                     var re = new RegExp(options.searchTerms[term], 'i');
+                     if (sequence[key].search(re) != -1) 
+                     {
+                        var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
+                        cellText = '';
+                        for (var c=0; c<cellArr.length; c++) 
+                        {
+                           var cellWord = cellArr[c] + ' ';
+                           if (cellWord.search(re) != -1) 
+                              {
+                                 cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
+                              }
+                           cellText += cellWord;
+                        }
+                     }
+                  }
+               }
+
+               // Write the cell
+	       html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
+               html += cellText + "</div></td>";
+            }
+	 }
+      }
+      html += "</tr>";
+   }
+   return(html);
 }
 
 // -----------------------------------------------------------------
@@ -3891,316 +4241,5 @@ function JSON2XML(divId)
    }
 }
 
-
-// -----------------------------------------------------------------
-/**
-Prints the toggle list - the buttons for redisplaying columns where display is toggled off
-
-@param {string} divId 		- divId we're dealing with
-@returns {string} html		- HTML
-
-@author
-- 09.01.17 Original By: JH
-- 20.08.19 Changed to include groupings for separate selection boxes
-*/
-function printToggleList(divId) 
-{
-   var stypes = ['heavy','light'];
-   var html = "<div class='toggle-col-list'>Show hidden columns: ";
-   var grpList = [];
-   for (var stype in stypes)
-   {
-      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-      {
-         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
-         {
-            var keyList = key.split('_');
-            if (keyList[0] == stypes[stype]) 
-            {
-               var grpGroup = keyList[0] + '_' + keyList[1];
-               if (grpList.indexOf(grpGroup) == -1) 
-               {
-       	          grpList.push(grpGroup);
-               }
-            }
-         }
-      }
-   }
-
-   for (var i=0; i<grpList.length; i++) 
-   {
-      var grpType = grpList[i].split('_');
-      html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
-      var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
-      html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
-      for (var key in gDisplayColumn[gOptions[divId].chainType]) 
-      {
-         if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
-         {
-            var keyList = key.split('_');
-            if (grpList[i] == (keyList[0] + '_' + keyList[1])) 
-            {
-               var keyText = '';
-               for (var k=2; k<keyList.length; k++) 
-               {
-                  keyText += keyList[k] + ' ';
-               }
-	       keyText = keyText.trim();
-               var desc = keyText;
-               if (gOptions[divId].ptmLabels)
-               {
-                  desc = (gOptions[divId].ptmLabels.hasOwnProperty(keyText)) ? gOptions[divId].ptmLabels[keyText] : keyText;
-               }
-               html += "<option class='tooltip' title='Show "+desc+"' value='"+key+"'>"+keyText+"</option>";
-            }
-         }
-      }
-      html += "</select>";
-   }
-} 
-html += '</div>';
-return(html);
-}
-
-// -----------------------------------------------------------------
-/**
-Prints the header for the table columns. Top line is the 'hide' icon, to toggle the column display to off.
-Second line is the Name and the sort icon, based on the respective field in gDisplayColumn.
-
-@param {string} divId 		- divId we're dealing with
-@param {bool} selectable	- global options selectable variable
-@returns {string} html		- HTML
-
-@author
-- 09.01.17 Original By: JH
-- 20.08.19 Changed to include groupings
-*/
-
-function printTableHeader(divId, selectable) 
-{
-   var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
-
-   var options = gOptions[divId];
-   var maxrows = 0;
-   for (var key in gDisplayColumn[options.chainType]) 
-   {
-      if (gDisplayColumn[options.chainType][key]) 
-      {		
-	 var numrows = key.split('_');
-         if (numrows.length > maxrows) maxrows = numrows.length;
-      }
-   }
-   for (var row=0; row<maxrows; row++) 
-   {
-      html += "<tr>";
-      if (row > 0) 
-      {
-         html += JSAV_buildSelectAllHTML(divId, selectable, (row==(maxrows-1)), 'lrborderheader '+options.chainType+'-col');
-	 html += "<th class='idCell " +options.chainType+ "-col'>";
-	 if (row==2) html += "ID";
-	 html += "</th>";
-      }
-      var colspan = 3;
-      var rowstart = true;
-      var lastcell = "";
-      var lasthtml = "";
-      gTableWidth[divId] = 140;
-      for (var key in gDisplayColumn[options.chainType]) 
-      {
-         if (gDisplayColumn[options.chainType][key]) 
-         {
-            var colheaders = key.split('_');
-            var colheader = "";
-            var colName = '';
-            for (var k=2; k<colheaders.length; k++) 
-            {
-               colName += colheaders[k] + ' ';
-            }
-	    colName = colName.trim();
-	    var colClass = colheaders[0]+"-col";
-            var colDesc = colName;
-            if (options.ptmLabels) 
-            {
-               colDesc = (options.ptmLabels.hasOwnProperty(colName)) ? options.ptmLabels[colName] : colName;
-            }
-            var colWidth = 50;
-            if (options.formattedCols)
-            {
-               colWidth = (colName in options.formattedCols) ? options.formattedCols[colName] : 50;
-            }
-            gTableWidth[divId] += (colWidth + 40);
-	    for (var r=0;r<=row;r++)
-            {
-	       colheader += colheaders[r];
-            }
- 
-            var htmlcell = "";
-	    if (colheader == lastcell) {
-	       colspan +=3;
-	    }
-            else
-            {
-	       colspan = 3;
-	    }
-            if (row==0) 
-            {
-               var seqtype = colheaders[0];
-            }
-            else if (row==colheaders.length-1) 
-            {
-	       switch (gDisplayColumn[options.chainType][key]) 
-               { 
-                   case 2: var icon = options.sortDownLabel;
-		      var textLbl = options.sortDownText;
-                      var direction = "desc";
-                      break;
-                   case 3: var icon = options.sortUpLabel;
-                      var textLbl = options.sortUpText;
-                      var direction = "asc";
-                      break;
-                   default: var icon = options.sortBothLabel;
-                      var textLbl = options.sortBothText;
-                      var direction = "asc";
-               }
-
-               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
-	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
-	       htmlcell += "<th class='"+colClass+" headerHide'>";
-               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
-               htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-               htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
-               htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
-	    } 
-         else 
-            {
-            if (row < colheaders.length-1)
-            {
-               var colSpread = ((colWidth * colspan)/3);
-            }
-            else
-            {
-               var colSpread = colWidth;
-            }
-            htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colSpread+"px;'>";
-            htmlcell += "<div class='truncated'>";
-            if (row < colheaders.length) htmlcell += colheaders[row]; 
-            htmlcell += "</div></th>";
-            }
-
-            if (rowstart) 
-            {
-               rowstart = false;
-	    } 
-            else if (colheader != lastcell) 
-            {
-               html += lasthtml;
-            }
-
-	    lasthtml = htmlcell;
-	    lastcell = colheader;
-         }
-      }
-      html += lasthtml + "</tr>";
-   }
-   html += "</table>";
-   return(html);
-}
-
-// -----------------------------------------------------------------
-/**
-Displays a single row of the data table, where displayrow is true
-
-@param {string} divId 		- the divId we're dealing with
-@param {object} sequence	- the sequence to display
-@returns {string} html		- HTML
-
-@author
-- 09.01.17 Original By: JH
-- 28.07.20 Removed use of accession for link - now used id
-*/
-
-function printDataRow(divId, sequence) 
-{
-   var options = gOptions[divId];
-   var html = "";
-   var bgcol;
-
-   if (sequence.displayrow) 
-   {
-      html += "<tr id = 'table_" + sequence.id + "'>";
-      var name = "select_" + sequence.id;
-      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-      var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
-      var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
-
-      html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
-   
-      var attrArray = options.idSubmitAttribute.split(':');
-      var idSubmitAttr = '';
-      for (var a=0; a<attrArray.length; a++)
-      {
-         idSubmitAttr += sequence[attrArray[a]] + ':';
-      }
-      idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 1, 'idCell', options.humanOrganism) + "\n";
-   
-      for (var key in gDisplayColumn[gOptions[divId].chainType])
-      {
-         if (gDisplayColumn[gOptions[divId].chainType][key])
-	 {
-            var colheaders = key.split('_');
-	    var matchcol = colheaders[0] + '_Numbered';
-            var colName = '';
-            for (var k=2; k<colheaders.length; k++) 
-               colName += colheaders[k] + ' ';
-	    colName = colName.trim();
-            var lcColName = 'other';
-            var colWidth = 90;
-            if (options.formattedCols) 
-            {
-               lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
-               colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
-            }
-            var feint = (sequence[matchcol] == 'N') ? ' feint' : '';                        
-            bgcol = '';
- 	    if (typeof(sequence[key]) == 'undefined') 
-            {
-               html += "<td></td>";
-	    } 
-            else 
-            {                     
-               var cellText = sequence[key];
-
-               for (var term in options.searchTerms) 
-               {
-                  if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
-                  {
-                     var re = new RegExp(options.searchTerms[term], 'i');
-                     if (sequence[key].search(re) != -1) 
-                     {
-                        var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
-                        cellText = '';
-                        for (var c=0; c<cellArr.length; c++) 
-                        {
-                           var cellWord = cellArr[c] + ' ';
-                           if (cellWord.search(re) != -1) 
-                              {
-                                 cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
-                              }
-                           cellText += cellWord;
-                        }
-                     }
-                  }
-               }
-
-	       html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
-               html += cellText + "</div></td>";
-            }
-	 }
-      }
-      html += "</tr>";
-   }
-   return(html);
-}
 
 // --------------------- END OF FILE ------------------------------------/
