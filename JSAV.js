@@ -251,6 +251,7 @@ function printJSAV(divId, sequences, options)
    if(options.colorScheme)                      { options.colourScheme        = options.colorScheme;       }
    if(options.colourScheme        == undefined) { options.colourScheme        = "taylor";                  }
    if(options.selectColor)                      { options.selectColour        = true;                      }
+   if(options.colourChoices       == undefined) { options.colourChoices       = JSAV_initColourChoices();  }
    if(options.colorChoices        != undefined) { options.colourChoices       = options.colorChoices;      }
    if(options.deletable)                        { options.selectable          = true;                      }
    if(options.hideable)                         { options.selectable          = true;                      }	
@@ -262,18 +263,18 @@ function printJSAV(divId, sequences, options)
    if(options.chainType           == undefined) { options.chainType           = "heavy";                   }
    if(options.iconButtons) 
    {
-      if(options.submitLabel == undefined)      { options.submitLabel 	      = 'far fa-check-square'; 	   }
-      if(options.actionLabel == undefined)      { options.actionLabel 	      = 'fa fa-cogs';       	   }
-      if(options.exportLabel == undefined)      { options.exportLabel 	      = 'fas fa-share-square';     }
-      if(options.sortLabel   == undefined)      { options.sortLabel 	      = 'fa fa-sort-down';	   }  
-      if(options.sortUpLabel == undefined)      { options.sortUpLabel         = 'fas fa-sort-up';          } 
-      if(options.sortDownLabel == undefined)    { options.sortDownLabel       = 'fas fa-sort-down';        }
-      if(options.sortBothLabel == undefined)    {  options.sortBothLabel       = 'fas fa-sort';            }
-      if(options.toggleDotifyLabel == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';       }
+      if(options.submitLabel         == undefined) { options.submitLabel 	 = 'far fa-check-square';  }
+      if(options.actionLabel         == undefined) { options.actionLabel 	 = 'fa fa-cogs';       	   }
+      if(options.exportLabel         == undefined) { options.exportLabel 	 = 'fas fa-share-square';  }
+      if(options.sortLabel           == undefined) { options.sortLabel 	         = 'fa fa-sort-down';	   }  
+      if(options.sortUpLabel         == undefined) { options.sortUpLabel         = 'fas fa-sort-up';       } 
+      if(options.sortDownLabel       == undefined) { options.sortDownLabel       = 'fas fa-sort-down';     }
+      if(options.sortBothLabel       == undefined) { options.sortBothLabel       = 'fas fa-sort';          }
+      if(options.toggleDotifyLabel   == undefined) { options.toggleDotifyLabel   = 'fa fa-ellipsis-h';     }
       if(options.toggleNocolourLabel == undefined) { options.toggleNocolourLabel = 'fa fa-th'; 		   }
-      if(options.hideLabel     == undefined)    { options.hideLabel 	      = 'fa fa-eye-slash';	   }
-      if(options.showallLabel  == undefined)    { options.showallLabel	      = 'fa fa-eye';		   }
-      if(options.deleteLabel   == undefined)    { options.deleteLabel 	      = 'fa fa-window-close';	   }   
+      if(options.hideLabel           == undefined) { options.hideLabel 	         = 'fa fa-eye-slash';	   }
+      if(options.showallLabel        == undefined) { options.showallLabel	 = 'fa fa-eye';		   }
+      if(options.deleteLabel         == undefined) { options.deleteLabel         = 'fa fa-window-close';   }   
       options.sortUpText = '';
       options.sortDownText = '';
       options.sortBothText = '';
@@ -379,6 +380,7 @@ function printJSAV(divId, sequences, options)
 
          if(options.action != undefined)
          {
+
 	    JSAV_ActionButton(divId, divId + '_controls', 'Process the selected sequences, or all sequences if none selected',
                                options.actionLabel, '', 'Process Sequences', options.action);
          }
@@ -540,11 +542,6 @@ Prints a pulldown menu to select a colour scheme
 */
 function JSAV_printColourSelector(divId, options)
 {
-   // Initialize colour choices if not provided
-   if(options.colourChoices == undefined)
-   {
-      options.colourChoices = JSAV_initColourChoices();
-   }
 
    var id   = divId + "_selectColour";
    var ctype = options.chainType;
@@ -562,16 +559,11 @@ function JSAV_printColourSelector(divId, options)
       html += "<option value='" + lcChoice + "'" + selected + ">" + 
                 options.colourChoices[i] + "</option>";
    }
-
-   if (options.frequencies) 
-   {
-      html += "<option value='frequencies'>Frequencies</option>";
-   }
-   
+  
    html += "</select></div>";
-   var parrenttag = '#' + divId + '_controls';
+   var parenttag = '#' + divId + '_controls';
 
-   $(parrenttag).append(html);
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -629,7 +621,7 @@ Prints a control button with icons, action and tooltip
 */
 function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, action)
 {
-   var parrenttag = '#' + localDiv;
+   var parenttag = '#' + localDiv;
    var options = gOptions[divId];
    var ctype = options.chainType;
    var tooltipText = "title='"+tooltip+"'";
@@ -645,7 +637,7 @@ function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, ac
    }
 
    html += "</button></div>";
-   $(parrenttag).append(html);
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -661,13 +653,14 @@ and visible sequences. Called from the button created by JSAV_ActionButton()
 */
 function JSAV_RunAction(action, divId)
 {
-   var sequences        = gSequences[divId];
-   var seletedSequences = Array();
+   var sequences         = gSequences[divId];
+   var selectedSequences = Array();
 
    // See if any checkboxes are set
    var count     = 0;
-   var toFASTA   = array();
+   var toFASTA   = Array();
    var dispOrder = gDisplayOrder[divId];
+
    // Find the selected sequences
    var tag = "#" + divId + " .selectBox";
    $(tag).each(function(index)
@@ -734,7 +727,8 @@ function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, act
    
    html += "</button>";
 
-   $(parrenttag).append(html);
+   $(parenttag).append(html);
+
 }
 
 // ---------------------------------------------------------------------
@@ -787,8 +781,8 @@ function JSAV_printToggleDotify(divId, options)
       html += "Dotify</button></div>";
    }
 
-   var parrenttag = '#' + divId + '_controls';
-   $(parrenttag).append(html);
+   var parenttag = '#' + divId + '_controls';
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -824,8 +818,8 @@ function JSAV_printToggleNocolour(divId, options)
    {
       html += "No Repeat Colour</button></div>";
    }
-   var parrenttag = '#' + divId + '_controls';
-   $(parrenttag).append(html);
+   var parenttag = '#' + divId + '_controls';
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -870,8 +864,8 @@ function JSAV_printToggleTranspose(divId, options)
       html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
    }
    html += "</div>";
-   var parrenttag = '#' + divId + '_controls';
-   $(parrenttag).append(html);
+   var parenttag = '#' + divId + '_controls';
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -1039,7 +1033,7 @@ Prints the submit button
 */
 function JSAV_printSubmit(divId, url, label)
 {
-   var parrenttag = '#' + divId + '_controls';
+   var parenttag = '#' + divId + '_controls';
    var ctype = gOptions[divId].chainType;
    var title = "title='Submit the selected sequences, or all sequences if none selected'";
    var html = "<button type='button' class='tooltip "+ctype+"button' "+title+" onclick='JSAV_submitSequences(\"" + divId + "\")'>";
@@ -1053,7 +1047,7 @@ function JSAV_printSubmit(divId, url, label)
    }
    html += "</button>";
 
-   $(parrenttag).append(html);
+   $(parenttag).append(html);
 
    // Build a hidden sequences text box in the form to contain
    var formId = divId + "_form"; 
@@ -1061,7 +1055,7 @@ function JSAV_printSubmit(divId, url, label)
    var textId = divId + "_submit";
    html += "<textarea id='" + textId + "' name='sequences'></textarea>";
    html += "</form></div>";
-   $(parrenttag).append(html);
+   $(parenttag).append(html);
 }
 
 // ---------------------------------------------------------------------
@@ -1536,7 +1530,8 @@ function JSAV_printFrequencyControls(divId, controlDiv, opts)
 {
 
    var html = '';
-   html += "<div class='freqSlider' id='"+divId+"FrequencyControls'>";
+   var notshown = (gOptions[divId].colourScheme == 'frequencies') ? '' : ' notshown';
+   html += "<div class='freqSlider" + notshown + "' id='"+divId+"FrequencyControls'>";
    html += "<div class='freqSliderLabel'>Frequencies </div>";
    html += "<div class='freqSliderLimits'>Lower limit: ";
    html += "<input value='"+opts.freqSlider1+"' name='"+divId+"fsMin' type='number' min='0' max='"+opts.freqMax+"' step='"+opts.freqStep+"' ";
@@ -2859,8 +2854,7 @@ file
 */
 function JSAV_initColourChoices()
 {
-   return(['Taylor', 'Clustal', 'Zappo', 'HPhob', 'Helix', 'Strand',
-           'Turn', 'Buried']);
+   return(['Taylor', 'Clustal', 'Zappo', 'HPhob']);
 }
 
 // ---------------------------------------------------------------------
