@@ -3999,10 +3999,10 @@ function JSON2CSV(divId)
    {
       if (gDisplayColumn[gOptions[divId].chainType][s]) 
       {
-         if ((columns[s.substring(0,5)].indexOf('id')) == -1)
-		 { 
-            columns[s.substring(0,5)].push('id');
-         }
+          if ((columns[s.substring(0,5)].indexOf('id')) == -1)
+          { 
+             columns[s.substring(0,5)].push('id');
+          }
 	  columns[s.substring(0,5)].push(s);
       }
    }
@@ -4140,12 +4140,12 @@ function JSON2XML(divId)
    {
       if (gDisplayColumn[gOptions[divId].chainType][s]) 
       {
-		  if ((chainId.indexOf(gOptions[divId].chainType)) == -1)
-		  {
-			  chainId.push(gOptions[divId].chainType);
-	          XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
-			  columns[gOptions[divId].chainType].push('id');
-		  }
+         if ((chainId.indexOf(gOptions[divId].chainType)) == -1)
+         {
+            chainId.push(gOptions[divId].chainType);
+            XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
+            columns[gOptions[divId].chainType].push('id');
+         }
 	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
 	 columns[s.substring(0,5)].push(s);
       }
