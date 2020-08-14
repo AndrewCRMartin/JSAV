@@ -672,7 +672,6 @@ function JSAV_RunAction(action, divId)
                      count++;
                   }
                });
-
    for(var i=0; i<sequences.length; i++)
    {
       if(sequences[dispOrder[i]] == undefined)
@@ -683,14 +682,13 @@ function JSAV_RunAction(action, divId)
       {
          if(sequences[dispOrder[i]].displayrow)
          {
-            if((count ==0) || (count == sequence.length) || (toFASTA[sequences[i].id] == 1))
+            if((count ==0) || (count == sequences.length) || (toFASTA[sequences[dispOrder[i]].id] == 1))
             {
-               selectedSequences.push(sequences[i]);
+               selectedSequences.push(sequences[dispOrder[i]]);
             }
          }
       }
    }
-
    window[action](divId, selectedSequences);
 }
 
@@ -1159,21 +1157,19 @@ function JSAV_buildFASTA(divId)
                      count++;
                   }
                });
-
    var sequenceText = "";
    var sequences = gSequences[divId];
    for(var i=0; i<sequences.length; i++)
    {
       if (sequences[dispOrder[i]].displayrow)
       {
-         if((count == 0) || (count == sequences.length) || (toFASTA[sequences[i].id] == 1))
+         if((count == 0) || (count == sequences.length) || (toFASTA[sequences[dispOrder[i]].id] == 1))
          {
-            sequenceText += ">" + sequences[i].id + "\n";
-            sequenceText += sequences[i].sequence + "\n";
+            sequenceText += ">" + sequences[dispOrder[i]].id + "\n";
+            sequenceText += sequences[dispOrder[i]].sequence + "\n";
          }
       }
    }
-
    return(sequenceText);
 }
 
