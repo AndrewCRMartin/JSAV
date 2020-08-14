@@ -3999,7 +3999,11 @@ function JSON2CSV(divId)
    {
       if (gDisplayColumn[gOptions[divId].chainType][s]) 
       {
-	 columns[s.substring(0,5)].push(s);
+         if ((columns[s.substring(0,5)].indexOf('id')) == -1)
+		 { 
+            columns[s.substring(0,5)].push('id');
+         }
+	  columns[s.substring(0,5)].push(s);
       }
    }
    for (var t in columns)
@@ -4130,10 +4134,18 @@ function JSON2XML(divId)
    XML += '</Styles>\r\n';
    XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
 
+   
+   var chainId = Array();
    for (var s in sequence[0]) 
    {
       if (gDisplayColumn[gOptions[divId].chainType][s]) 
       {
+		  if ((chainId.indexOf(gOptions[divId].chainType)) == -1)
+		  {
+			  chainId.push(gOptions[divId].chainType);
+	          XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
+			  columns[gOptions[divId].chainType].push('id');
+		  }
 	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
 	 columns[s.substring(0,5)].push(s);
       }
