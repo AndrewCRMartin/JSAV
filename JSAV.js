@@ -1989,9 +1989,9 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
    var options = gOptions[divId];
    var html = "";
 
-   if ((idSubmit == null) || (attributeValue == undefined))
+   if ((idSubmit == null) || (attributeValue == 'undefined'))
    {
-      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='feint tooltip' title='" + id + "'>" + id + "</div></td>";
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='tooltip' title='" + id + "'>" + id + "</div></td>";
    }
    else
    {
@@ -2241,13 +2241,12 @@ for selecting/deselecting all sequences
 function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
 {
 
-   var html;
-   var id = divId + "_AllNone";
-   var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
-   var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
-
+   var html = '';
    if (selectable) 
    {
+      var id = divId + "_AllNone";
+      var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
+      var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
       html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
    }   
    return(html);
@@ -3753,7 +3752,7 @@ function printTableHeader(divId, selectable)
       var rowstart = true;
       var lastcell = "";
       var lasthtml = "";
-      gTableWidth[divId] = 140;
+      gTableWidth[divId] = (options.selectable) ? 140 : 120;
 
       // Build each row cell for the column 
       for (var key in gDisplayColumn[options.chainType]) 
@@ -3827,10 +3826,16 @@ function printTableHeader(divId, selectable)
                var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	       htmlcell += "<th class='"+colClass+" headerHide'>";
-               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'></i>"+options.hideText+"</div></th>";
+               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'>";
+               htmlcell += "</i>"+options.hideText+"</div></th>";
                htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
                htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
-               htmlcell += "<th class='"+colClass+" headerSort'><div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div></th>";
+               htmlcell += "<th class='"+colClass+" headerSort'>";
+               if (options.sortable)
+               {
+                  htmlcell += "<div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div>";
+               }
+               htmlcell += "</th>";
 	    } 
             else 
             {
@@ -3893,11 +3898,14 @@ function printDataRow(divId, sequence)
       html += "<tr id = 'table_" + sequence.id + "'>";
 
       // Add the initial select row checkbox cell. It's name is 'select_' and the id with decimal points and underscores removed.
-      var name = "select_" + sequence.id;
-      var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-      var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
-      var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
-      html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+      if (options.selectable)
+      {
+         var name = "select_" + sequence.id;
+         var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+         var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
+         var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
+         html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
+      }
    
       // Build the id cell
       var attrArray = options.idSubmitAttribute.split(':');
