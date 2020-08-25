@@ -2248,6 +2248,7 @@ function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
       var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
       var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
       html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
+      gTableWidth[divId] += 20;
    }   
    return(html);
 }
@@ -3737,6 +3738,7 @@ function printTableHeader(divId, selectable)
    for (var row=0; row<maxrows; row++) 
    {
       html += "<tr>";
+      gTableWidth[divId] = 120;
 
       // Build selectAll checkbox cell and ID header cell
       if (row > 0) 
@@ -3752,7 +3754,6 @@ function printTableHeader(divId, selectable)
       var rowstart = true;
       var lastcell = "";
       var lasthtml = "";
-      gTableWidth[divId] = (options.selectable) ? 140 : 120;
 
       // Build each row cell for the column 
       for (var key in gDisplayColumn[options.chainType]) 
@@ -3976,7 +3977,7 @@ function printDataRow(divId, sequence)
 
                // Write the cell
 	       html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
-               html += cellText + "</div></td>";
+               html += decodeURIComponent(cellText) + "</div></td>";
             }
 	 }
       }
