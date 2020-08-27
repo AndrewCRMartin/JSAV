@@ -3977,7 +3977,7 @@ function printDataRow(divId, sequence)
 
                // Write the cell
 	       html += "<td class='bodyText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'><div class='wwrap " + lcColName + feint + "'>";
-               html += decodeURIComponent(cellText) + "</div></td>";
+               html += cellText + "</div></td>";
             }
 	 }
       }
