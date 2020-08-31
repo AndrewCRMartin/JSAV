@@ -3646,14 +3646,16 @@ function printToggleList(divId)
 
    // Create the list of groups which will each generate a selection box
    var stypes = ['heavy','light'];
-   var html = "<div class='toggle-col-list'>Show hidden columns: ";
+   var html = '';
    var grpList = [];
+   var hiddenGroups = 0;
    for (var stype in stypes)
    {
       for (var key in gDisplayColumn[gOptions[divId].chainType]) 
       {
          if (gDisplayColumn[gOptions[divId].chainType][key] == false) 
          {
+            hiddenGroups = 1;
             var keyList = key.split('_');
             if (keyList[0] == stypes[stype]) 
             {
@@ -3698,9 +3700,12 @@ function printToggleList(divId)
       }
       html += "</select>";
    }
+   var divHtml = "<div class='toggle-col-list'";
+   if (!hiddenGroups)  divHtml += " style='display:none'";
+   divHtml += ">Show hidden columns: ";
 
    html += '</div>';
-   return(html);
+   return(divHtml + html);
 }
 
 // -----------------------------------------------------------------
