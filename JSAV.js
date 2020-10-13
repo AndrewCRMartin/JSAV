@@ -287,7 +287,6 @@ function printJSAV(divId, sequences, options)
       options.sortBothText = '&#9670;';
       options.hideText = '&#9747';
    }
-
    // Initialize globals if not yet done
    JSAV_init();
    mouseUpHandler();
@@ -995,8 +994,7 @@ count from zero.
 
 @author 
 - 13.06.14   Original   By: ACRM
-- 09.01.17	 Now calls calculate
-printHighlightCell to display each cell based on highlight  By: JH
+- 09.01.17	 Now calls calculate printHighlightCell to display each cell based on highlight  By: JH
 */
 function JSAV_buildHighlightHTML(divId, seqLen, selectable, highlight, cc)
 {
@@ -1894,7 +1892,8 @@ function JSAV_transposeSequencesHTML(divId, sequences)
          {
 	    var name = "select_" + sequences[dispOrder[i]].id;
             var cname = name.replace(/\./g, "_").replace(/\//g, "_");
-            html += "<td class='tr_seqCell tr_selectCell'><input class='selectBox "+cname+" tr_checkbox' type='checkbox' name='" + name + "' onclick='JSAV_resetAllNone(\""+divId+"\", \""+cname+"\",this.checked);'/></td>";
+            html += "<td class='tr_seqCell tr_selectCell'><input class='selectBox "+cname+" tr_checkbox' type='checkbox' name='" + name; 
+            html += "' onclick='JSAV_resetAllNone(\""+divId+"\", \""+cname+"\",this.checked);'/></td>";
          }
       }
 
@@ -4115,13 +4114,15 @@ function JSON2XML(divId)
    var dispOrder = gDisplayOrder[divId];
    var options = gOptions[divId];
    var columns = [];
+   var dnaColumn = 0;
 
    columns['heavy'] = new Array();
    columns['light'] = new Array();
 
    var XML = '<?xml version="1.0"?>\r\n<?mso-application progid="Excel.Sheet"?>\r\n';
    XML += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:o="urn:schemas-microsoft-con:office:office"\r\n';
-   XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\nxmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
+   XML += 'xmlns:x="urn:schemas-microsoft-com:office:excel"\r\nxmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\r\n';
+   XML += 'xmlns:html="http://www.w3.org/TR/REC-html40">\r\n';
    XML += '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"></DocumentProperties>\r\n';
    XML += '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"></ExcelWorkbook>\r\n';
    XML += '<Styles>\r\n <Style ss:ID="columnHeader">';
@@ -4148,10 +4149,15 @@ function JSON2XML(divId)
    XML += '</Styles>\r\n';
    XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
 
-   
+   // Column definitions
+   // Set datatable column widths
    var chainId = Array();
    for (var s in sequence[0]) 
    {
+      if (s.substring(6) == 'General_Dna')
+      {
+         dnaColumn = 1;
+      }
       if (gDisplayColumn[gOptions[divId].chainType][s]) 
       {
          if ((chainId.indexOf(gOptions[divId].chainType)) == -1)
@@ -4160,27 +4166,32 @@ function JSON2XML(divId)
             XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
             columns[gOptions[divId].chainType].push('id');
          }
-	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*7)+'"/>\r\n';
+	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*4)+'"/>\r\n';
 	 columns[s.substring(0,5)].push(s);
       }
    }
 
+   // Set residue column widths
    for (var s=0; s<sequence[0].sequence.length; s++) 
    {
       XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
    }
    XML += '<Row ss:StyleID="columnHeader">\r\n';
 
+   // Column Headers
+   // Datatable chain type header row
    for (var t in columns) 
    {
       if (columns[t].length > 0) 
       {
-      XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase() + '</Data></Cell>\r\n';
+      XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase();
+      XML += '</Data></Cell>\r\n';
       }
    }
    XML += '</Row>\r\n';
    XML += '<Row ss:StyleID="columnHeader">\r\n';
 
+   // Datatable column headers
    for (var t in columns) 
    {
       for (var c=0; c<columns[t].length; c++)
@@ -4189,6 +4200,7 @@ function JSON2XML(divId)
       }
    }
 
+   // Residue labels header
    if(options.labels != undefined)
    {
       for (var s=0; s<options.labels.length; s++) 
@@ -4197,6 +4209,33 @@ function JSON2XML(divId)
       }
    }
    XML += '</Row>\r\n';
+
+   // Table cells
+   if((gOptions[divId].blastaaquery != undefined) && (gOptions[divId].blastaaquery != ''))
+   {
+      row = '<Row>\r\n';
+      row += '  <Cell><Data ss:Type="String">Blast Query</Data></Cell>\r\n';
+      for (var t in columns) 
+      {
+         for (var c=1; c<columns[t].length; c++) 
+         {
+	    row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
+         }
+      }
+      var blastArray = gOptions[divId].blastaaquery.split("");
+      for (var s=0; s<blastArray.length; s++) 
+         {
+            row += '  <Cell';
+            var r = blastArray[s];
+	    if ((typeof(aaColours) !== 'undefined') && (aaColours[gOptions[divId].colourScheme].hasOwnProperty(r)))
+            {
+               row += ' ss:StyleID="' + r + '"';
+            }
+	    row += '><Data ss:Type="String">' + r + '</Data></Cell>\r\n';          
+         }
+      row += '</Row>\r\n';
+      XML += row;
+   }
 
    for (var i=0; i<sequence.length; i++) 
    {
@@ -4217,21 +4256,101 @@ function JSON2XML(divId)
 	       }
             }
 	 }
+
          for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) 
          {
             row += '  <Cell';
-	    if (typeof(aaColours) !== 'undefined') 
-            {
-               row += ' ss:StyleID="' + sequence[dispOrder[i]].sequence[s] + '"';
-            }
-	    row += '><Data ss:Type="String">' + sequence[dispOrder[i]].sequence[s] + '</Data></Cell>\r\n';          
+            var r = sequence[dispOrder[i]].sequence[s];
+	    if ((typeof(aaColours) !== 'undefined') && (options.colourScheme !== 'frequencies') && (aaColours[options.colourScheme].hasOwnProperty(r)))
+               {
+                  row += ' ss:StyleID="' + r + '"';
+               }
+	    row += '><Data ss:Type="String">' + r + '</Data></Cell>\r\n';          
          }
          row += '</Row>';
 	 XML += row;
       }
    }
 
-   XML += '</Table></Worksheet></Workbook>';
+   XML += '</Table></Worksheet>';
+   // CDR Region worksheet
+   if (options.regionTypes)
+   {
+      XML += '<Worksheet ss:Name="CDR regions">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+
+      var intoCDR = 0;
+      var newHighlight = [];
+      for (h=0; h<options.highlight.length; h++) 
+      {
+        newHighlight[h] = options.highlight[h] + intoCDR -1; 
+        intoCDR = (intoCDR == 1) ? 0 : 1;
+      }
+
+      // Column definitions
+      XML += '  <Column ss:AutoFitWidth="0" ss:Width="100.0"/>\r\n';
+      for (c=0;c<newHighlight.length;c++)
+      {
+         var colWidth = (c == 0) ? (newHighlight[0] * 10) : ((newHighlight[c] - newHighlight[c-1]) * 10);
+         XML += '  <Column ss:AutoFitWidth="0" ss:Width="' + colWidth + '"/>\r\n';
+      }
+      XML += '  <Column ss:AutoFitWidth="0" ss:Width="100.0"/>\r\n';
+      XML += '  <Column ss:AutoFitWidth="0" ss:Width="200.0"/>\r\n';
+      if (dnaColumn)
+      {
+         XML += '  <Column ss:AutoFitWidth="0" ss:Width="400.0"/>\r\n';
+      }
+
+      // Headers
+      row = '<Row>\r\n';
+      row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
+      for (r=0; r<options.regionTypes.length; r++)
+      {
+         row += '  <Cell><Data ss:Type="String">' + options.regionTypes[r] + '</Data></Cell>\r\n';
+      }
+      row += '  <Cell><Data ss:Type="String">SEQUENCE</Data></Cell>\r\n';
+      if (dnaColumn)
+      {
+         row += '  <Cell><Data ss:Type="String">DNA</Data></Cell>\r\n';
+      }
+      row += '</Row>';
+      XML += row;
+
+      // Table cells
+      var dispStr = '';
+      for (var i=0; i<sequence.length; i++) 
+      {
+         if (sequence[dispOrder[i]].displayrow) 
+         {
+            row = '<Row>\r\n';
+            row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]].id + '</Data></Cell>\r\n';
+            for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) 
+            {
+               dispStr += sequence[dispOrder[i]].sequence[s];
+               if (newHighlight.indexOf(s) != -1)
+               {
+                  row += '  <Cell><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n';          
+                  dispStr = '';
+               }
+            }
+            row += '  <Cell><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n'; 
+            row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]].sequence.replace(/-/g,"") + '</Data></Cell>\r\n'; 
+            if (dnaColumn)
+            {
+               var dna = '';
+               if (sequence[dispOrder[i]].hasOwnProperty('heavy_General_Dna'))
+                  dna += sequence[dispOrder[i]]['heavy_General_Dna'];
+               if (sequence[dispOrder[i]].hasOwnProperty('light_General_Dna'))
+                  dna += sequence[dispOrder[i]]['light_General_Dna'];
+               row += '  <Cell><Data ss:Type="String">' + dna + '</Data></Cell>\r\n';
+            }
+            row += '</Row>';
+	    XML += row;
+         }
+      }
+      XML += '</Table></Worksheet>';
+   }
+
+   XML += '</Workbook>';
    if (XML == '') 
    {
       alert("Invalid data");
