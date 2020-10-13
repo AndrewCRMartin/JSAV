@@ -558,7 +558,7 @@ table.results th.idCell {
     min-width: 80px; 
     max-width: 80px; 
     overflow: hidden; 
-	border: none;
+    border: none;
     text-overflow: ellipsis; 
     padding-left: 38px;}
 
