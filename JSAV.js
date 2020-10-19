@@ -331,7 +331,7 @@ function printJSAV(divId, sequences, options)
             div_sortable.css('white-space', 'nowrap');
          }
 
-         var html = JSAV_redraw(divId);
+         var html = JSAV_redraw(divId, options.colourScheme);
    
          var div_controls = $('<div />').appendTo(div);
          div_controls.attr('id', divId + '_controls');
@@ -2086,7 +2086,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
    //------------------ Header Columns --------------------------
    
    html += "<div class='header'><table border='0'>";
-   html += "<tr><td class='idCell' colspan='10'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
+   html += "<tr class='labelrow'>";
    var cc = chainChange(options.labels, options.autoLabels, divId);
    if (options.selectable)
    { 
@@ -2097,7 +2097,6 @@ function JSAV_buildSequencesHTML(divId, sequences)
    {
       html += "<td>&nbsp;</td><td class='selectCell'>&nbsp;</td>"; 
    }
-
 
    if(options.labels != undefined)
    {
@@ -2205,7 +2204,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
 
    html += "</table></div>";
    html += "</div>\n";
-   seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
+//   seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
    return(html);
 }
 
@@ -2260,14 +2259,12 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
    var html = "";
 
-   //    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
-
    for(var i=0; i<seqLen; i++)
    {
       var id = divId + "_JSAVMarker" + i;
       var onmousedown = "setSortStart(\""+divId+"\", "+(i)+");";
       var onmouseover = "setSortRange(\""+divId+"\", "+i+");";
-      html += "<td id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
+      html += "<td class='seqCell' id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
    }
    html += "<td class='rhcol'></td>\n";
    return(html);
@@ -2699,8 +2696,13 @@ Refreshes the content of the divId_sortable div with the new sequence table
 @author 
 - 13.10.20  Original split out from JSAV_refresh() By: JH
 */
-function JSAV_redraw(divId)
+function JSAV_redraw(divId, colourScheme, cdrRegion)
 {
+   gOptions[divId].colourScheme = colourScheme;
+   if (cdrRegion)
+   {
+     gOptions[divId].highlight = gOptions[divId].regions[cdrRegion];
+   }
    var html;
    if (gOptions[divId].transpose) 
    {
@@ -2710,12 +2712,15 @@ function JSAV_redraw(divId)
    {
       html = JSAV_buildSequencesHTML(divId, gSequences[divId]);
    }
+   var seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
+
    var element = document.getElementById(divId + "_sortable");
    element.innerHTML = html;
    $('#' + divId + ' .seqtable').css('width', seqtabWidth);
    $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
    $('#' + divId + ' .header').css('width', seqtabWidth);
    $('#' + divId + ' .footer').css('width', seqtabWidth);
+   $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
 }
 
 // ---------------------------------------------------------------------
@@ -2742,7 +2747,7 @@ function JSAV_refresh(divId)
 {
    var sequences = gSequences[divId];
    var options = gOptions[divId];
-   JSAV_redraw(divId);
+   JSAV_redraw(divId, options.colourScheme);
 
    if(options.border)
    {
