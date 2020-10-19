@@ -4116,6 +4116,7 @@ function JSON2XML(divId)
    var columns = [];
    var dnaColumn = 0;
 
+   columns['combined'] = new Array();
    columns['heavy'] = new Array();
    columns['light'] = new Array();
 
@@ -4146,8 +4147,12 @@ function JSON2XML(divId)
    XML += ' <Style ss:ID="light">';
    XML += '  <Interior ss:Color="#999999" ss:Pattern="Solid" />';
    XML += ' </Style>\r\n';
+   XML += ' <Style ss:ID="courier">';
+   XML += '  <Font ss:FontName="Courier" x:Family="Swiss" />';
+   XML += ' </Style>\r\n';
    XML += '</Styles>\r\n';
-   XML += '<Worksheet ss:Name="abysis_output">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+   XML += '<Worksheet ss:Name="Annotated Alignment">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+
 
    // Column definitions
    // Set datatable column widths
@@ -4158,15 +4163,16 @@ function JSON2XML(divId)
       {
          dnaColumn = 1;
       }
-      if (gDisplayColumn[gOptions[divId].chainType][s]) 
+      var ctype = gOptions[divId].chainType;
+      if (gDisplayColumn[ctype][s]) 
       {
-         if ((chainId.indexOf(gOptions[divId].chainType)) == -1)
+         if (chainId.indexOf(ctype) == -1)
          {
-            chainId.push(gOptions[divId].chainType);
+            chainId.push(ctype);
             XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
-            columns[gOptions[divId].chainType].push('id');
+            columns[ctype].push('id');
          }
-	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*4)+'"/>\r\n';
+         XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*4)+'"/>\r\n';
 	 columns[s.substring(0,5)].push(s);
       }
    }
@@ -4176,16 +4182,20 @@ function JSON2XML(divId)
    {
       XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
    }
+
+
    XML += '<Row ss:StyleID="columnHeader">\r\n';
 
    // Column Headers
    // Datatable chain type header row
    for (var t in columns) 
    {
+      var cellStyle = '';
+      if ((t == 'heavy') || (t =='light')) cellStyle = ' ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"';
       if (columns[t].length > 0) 
       {
-      XML += '  <Cell ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"><Data ss:Type="String">' + t.toUpperCase();
-      XML += '</Data></Cell>\r\n';
+         XML += '  <Cell ' + cellStyle  + '><Data ss:Type="String">' + t.toUpperCase();
+        XML += '</Data></Cell>\r\n';
       }
    }
    XML += '</Row>\r\n';
@@ -4194,9 +4204,11 @@ function JSON2XML(divId)
    // Datatable column headers
    for (var t in columns) 
    {
+      var cellStyle = '';
+      if ((t == 'heavy') || (t =='light')) cellStyle = ' ss:StyleID="' + t + '"';
       for (var c=0; c<columns[t].length; c++)
       {
-	 XML += '  <Cell ss:StyleID="' + t + '"><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
+	 XML += '  <Cell ' + cellStyle + '><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
       }
    }
 
@@ -4276,7 +4288,7 @@ function JSON2XML(divId)
    // CDR Region worksheet
    if (options.regionTypes)
    {
-      XML += '<Worksheet ss:Name="CDR regions">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
+      XML += '<Worksheet ss:Name="Regions">\r\n<Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">\r\n';
 
       var intoCDR = 0;
       var newHighlight = [];
@@ -4328,12 +4340,12 @@ function JSON2XML(divId)
                dispStr += sequence[dispOrder[i]].sequence[s];
                if (newHighlight.indexOf(s) != -1)
                {
-                  row += '  <Cell><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n';          
+                  row += '  <Cell ss:StyleID="courier"><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n';          
                   dispStr = '';
                }
             }
-            row += '  <Cell><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n'; 
-            row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]].sequence.replace(/-/g,"") + '</Data></Cell>\r\n'; 
+            row += '  <Cell ss:StyleID="courier"><Data ss:Type="String">' + dispStr.replace(/-/g,"") + '</Data></Cell>\r\n'; 
+            row += '  <Cell ss:StyleID="courier"><Data ss:Type="String">' + sequence[dispOrder[i]].sequence.replace(/-/g,"") + '</Data></Cell>\r\n'; 
             if (dnaColumn)
             {
                var dna = '';
@@ -4341,7 +4353,7 @@ function JSON2XML(divId)
                   dna += sequence[dispOrder[i]]['heavy_General_Dna'];
                if (sequence[dispOrder[i]].hasOwnProperty('light_General_Dna'))
                   dna += sequence[dispOrder[i]]['light_General_Dna'];
-               row += '  <Cell><Data ss:Type="String">' + dna + '</Data></Cell>\r\n';
+               row += '  <Cell ss:StyleID="courier"><Data ss:Type="String">' + dna + '</Data></Cell>\r\n';
             }
             row += '</Row>';
 	    XML += row;
@@ -4359,7 +4371,7 @@ function JSON2XML(divId)
    var link = document.createElement("a");
    var browser = window.navigator.userAgent;
    var appStr = 'data:application/xml;charset=utf-8';
-   var fileName = "JSAV_Export.xml";
+   var fileName = gOptions[divId].chainType.charAt(0).toUpperCase() + gOptions[divId].chainType.slice(1) + "_Chain_Alignment.xml";
    if((browser.indexOf('MSIE ') > 0) || (browser.indexOf('Trident/') > 0) || (browser.indexOf('Edge/') > 0)) 
    { 
       var blob = new Blob([XML], {type: appStr });
