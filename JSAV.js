@@ -4060,7 +4060,15 @@ function JSON2CSV(divId)
                } 
                else 
                {
-                   row += '"' + sequence[dispOrder[i]][columns[t][c]] + '",';
+	           var seqtext = sequence[dispOrder[i]][columns[t][c]];
+		   // HTML-wrapped data should have pure data in a preceeding comment
+		   if(seqtext.match(/<!--.+-->/)){
+		       // Remove the comment tags to expose the data
+		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
+		       // Remove any HTML from first to last tag
+		       seqtext = seqtext.replace(/<.+>/,'');
+		   }
+                  row += '"' + seqtext + '",';
 	       }
             }
 	 }
@@ -4264,7 +4272,17 @@ function JSON2XML(divId)
                } 
                else 
                {
-                  row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]][columns[t][c]] + '</Data></Cell>\r\n';
+	       	   var seqtext = sequence[dispOrder[i]][columns[t][c]];
+		   
+		   // HTML-wrapped data should have pure data in a preceeding comment
+		   if(seqtext.match(/<!--.+-->/)){
+		       // Remove the comment tags to expose the data
+		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
+		       // Remove any HTML from first to last tag
+		       seqtext = seqtext.replace(/<.+>/,'');
+		   }
+
+                  row += '  <Cell><Data ss:Type="String">' + seqtext + '</Data></Cell>\r\n';
 	       }
             }
 	 }
