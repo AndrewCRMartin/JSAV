@@ -330,22 +330,9 @@ function printJSAV(divId, sequences, options)
             div_sortable.css('overflow-y', 'hidden');
             div_sortable.css('white-space', 'nowrap');
          }
+
+         var html = JSAV_redraw(divId, options.colourScheme, options.defaultRegion);
    
-         if (options.transpose) 
-         {
- 	    var html = JSAV_transposeSequencesHTML(divId, sequences);
-   	 } 
-         else 
-         {
-	    var html = JSAV_buildSequencesHTML(divId, sequences);
-	 }
-
-         div_sortable.append(html);
-         $('#' + divId + ' .seqtable').css('width', seqtabWidth);
-         $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
-         $('#' + divId + ' .header').css('width', seqtabWidth);
-         $('#' + divId + ' .footer').css('width', seqtabWidth);
-
          var div_controls = $('<div />').appendTo(div);
          div_controls.attr('id', divId + '_controls');
          div_controls.attr('class', 'JSAVControls');
@@ -600,7 +587,7 @@ function JSAV_setColourScheme(divId, select)
    }
    else
    {
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      JSAV_refresh(divId);
    }
 }
 
@@ -935,7 +922,7 @@ function JSAV_toggleOptionIcon(divId, theButton, theOption, activeText, inactive
    }
    else
    { 
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      JSAV_refresh(divId);
    }
 }
 
@@ -976,7 +963,7 @@ function JSAV_toggleOption(divId, theButton, theOption)
    }
    else
    {
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      JSAV_refresh(divId);
    }
 }
 
@@ -1237,7 +1224,7 @@ function JSAV_deleteSelectedSequences(divId)
                           }
                           else
                           {
-                             JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+                             JSAV_refresh(divId);
                           } 
                        }
                     });
@@ -1295,7 +1282,7 @@ function JSAV_hideSelectedSequences(divId)
       }
       else
       {
-         JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+         JSAV_refresh(divId);
       }
    }
 }
@@ -1353,7 +1340,7 @@ function JSAV_resetDisplayrow(divId)
    }
    else
    {
-      JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+      JSAV_refresh(divId);
    }
 }
 
@@ -1471,7 +1458,7 @@ function printFrequencySlider(divId, controlDiv, opts)
                             $(upperlimit).val(ui.values[1]);
                             gOptions[divId].freqSlider1 = ui.values[0];
                             gOptions[divId].freqSlider2 = ui.values[1];
-                            JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+                            JSAV_refresh(divId);
 	                    var max = parseFloat($(sliderrange).slider( "option", "max"));
                             $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
                          }
@@ -1485,7 +1472,7 @@ function printFrequencySlider(divId, controlDiv, opts)
                            $(upperlimit).val(ui.values[1]);
                            gOptions[divId].freqSlider1 = ui.values[0];
                            gOptions[divId].freqSlider2 = ui.values[1];
-                           JSAV_refresh(divId, gSequences[divId], gStartPos[divId]-1, gStopPos[divId]-1);
+                           JSAV_refresh(divId);
 	                   var max = parseFloat($(sliderrange).slider( "option", "max"));
                            $(AboveMax).css('width', 100 * (max - ui.values[0]) / max + '%');
                         }
@@ -2099,7 +2086,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
    //------------------ Header Columns --------------------------
    
    html += "<div class='header'><table border='0'>";
-   html += "<tr><td class='idCell' colspan='10'>Kabat numbering and CDRs</td></tr><tr class='labelrow'>";
+   html += "<tr class='labelrow'>";
    var cc = chainChange(options.labels, options.autoLabels, divId);
    if (options.selectable)
    { 
@@ -2110,7 +2097,6 @@ function JSAV_buildSequencesHTML(divId, sequences)
    {
       html += "<td>&nbsp;</td><td class='selectCell'>&nbsp;</td>"; 
    }
-
 
    if(options.labels != undefined)
    {
@@ -2218,7 +2204,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
 
    html += "</table></div>";
    html += "</div>\n";
-   seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
+//   seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
    return(html);
 }
 
@@ -2273,14 +2259,12 @@ function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
    var html = "";
 
-   //    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
-
    for(var i=0; i<seqLen; i++)
    {
       var id = divId + "_JSAVMarker" + i;
       var onmousedown = "setSortStart(\""+divId+"\", "+(i)+");";
       var onmouseover = "setSortRange(\""+divId+"\", "+i+");";
-      html += "<td id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
+      html += "<td class='seqCell' id='" + id + "' onmousedown='"+onmousedown+"' onmouseover='"+onmouseover+"'>&nbsp;</td>";
    }
    html += "<td class='rhcol'></td>\n";
    return(html);
@@ -2695,7 +2679,7 @@ function JSAV_sortAndRefreshSequences(divId)
    JSAV_sortSequences(gSequences[divId], range[0], range[1], divId);
    resetDisplayColumn(gDisplayColumn[gOptions[divId].chaintype], gSequences[divId]);
    
-   JSAV_refresh(divId, gSequences[divId], range[0], range[1]);
+   JSAV_refresh(divId);
 
    // Record the fact that the display has been sorted
    gSorted[divId] = true;
@@ -2703,16 +2687,64 @@ function JSAV_sortAndRefreshSequences(divId)
    return(false);
 }
 
-
 // ---------------------------------------------------------------------
 /**
 Refreshes the content of the divId_sortable div with the new sequence table
-Also updates the marked range and the CSS if the border option is set
 
 @param {char}     divId        ID of an HTML <div>
-@param {object[]} sequences    Array of sequence objects
-@param {int}      start        start of selected region
-@param {int}      stop         end of selected region
+
+@author 
+- 13.10.20  Original split out from JSAV_refresh() By: JH
+*/
+function JSAV_redraw(divId, colourScheme, cdrRegion)
+{
+   if (typeof gSequences !== 'undefined')
+   {
+      if (gSequences[divId])
+      {
+         gOptions[divId].colourScheme = colourScheme;
+         if (cdrRegion)
+         {
+           gOptions[divId].highlight = gOptions[divId].regions[cdrRegion];
+         }
+         var html;
+         if (gOptions[divId].transpose) 
+         {
+            html = JSAV_transposeSequencesHTML(divId, gSequences[divId])
+         }
+         else 
+         {
+            html = JSAV_buildSequencesHTML(divId, gSequences[divId]);
+         }
+         var seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
+ 
+         if (colourScheme == 'frequencies')
+         {
+            $('#'+divId+'FrequencyControls').show();
+         }
+         else
+         {
+            $('#'+divId+'FrequencyControls').hide();
+         }
+
+         var element = document.getElementById(divId + "_sortable");
+         element.innerHTML = html;
+         $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+         $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+         $('#' + divId + ' .header').css('width', seqtabWidth);
+         $('#' + divId + ' .footer').css('width', seqtabWidth);
+         $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
+      }
+   }
+}
+
+// ---------------------------------------------------------------------
+/**
+Refreshes the content of the divId_sortable div by calling JSAV_redraw
+Also updates the marked range and the CSS if the border option is set
+Also redraws sort range and datatable
+
+@param {char}     divId        ID of an HTML <div>
 
 @author 
 - 12.06.14  Original split out from JSAV_sortAndRefreshSequences() By: ACRM
@@ -2723,25 +2755,14 @@ Also updates the marked range and the CSS if the border option is set
 - 09.01.17  Choice of display (transposed or standard) based on transpose parameter
 		JSAV_MarkRange only called if options.sortable is true
 		Also calls printDataTable		By: JH
+- 13.10.20  Removed sequences, start and stop as no longer required and now calls
+                JSAV_redraw for the sequence section
 */
-function JSAV_refresh(divId, sequences, start, stop)
+function JSAV_refresh(divId)
 {
+   var sequences = gSequences[divId];
    var options = gOptions[divId];
-   if (options.transpose) 
-   {
-      var html = JSAV_transposeSequencesHTML(divId, sequences)
-   }
-   else 
-   {
-      var html = JSAV_buildSequencesHTML(divId, sequences);
-   }
-									  
-   var element = document.getElementById(divId + "_sortable");
-   element.innerHTML = html;
-   $('#' + divId + ' .seqtable').css('width', seqtabWidth);
-   $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
-   $('#' + divId + ' .header').css('width', seqtabWidth);
-   $('#' + divId + ' .footer').css('width', seqtabWidth);
+   JSAV_redraw(divId, options.colourScheme, options.defaultRegion);
 
    if(options.border)
    {
@@ -3602,7 +3623,7 @@ function DT_sortColumn(divId, direction, colName)
       }
    }
 
-   JSAV_refresh(divId, gSequences[divId], 0, gSequences[divId][0].sequence.length-1);
+   JSAV_refresh(divId);
 } 
  
 // -----------------------------------------------------------------
