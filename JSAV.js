@@ -4062,7 +4062,8 @@ function JSON2CSV(divId)
                {
 	           var seqtext = sequence[dispOrder[i]][columns[t][c]];
 		   // HTML-wrapped data should have pure data in a preceeding comment
-		   if(seqtext.match(/<!--.+-->/)){
+		   if(seqtext.match(/<!--.+-->/))
+                   {
 		       // Remove the comment tags to expose the data
 		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
 		       // Remove any HTML from first to last tag
@@ -4275,7 +4276,8 @@ function JSON2XML(divId)
 	       	   var seqtext = sequence[dispOrder[i]][columns[t][c]];
 		   
 		   // HTML-wrapped data should have pure data in a preceeding comment
-		   if(seqtext.match(/<!--.+-->/)){
+		   if(seqtext.match(/<!--.+-->/))
+                   {
 		       // Remove the comment tags to expose the data
 		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
 		       // Remove any HTML from first to last tag
