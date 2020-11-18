@@ -641,6 +641,37 @@ div.wwrap {
    display: none;
 }
 
+/* Tooltip container */
+.tooltip2 {
+  position: relative;
+  display: inline-block;
+/*  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip2 .tooltiptext {
+  visibility: hidden;
+  font-size: 14px;
+  width: 100px;
+  border: 1px solid lightgrey;
+  background-color: #fff;
+  color: #333;
+  text-align: center;
+  padding: 3px 5px;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 99;
+  left: 75%;
+  top: 20px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip2:hover .tooltiptext {
+  visibility: visible;
+}
+
 
 
 

@@ -86,6 +86,7 @@
                         be duplicated for both views.
                       - Modified sequence sorting routines.
                       - Export to CSV and Excel.
+   V2.1    18.11.20  Added tooltip2, tooltiptext class.
 
 TODO: 
       1. Bar display of conservation from entropy
@@ -538,14 +539,15 @@ Prints a pulldown menu to select a colour scheme
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than writing to document  By: JHN
 - 31.07.20 Added option to display colour based on frequency By: JH
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_printColourSelector(divId, options)
 {
 
    var id   = divId + "_selectColour";
    var ctype = options.chainType;
-   var html = "<div style='float:left'>";
-   html += "<select class='tooltip colourselect "+ctype+"button' title='Select colour scheme' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
+   var html = "<div style='float:left' class='tooltip2'>";
+   html += "<select class='colourselect "+ctype+"button' id = '" + id + "' onchange='JSAV_setColourScheme(\"" + divId + "\", this)'>";
 
    for(var i=0; i<options.colourChoices.length; i++)
    {
@@ -559,7 +561,7 @@ function JSAV_printColourSelector(divId, options)
                 options.colourChoices[i] + "</option>";
    }
   
-   html += "</select></div>";
+   html += "</select><span class='tooltiptext'>Select colour scheme</span></div>";
    var parenttag = '#' + divId + '_controls';
 
    $(parenttag).append(html);
@@ -617,25 +619,25 @@ Prints a control button with icons, action and tooltip
 
 @author
 - 24.09.17 Original	By: JH
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_ControlButton(divId, localDiv, tooltip, icon, label, textlabel, action)
 {
    var parenttag = '#' + localDiv;
    var options = gOptions[divId];
    var ctype = options.chainType;
-   var tooltipText = "title='"+tooltip+"'";
-   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button' "+tooltipText+"  onclick='"+action+"'>";
+   var html = "<div style='float:left' class='tooltip2'><button type='button' class='"+ctype+"button' onclick='"+action+"'>";
 
    if (options.iconButtons) 
    {
-      html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+      html += "<i class='"+icon+"'></i> "+ label;
    } 
    else 
    {
       html +=  (icon != undefined) ? icon : textlabel;
    }
 
-   html += "</button></div>";
+   html += "</button><span class='tooltiptext'>" + tooltip + "</span></div>";
    $(parenttag).append(html);
 }
 
@@ -704,25 +706,25 @@ Prints an action button with icons, action and tooltip
 
 @author 
 - 06.07.20 Original based on JSAV_ControlButton   By: ACRM
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_ActionButton(divId, localDiv, tooltip, icon, label, textlabel, action)
 {
    var parenttag = "#" + localDiv;
    var options = gOptions[divId];
    var ctype = options.chainType == undefined ? 'JSAV' : options.chainType;
-   var tooltipText = "title='"+tooltip+"'";
-   var html = "<button type='button' class='tooltip " + ctype+"button' " + tooltipText + " onclick='JSAV_RunAction(\"" + action +"\", \"" + divId + "\")'>";
+   var html = "<div style='float:left' class='tooltip2'><button type='button' class='" + ctype+"button' onclick='JSAV_RunAction(\"" + action +"\", \"" + divId + "\")'>";
 
    if (options.iconButtons)
    {
-      html += "<i class='"+icon+"' "+tooltipText+"></i> "+ label;
+      html += "<i class='"+icon+"'></i> "+ label;
    }
    else
    {
       html += (icon != undefined) ? icon : textlabel;
    }
    
-   html += "</button>";
+   html += "</button><span class='tooltiptext'>" + tooltip + "</span></div>";
 
    $(parenttag).append(html);
 
@@ -757,6 +759,7 @@ Print a checkbox for toggling dotify mode
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 - 23.09.15 Dotify label now comes from options  By: ACRM
 - 09.01.17 Now includes dotifybutton class, checked changed to active, label now taken from options.toggleDotifyLabel  By: JH
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_printToggleDotify(divId, options)
 {
@@ -767,17 +770,16 @@ function JSAV_printToggleDotify(divId, options)
    var label = options.toggleDotifyLabel;
    var idText = " id='" + id + "'";
    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"dotify\")'";
-   var title = "title='Replace repeated residues with dots'";
-   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " " +title+ " "  + onclick + ">";
+   var html = "<div style='float:left' class='tooltip2'><button type='button' class='"+ctype+"button" + active + "' " + idText + " "  + onclick + ">";
    if (gOptions[divId].iconButtons) 
    {
-      html += "<i class='"+label+"'  "+title+"></i></button>";
+      html += "<i class='"+label+"'></i>";
    } 
    else 
    {
-      html += "Dotify</button></div>";
+      html += "Dotify";
    }
-
+   html += "</button><span class='tooltiptext'>Replace repeated residues with dots</span></div>";
    var parenttag = '#' + divId + '_controls';
    $(parenttag).append(html);
 }
@@ -795,6 +797,7 @@ Print a checkbox for toggling nocolour-dotify mode
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
 - 23.09.15 Obtains label from options.toggleNocolourLabel  By: ACRM
 - 09.01.17 Now includes nocolourbutton class, checked changed to active, label now taken from options.toggleNocolourlabel  By: JH
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_printToggleNocolour(divId, options) 
 {
@@ -805,16 +808,17 @@ function JSAV_printToggleNocolour(divId, options)
    var idText = " id='" + id + "'";
    var label = options.toggleNocolourLabel;
    var onclick = " onclick='JSAV_toggleOption(\"" + divId + "\", \"" + id + "\", \"nocolour\")'";
-   var title = "title='Do not colour repeated residues'";
-   var html = "<div style='float:left'><button type='button' class='tooltip "+ctype+"button" + active + "' " + idText + " "+title+ " " + onclick + ">"
+   var title = "Do not colour repeated residues";
+   var html = "<div style='float:left' class='tooltip2'><button type='button' class='"+ctype+"button" + active + "' " + idText + " " + onclick + ">"
    if (gOptions[divId].iconButtons) 
    {
-      html += "<i class='"+label+"' "+title+"></i></button>";
+      html += "<i class='"+label+"'></i>";
    } 
    else 
    {
-      html += "No Repeat Colour</button></div>";
+      html += "No Repeat Colour";
    }
+   html += "</button><span class='tooltiptext'>" + title + "</span></div>";
    var parenttag = '#' + divId + '_controls';
    $(parenttag).append(html);
 }
@@ -828,13 +832,14 @@ Print a checkbox for toggling transposed sequence view
 
 @author 
 - 03.01.17 Original   By: JH
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 
 */
 function JSAV_printToggleTranspose(divId, options) 
 {
    var options = gOptions[divId];
    var ctype = options.chainType;
-   var html = "<div style='float:left'>";
+   var html = "<div style='float:left' class='tooltip2'>";
    var activeText = "fas fa-reply";
    var inactiveText = "fas fa-share";
    var active = "";
@@ -850,17 +855,16 @@ function JSAV_printToggleTranspose(divId, options)
    var id = divId + "_toggleTranspose";
    var idText = " id='" + id + "'";
    var onclick = " onclick='JSAV_toggleTranspose(\"" + divId + "\", \"" + id + "\", \"transpose\", \"" +activeText+"\",  \"" +inactiveText+"\")'";
-   var tooltip = "Transpose sequence view";
 
    if (options.iconButtons) 
    {
-      html += "<button type='button' class='tooltip "+ctype+"button' title='"+tooltip+ "' "  + onclick + "><i " + idText + " class='"+active+"'></i></button>";
+      html += "<button type='button' class='"+ctype+"button' "  + onclick + "><i " + idText + " class='"+active+"'></i></button>";
    }
    else 
    {
-      html += "<button type='button' class='tooltip "+ctype+"button' " + idText + " title='"+tooltip+ "' "  + onclick + ">Transpose Sequences</button>";
+      html += "<button type='button' class='"+ctype+"button' " + idText + " "  + onclick + ">Transpose Sequences</button>";
    }
-   html += "</div>";
+   html += "<span class='tooltiptext'>Transpose sequence view</span></div>";
    var parenttag = '#' + divId + '_controls';
    $(parenttag).append(html);
 }
@@ -1026,22 +1030,22 @@ Prints the submit button
 - 12.06.14 Original   By: ACRM
 - 18.06.14 Added tooltip
 - 02.09.14 Modifies the DOM rather than printing to the document By: JHN
+- 18.11.20 Added tooltip2, tooltiptext class By: JH
 */
 function JSAV_printSubmit(divId, url, label)
 {
    var parenttag = '#' + divId + '_controls';
    var ctype = gOptions[divId].chainType;
-   var title = "title='Submit the selected sequences, or all sequences if none selected'";
-   var html = "<button type='button' class='tooltip "+ctype+"button' "+title+" onclick='JSAV_submitSequences(\"" + divId + "\")'>";
+   var html = "<div style='float:left' class='tooltip2'><button type='button' class='"+ctype+"button' onclick='JSAV_submitSequences(\"" + divId + "\")'>";
    if (gOptions[divId].iconButtons) 
    {
-      html += "<i class='"+label+"' "+title+"></i>";
+      html += "<i class='"+label+"'></i>";
    } 
    else 
    {
       html += "Submit Selected Sequences";
    }
-   html += "</button>";
+   html += "</button><span class='tooltiptext'>Submit the selected sequences, or all sequences if none selected</span></div>";
 
    $(parenttag).append(html);
 
@@ -1990,7 +1994,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
 
    if ((idSubmit == null) || (attributeValue == 'undefined'))
    {
-      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><div class='tooltip' title='" + id + "'>" + id + "</div></td>";
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "'>" + id + "</td>";
    }
    else
    {
@@ -2245,7 +2249,7 @@ function JSAV_buildSelectAllHTML(divId, selectable, displayContent, extraClass)
    {
       var id = divId + "_AllNone";
       var checked = ($('.' + id).prop('checked')) ? 'checked' : '';
-      var content = (displayContent) ? "<input class='tooltop " + id + "' title='Select or deselect all sequences' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
+      var content = (displayContent) ? "<input class='" + id + "' type='checkbox' " + checked + " onclick='JSAV_selectAllOrNone(\"" + divId + "\",this.checked);' />" : '';
       html = "<td class='selectCell " + extraClass + "'>"+content+"</td>";
       gTableWidth[divId] += 20;
    }   
@@ -2272,8 +2276,6 @@ residues to be used for sorting
 function JSAV_buildMarkerHTML(divId, seqLen, selectable)
 {
    var html = "";
-
-   //    html += "<tr class='tooltip markerrow' title='Select region for sorting'>";
 
    for(var i=0; i<seqLen; i++)
    {
@@ -3166,7 +3168,7 @@ function JSAV_buildLabelsHTML(divId,  seqLen, labels, cc)
       var lastChar = labelText.substring(labelText.length-1,labelText.length);
 
       // Open a table cell with the label as a tooltip
-      html += "<td class='tooltip "+pref+cellCol+"' title='" + labels[i] + "'>";
+      html += "<td class='tooltip "+pref+cellCol+"' title='"+ labels[i] + "'>";
 
       // Insert the appropriate character
       if (lastChar == "0")   // 0 - do a '|'
@@ -3719,6 +3721,7 @@ Second line is the Name and the sort icon, based on the respective field in gDis
 @author
 - 09.01.17 Original By: JH
 - 20.08.19 Changed to include groupings
+- 18.11.20 Added tooltip2, tooltiptext class to sort and hide. By: JH
 */
 
 function printTableHeader(divId, selectable) 
@@ -3831,14 +3834,14 @@ function printTableHeader(divId, selectable)
                var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 	       htmlcell += "<th class='"+colClass+" headerHide'>";
-               htmlcell += "<div "+toggleclick+"><i class='"+options.hideLabel+" fa-inverse tooltip' title='Hide Column "+colDesc+"'>";
-               htmlcell += "</i>"+options.hideText+"</div></th>";
+               htmlcell += "<div "+toggleclick+" class='tooltip2'><i class='"+options.hideLabel+" fa-inverse'>";
+               htmlcell += "</i>"+options.hideText+"<span class='tooltiptext'>Hide Column "+colDesc+"</span></div></th>";
                htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
                htmlcell += "<div class='truncated tooltip' title='"+colDesc+"'>" + colheaders[row] + "</div></th>";
                htmlcell += "<th class='"+colClass+" headerSort'>";
                if (options.sortable)
                {
-                  htmlcell += "<div "+sortclick+"><i class='"+icon+" fa-inverse fa-lg tooltip' title='Sort Column "+colName+"'></i>"+textLbl+"<div>";
+                  htmlcell += "<div "+sortclick+" class='tooltip2'><i class='"+icon+" fa-inverse fa-lg'></i>"+textLbl+"<span class='tooltiptext'>Sort Column "+colName+"</span><div>";
                }
                htmlcell += "</th>";
 	    } 
