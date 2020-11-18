@@ -652,7 +652,6 @@ div.wwrap {
 .tooltip2 .tooltiptext {
   visibility: hidden;
   font-size: 14px;
-  width: 100px;
   border: 1px solid lightgrey;
   background-color: #fff;
   color: #333;
