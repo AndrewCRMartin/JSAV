@@ -1994,7 +1994,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
 
    if ((idSubmit == null) || (attributeValue == 'undefined'))
    {
-      html += "<td colspan='" + colspan + "' class='" + bgcol + "'>" + id + "</td>";
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "' title='" + id + "'>" + id + "</td>";
    }
    else
    {
@@ -2036,7 +2036,7 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, colspan,
       {
          url += '&humanorganism='+humanOrg;
       }
-      html += "<td colspan='" + colspan + "' class='" + bgcol + "'><a href='" + url + "'>" + id + "</a></td>";
+      html += "<td colspan='" + colspan + "' class='" + bgcol + "' title='" + id + "' onclick='location.href= \"" + url + "\"';>" + id + "</td>";
    }
 
    return(html);
