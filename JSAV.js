@@ -4447,6 +4447,21 @@ function JSON2xlsx(divId)
    columns['heavy'] = new Array();
    columns['light'] = new Array();
 
+   var chainId = Array();
+   for (var s in sequence[0]) 
+   {
+      var ctype = gOptions[divId].chainType;
+      if (gDisplayColumn[ctype][s]) 
+      {
+         if (chainId.indexOf(ctype) == -1)
+         {
+            chainId.push(ctype);
+            columns[ctype].push('id');
+         }
+	 columns[s.substring(0,5)].push(s);
+      }
+   }
+
    // Column Headers
    // Datatable column headers
    for (var t in columns) 
@@ -4488,6 +4503,7 @@ function JSON2xlsx(divId)
 
    for (var i=0; i<sequence.length; i++) 
    {
+      row = [];
       if (sequence[dispOrder[i]].displayrow) 
       {
 	 for (var t in columns) 
