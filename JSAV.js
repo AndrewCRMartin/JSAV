@@ -2703,7 +2703,7 @@ Refreshes the content of the divId_sortable div with the new sequence table
 */
 function JSAV_redraw(divId, colourScheme, cdrRegion)
 {
-   if (document.getElementById(divId))
+   if ((document.getElementById(divId)) && (gOptions[divId]))
    {
       gOptions[divId].colourScheme = colourScheme;
       if (cdrRegion)
