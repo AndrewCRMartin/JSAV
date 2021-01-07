@@ -2703,29 +2703,32 @@ Refreshes the content of the divId_sortable div with the new sequence table
 */
 function JSAV_redraw(divId, colourScheme, cdrRegion)
 {
-   gOptions[divId].colourScheme = colourScheme;
-   if (cdrRegion)
+   if (document.getElementById(divId))
    {
-     gOptions[divId].highlight = gOptions[divId].regions[cdrRegion];
-   }
-   var html;
-   if (gOptions[divId].transpose) 
-   {
-      html = JSAV_transposeSequencesHTML(divId, gSequences[divId])
-   }
-   else 
-   {
-      html = JSAV_buildSequencesHTML(divId, gSequences[divId]);
-   }
-   var seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
+      gOptions[divId].colourScheme = colourScheme;
+      if (cdrRegion)
+      {
+         gOptions[divId].highlight = gOptions[divId].regions[cdrRegion];
+      }
+      var html;
+      if (gOptions[divId].transpose) 
+      {
+         html = JSAV_transposeSequencesHTML(divId, gSequences[divId])
+      }
+      else 
+      {
+         html = JSAV_buildSequencesHTML(divId, gSequences[divId]);
+      }
+      var seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
 
-   var element = document.getElementById(divId + "_sortable");
-   element.innerHTML = html;
-   $('#' + divId + ' .seqtable').css('width', seqtabWidth);
-   $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
-   $('#' + divId + ' .header').css('width', seqtabWidth);
-   $('#' + divId + ' .footer').css('width', seqtabWidth);
-   $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
+      var element = document.getElementById(divId + "_sortable");
+      element.innerHTML = html;
+      $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+      $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+      $('#' + divId + ' .header').css('width', seqtabWidth);
+      $('#' + divId + ' .footer').css('width', seqtabWidth);
+      $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
+   }
 }
 
 // ---------------------------------------------------------------------
