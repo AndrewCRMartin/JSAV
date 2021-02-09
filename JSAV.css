@@ -65,6 +65,7 @@
                       Added options.idSubmit
                       Various CSS improvements  By: ACRM
    V1.8    24.09.15   Added options.scrollX and options.scrollY
+   V2.1    18.11.20   Added tooltip2, tooltiptext
 */
 
 /***********************************************************************/
@@ -668,6 +669,10 @@ div.wwrap {
 .tooltip2:hover span.tooltiptext {
   display: inline;
 }
+
+
+
+
 
 
 
