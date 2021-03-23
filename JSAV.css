@@ -65,6 +65,7 @@
                       Added options.idSubmit
                       Various CSS improvements  By: ACRM
    V1.8    24.09.15   Added options.scrollX and options.scrollY
+   V2.1    18.11.20   Added tooltip2, tooltiptext
 */
 
 /***********************************************************************/
@@ -143,7 +144,7 @@
 
 .JSAVControls .actionbutton { background: #999999; border-radius: 4px; border-color: #666666; }
 .JSAVControls input { margin-left: 8pt; }
-.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {text-align: left; color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px; min-width: 100px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; padding-left: 18px;}
+.JSAV .idCell, .JSAV .idCell a:link, .JSAV .idCell a:visited {text-align: left; color: #274c7b; font-weight: normal; font: 9pt sans-serif; width: 100px; min-width: 100px; max-width: 100px; padding-left: 18px; cursor: pointer;}
 .JSAV p, .JSAV label {color: #274c7b;}
 .JSAV .highlightrow  {height: 18px;}
 .JSAV .br_highlightrow  {height: 18px; border-right: 3px solid #999999;}
@@ -494,8 +495,8 @@ div.feint {
    opacity:0.3;
 }
 div.truncated {
-   overflow: hidden;
-   text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 table.results {
@@ -584,8 +585,7 @@ table.results td.idCell, table.results td.idCell a:link, table.results td.idCell
     width: 100px; 
     min-width: 100px; 
     max-width: 100px; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
+    cursor: pointer;
     padding-left: 18px;}
 
 table.results th.headerHide {
@@ -640,6 +640,60 @@ div.wwrap {
 .notshown {
    display: none;
 }
+
+/* Tooltip container */
+.tooltip2 {
+  position: relative;
+}
+
+/* Tooltip text */
+.tooltiptext {
+  display: none;
+  font-size: 14px;
+  border: 1px solid lightgrey;
+  background-color: #fff;
+  color: #333;
+  text-align: center;
+  padding: 3px 5px;
+  border-radius: 6px;
+ 
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 100;
+  left: 75%;
+  right: -150px;
+  top: 20px;
+}
+
+/* Tooltip text */
+.tooltiptext2 {
+  display: none;
+  font-size: 12px;
+  border: 1px solid lightgrey;
+  background-color: #fff;
+  color: #333;
+  text-align: center;
+  padding: 1px 2px;
+  border-radius: 4px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 100;
+  left: 75%;
+  top: 0px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip2:hover span.tooltiptext {
+  display: inline;
+}
+.tooltip2:hover span.tooltiptext2 {
+  display: inline;
+}
+
+
+
+
 
 
 
