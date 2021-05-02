@@ -3577,6 +3577,7 @@ Prints the toggle list - the buttons for redisplaying columns where display is t
 @author
 - 09.01.17 Original By: JH
 - 20.08.19 Changed to include groupings for separate selection boxes
+- 01.05.21 Now uses the header data structure to create the toggles and dropdowns
 */
 function printToggleList(divId) 
 {
