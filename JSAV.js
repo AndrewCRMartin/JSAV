@@ -3285,9 +3285,14 @@ function initDisplayColumn(divId, sequences, displayColumns)
    {
       for (var key in sequences[s]) 
       {
-         var col = getColHeader(divId, gOptions[divId].header, key);
-         if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key.substring(6) != 'Chain id')) 
+         if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key != 'Chain id')) 
          {
+            var col = getColHeader(divId, gOptions[divId].header, key);
+            if (!col.hasOwnProperty('Item'))
+            {
+               var cType = (gOptions[divId].chainType == 'light') ? 'l' : 'h';
+               gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Select',Item:cType+key,Display:key,Default:'0'});
+            }
             var colTitle = key.substring(1);
             if (displayColumns && displayColumns.hasOwnProperty(key))
             {
@@ -3703,32 +3708,16 @@ function printTableHeader(divId, selectable)
       var lastHtml = "";
 
       // Build each row cell for the column 
-      for (var key in gDisplayColumn[options.chainType]) 
+      for (let col of options.header) 
       {
-         if (gDisplayColumn[options.chainType][key]) 
+         var colItem = col.Item;
+         if (gDisplayColumn[options.chainType][colItem]) 
          {
-            var col = getColHeader(divId, options.header, key);
-            var colDisplay;
-            var colLabel;
-            var sColItem;
-            var colItemGroup;
-            var colGroup;
-            if (col.hasOwnProperty('Item'))
-            {
-               colGroup = col.Group;
-               colItemGroup = (col.hasOwnProperty('ItemGroup')) ? col.ItemGroup: '';
-               sColItem = col.Item.substring(1);
-               colDisplay = col.Display;
-               colLabel = col.Label;
-            }
-            else
-            {
-               sColItem = col.Item;
-               colDisplay = col.Item;
-               colLabel = col.Item;
-               colItemGroup = '';
-               colGroup = '';
-            }
+            var sColItem = col.Item.substring(1);
+            var colGroup = col.Group;
+            var colItemGroup = (col.hasOwnProperty('ItemGroup')) ? col.ItemGroup: '';
+            var colDisplay = col.Display;
+            var colLabel = col.Label;
             // Set column width and add this to the table width
             var colWidth = 50;
             var colClass = options.chainType+"-col";
@@ -3743,7 +3732,7 @@ function printTableHeader(divId, selectable)
             // The last row of the column - includes the hide and sort icons
             if (row == 2)
             {
-   	       switch (gDisplayColumn[options.chainType][key]) 
+   	       switch (gDisplayColumn[options.chainType][colItem]) 
                { 
                    case 2: var icon = options.sortDownLabel;
 	  	      var textLbl = options.sortDownText;
@@ -3757,8 +3746,8 @@ function printTableHeader(divId, selectable)
                       var textLbl = options.sortBothText;
                       var direction = "asc";
                }
-               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
-	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
+               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + colItem + "\");'";
+	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + colItem + "\");'";
 
 	       html += "<th class='"+colClass+" headerHide'>";
                html += "<div "+toggleclick+" class='tooltip2'><i class='"+options.hideLabel+" fa-inverse'>";
@@ -3862,14 +3851,14 @@ function printDataRow(divId, sequence)
       html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 18, options.humanOrganism) + "\n";
 
       // Build the data cells
-      for (var key in gDisplayColumn[gOptions[divId].chainType])
+      for (let col of gOptions[divId].header) 
       {
-         if (gDisplayColumn[gOptions[divId].chainType][key])
-	 {
-
+         var sColItem = col.Item.substring(1);
+         var colItem = col.Item;
+         if (gDisplayColumn[options.chainType][colItem]) 
+         {
             // Set column width and lower-case Colname based on the formattedCols object
             var lcColName = 'other';
-            sColItem = key.substring(1);
             var colWidth = 90;
             if (options.formattedCols) 
             {
@@ -3882,13 +3871,13 @@ function printDataRow(divId, sequence)
             var feint = (sequence[matchcol] == 'N') ? ' feint' : '';
 
             // Build the cell (or empty cell if no data)
- 	    if (typeof(sequence[key]) == 'undefined') 
+ 	    if (typeof(sequence[colItem]) == 'undefined') 
             {
                html += "<td></td>";
 	    } 
             else 
             {                     
-               var cellText = sequence[key];
+               var cellText = sequence[colItem];
 
                // Check search terms as, if found in the cellText, the word will be upper-cased and highlighted
                for (var term in options.searchTerms) 
@@ -3896,9 +3885,9 @@ function printDataRow(divId, sequence)
                   if (( term == 'simple')  || (sColItem.toLowerCase() == term) ) 
                   {
                      var re = new RegExp(options.searchTerms[term], 'i');
-                     if (sequence[key].search(re) != -1) 
+                     if (sequence[colItem].search(re) != -1) 
                      {
-                        var cellArr = sequence[key].replace(/\>/g,'> ').split(' ');
+                        var cellArr = sequence[colItem].replace(/\>/g,'> ').split(' ');
                         cellText = '';
                         for (var c=0; c<cellArr.length; c++) 
                         {
