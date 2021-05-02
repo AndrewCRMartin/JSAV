@@ -3637,6 +3637,18 @@ function printToggleList(divId)
    return(divHtml + html);
 }
 
+// ----------------------------------------------------------------
+/**
+Returns the object where the key matches the object Item, or empty object if non found
+
+@param {string} divId		- div we're dealing with
+@param {array} header		- array of header objects
+@param {string} key		- item we're looking for
+@returns {object}		- the object required
+@author
+-02.05.21 Original By: JH
+*/
+
 function getColHeader(divId, header, key)
 {
    for (let col of gOptions[divId].header) 
@@ -3660,6 +3672,7 @@ Second line is the Name and the sort icon, based on the respective field in gDis
 - 09.01.17 Original By: JH
 - 20.08.19 Changed to include groupings
 - 18.11.20 Added tooltip2, tooltiptext class to sort and hide. By: JH
+- 02.05.21 Groupings now use the hierarchical JSON format - Type:Group:ItemGroup:Item
 */
 
 function printTableHeader(divId, selectable) 
@@ -3685,8 +3698,8 @@ function printTableHeader(divId, selectable)
 
       var colspan = 3;
       var rowstart = true;
-      var lastcell = "";
-      var lasthtml = "";
+      var lastDisplayName = "";
+      var lastHtml = "";
 
       // Build each row cell for the column 
       for (var key in gDisplayColumn[options.chainType]) 
@@ -3717,16 +3730,14 @@ function printTableHeader(divId, selectable)
             }
             // Set column width and add this to the table width
             var colWidth = 50;
+            var colClass = options.chainType+"-col";
+
             if (options.formattedCols)
             {
                colWidth = (sColItem in options.formattedCols) ? options.formattedCols[sColItem] : 50;
             }
             gTableWidth[divId] += (colWidth + 40);
-            // colspan increases if the column header for the row does not change 
-            var colClass = options.chainType+"-col";
-            var colspan = 3;
 
-            var htmlcell = "";
             // Build the cell
             // The last row of the column - includes the hide and sort icons
             if (row == 2)
@@ -3748,20 +3759,20 @@ function printTableHeader(divId, selectable)
                var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + key + "\");'";
 	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + key + "\");'";
 
-	       htmlcell += "<th class='"+colClass+" headerHide'>";
-               htmlcell += "<div "+toggleclick+" class='tooltip2'><i class='"+options.hideLabel+" fa-inverse'>";
-               htmlcell += "</i>"+options.hideText+"<span class='tooltiptext'>Hide Column "+colLabel+"</span></div></th>";
-               htmlcell += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
-               htmlcell += "<div class='tooltip2'>";
-               htmlcell += (colDisplay.length < 18) ? colDisplay : (colDisplay.substring(0, 15) + '...');
-               htmlcell += "<span class='tooltiptext'>"+colLabel+"</span></div></th>";
-               htmlcell += "<th class='"+colClass+" headerSort'>";
+	       html += "<th class='"+colClass+" headerHide'>";
+               html += "<div "+toggleclick+" class='tooltip2'><i class='"+options.hideLabel+" fa-inverse'>";
+               html += "</i>"+options.hideText+"<span class='tooltiptext'>Hide Column "+colLabel+"</span></div></th>";
+               html += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
+               html += "<div class='tooltip2'>";
+               html += (colDisplay.length < 18) ? colDisplay : (colDisplay.substring(0, 15) + '...');
+               html += "<span class='tooltiptext'>"+colLabel+"</span></div></th>";
+               html += "<th class='"+colClass+" headerSort'>";
                if (options.sortable)
                {
-                  htmlcell += "<div "+sortclick+" class='tooltip2'><i class='"+icon+" fa-inverse fa-lg'></i>"+textLbl+"<span class='tooltiptext'>";
-                  htmlcell += "Sort Column "+colLabel+"</span><div>";
+                  html += "<div "+sortclick+" class='tooltip2'><i class='"+icon+" fa-inverse fa-lg'></i>"+textLbl+"<span class='tooltiptext'>";
+                  html += "Sort Column "+colLabel+"</span><div>";
                }
-               htmlcell += "</th>";
+               html += "</th>";
             }
             else
             {
@@ -3774,14 +3785,32 @@ function printTableHeader(divId, selectable)
                {
                    displayName = colItemGroup;
                }
-               htmlcell += "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colWidth+"px;'>";
+               if ((lastDisplayName == displayName) && (displayName != ''))
+               {
+                  colspan += 3;
+               }
+               else
+               {
+                  colspan = 3;
+               }
+               var htmlcell = "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colWidth+"px;'>";
                htmlcell += "<div class='truncated'>";
                htmlcell += displayName; 
                htmlcell += "</div></th>";
+               if (rowstart)
+               {
+                  rowstart = false;
+               }
+               else if ((displayName != lastDisplayName) || (displayName == ''))
+               {
+                  html += lastHtml;
+               }              
+               lastHtml = htmlcell;
+               lastDisplayName = displayName;
             }
-            html += htmlcell;
          }
       }
+      html += lastHtml;
       html += "</tr>";
    }
    html += "</table>";
@@ -3799,6 +3828,7 @@ Displays a single row of the data table, where displayrow is true
 @author
 - 09.01.17 Original By: JH
 - 28.07.20 Removed use of accession for link - now used id
+- 02.05.21 No longer uses underscore format for groupng hierarchy
 */
 
 function printDataRow(divId, sequence) 
@@ -3835,24 +3865,19 @@ function printDataRow(divId, sequence)
       {
          if (gDisplayColumn[gOptions[divId].chainType][key])
 	 {
-            // colName is the cell name minus the chainType and group label, colheaders is the text for each row
-            var colheaders = key.split('_');
-            var colName = '';
-            for (var k=2; k<colheaders.length; k++) 
-               colName += colheaders[k] + ' ';
-	    colName = colName.trim();
 
             // Set column width and lower-case Colname based on the formattedCols object
             var lcColName = 'other';
+            sColItem = key.substring(1);
             var colWidth = 90;
             if (options.formattedCols) 
             {
-               lcColname = (colName in options.formattedCols) ? colName.toLowerCase() : 'other';
-               colWidth = (colName in options.formattedCols) ? (options.formattedCols[colName] + 40) : 90;
+               lcColname = (sColItem in options.formattedCols) ? sColItem.toLowerCase() : 'other';
+               colWidth = (sColItem in options.formattedCols) ? (options.formattedCols[sColItem] + 40) : 90;
             }
 
             // Add feint class if sequence not matched.
-	    var matchcol = colheaders[0] + '_Numbered';
+	    var matchcol = (gOptions[divId].chainType == 'heavy') ? 'hNumbered' : 'lNumbered';
             var feint = (sequence[matchcol] == 'N') ? ' feint' : '';
 
             // Build the cell (or empty cell if no data)
@@ -3867,7 +3892,7 @@ function printDataRow(divId, sequence)
                // Check search terms as, if found in the cellText, the word will be upper-cased and highlighted
                for (var term in options.searchTerms) 
                {
-                  if (( term == 'simple')  || (colName.toLowerCase() == term) ) 
+                  if (( term == 'simple')  || (sColItem.toLowerCase() == term) ) 
                   {
                      var re = new RegExp(options.searchTerms[term], 'i');
                      if (sequence[key].search(re) != -1) 
