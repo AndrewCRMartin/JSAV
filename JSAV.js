@@ -3281,6 +3281,7 @@ function initDisplayColumn(divId, sequences, displayColumns)
 {
    var dispColumn = {};
    var header = gOptions[divId].header;
+   var headerItems = [];
    for (var s=0; s<=sequences.length; s++) 
    {
       for (var key in sequences[s]) 
@@ -3291,13 +3292,18 @@ function initDisplayColumn(divId, sequences, displayColumns)
             if (!col.hasOwnProperty('Item'))
             {
                var cType = (gOptions[divId].chainType == 'light') ? 'l' : 'h';
-               gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Select',Item:cType+key,Display:key,Default:'0'});
+               var item = cType + key;
+               if (headerItems.indexOf(key) < 0) headerItems.push(key);
             }
             var colTitle = key.substring(1);
             if (displayColumns && displayColumns.hasOwnProperty(key))
             {
                dispColumn[key] = displayColumns[key];
             }
+            else if ( gOptions[divId].defaultVisibleColumns.indexOf(key) >= 0 )
+            { 
+               dispColumn[key] = 1;
+            } 
             else if ( gOptions[divId].defaultVisibleColumns.indexOf(colTitle) >= 0 )
             { 
                dispColumn[key] = 1;
@@ -3327,6 +3333,10 @@ function initDisplayColumn(divId, sequences, displayColumns)
             }
          }
       }
+   }
+   for (var i=0; i<headerItems.length; i++)
+   {
+      gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Data',Item:headerItems[i],Display:headerItems[i],Default:'0'});
    }
    return(dispColumn);
 }
@@ -3710,17 +3720,13 @@ function printTableHeader(divId, selectable)
       // Build each row cell for the column 
       for (let col of options.header) 
       {
-         var colItem = col.Item;
-         if (gDisplayColumn[options.chainType][colItem]) 
+         if (gDisplayColumn[options.chainType][col.Item]) 
          {
             var sColItem = col.Item.substring(1);
-            var colGroup = col.Group;
             var colItemGroup = (col.hasOwnProperty('ItemGroup')) ? col.ItemGroup: '';
-            var colDisplay = col.Display;
-            var colLabel = col.Label;
             // Set column width and add this to the table width
             var colWidth = 50;
-            var colClass = options.chainType+"-col";
+            var colClass = col.Type+'-col';
 
             if (options.formattedCols)
             {
@@ -3732,7 +3738,7 @@ function printTableHeader(divId, selectable)
             // The last row of the column - includes the hide and sort icons
             if (row == 2)
             {
-   	       switch (gDisplayColumn[options.chainType][colItem]) 
+   	       switch (gDisplayColumn[options.chainType][col.Item]) 
                { 
                    case 2: var icon = options.sortDownLabel;
 	  	      var textLbl = options.sortDownText;
@@ -3746,21 +3752,21 @@ function printTableHeader(divId, selectable)
                       var textLbl = options.sortBothText;
                       var direction = "asc";
                }
-               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + colItem + "\");'";
-	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + colItem + "\");'";
+               var toggleclick = "onclick='DT_toggleColumn(\"" + divId + "\", \"" + col.Item + "\");'";
+	       var sortclick = "onclick='DT_sortColumn(\"" + divId + "\", \"" + direction + "\", \"" + col.Item + "\");'";
 
 	       html += "<th class='"+colClass+" headerHide'>";
                html += "<div "+toggleclick+" class='tooltip2'><i class='"+options.hideLabel+" fa-inverse'>";
-               html += "</i>"+options.hideText+"<span class='tooltiptext'>Hide Column "+colLabel+"</span></div></th>";
+               html += "</i>"+options.hideText+"<span class='tooltiptext'>Hide Column "+col.Label+"</span></div></th>";
                html += "<th class='"+colClass+" headerText' style='min-width:"+colWidth+"px;max-width:"+colWidth+"px;'>";
                html += "<div class='tooltip2'>";
-               html += (colDisplay.length < 18) ? colDisplay : (colDisplay.substring(0, 15) + '...');
-               html += "<span class='tooltiptext'>"+colLabel+"</span></div></th>";
+               html += (col.Display.length < 18) ? col.Display : (col.Display.substring(0, 15) + '...');
+               html += "<span class='tooltiptext'>"+col.Label+"</span></div></th>";
                html += "<th class='"+colClass+" headerSort'>";
                if (options.sortable)
                {
                   html += "<div "+sortclick+" class='tooltip2'><i class='"+icon+" fa-inverse fa-lg'></i>"+textLbl+"<span class='tooltiptext'>";
-                  html += "Sort Column "+colLabel+"</span><div>";
+                  html += "Sort Column "+col.Label+"</span><div>";
                }
                html += "</th>";
             }
@@ -3769,7 +3775,7 @@ function printTableHeader(divId, selectable)
                var displayName;
                if (row == 0)
                {
-                   displayName = colGroup;
+                   displayName = col.Group;
                } 
                else 
                {
