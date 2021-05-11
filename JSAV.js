@@ -240,6 +240,7 @@ accession code).
 - 12.08.19 Added sortColumn and sortDirection for initilial sorting of columns 
 
 */
+
 function printJSAV(divId, sequences, options)
 {
    // Deal with options
@@ -2034,13 +2035,41 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidt
       {
          url += '&humanorganism='+humanOrg;
       }
-      html += "<td class='idCell'><div class='tooltip2' onclick='location.href= \"" + url + "\";'>";
+      html += "<td class='idCell'><div class='tooltip2' oncontextmenu='event.preventDefault();' onmousedown='linkClick(\"" + url + "\");'>";
       html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...');
       html += "<span class='tooltiptext2'>"+id+"</span></div></td>";
    }
 
    return(html);
 }
+
+// ----------------------------------------------------------------
+/**
+Opens new window based on mouse button
+
+@param 		{string}	url		URL of window to be opened
+
+@author
+- 11.05.21 Original By: JH
+*/
+function linkClick(url)
+{
+   if ((event.button == 2) || (event.shiftKey)) 
+   { 
+      var newWindow = window.open(url, '_blank');
+      newWindow.focus();
+   }
+   else if ((event.ctrlKey) || (event.metaKey))
+   {
+      var newWindow = window.open(url, '_blank');
+      newWindow.focus();
+   } 
+   else 
+   {
+      window.open(url, '_top');
+   }
+}
+
 
 // ---------------------------------------------------------------------
 /**
@@ -3655,7 +3684,7 @@ function printToggleList(divId)
 
 // ----------------------------------------------------------------
 /**
-Returns the object where the key matches the object Item, or empty object if non found
+Returns the header object where the key matches the object Item, or empty object if non found
 
 @param {string} divId		- div we're dealing with
 @param {array} header		- array of header objects
@@ -3696,10 +3725,18 @@ function printTableHeader(divId, selectable)
    var html = "<table class='results' border='1' id='" + divId + "_tablehead'>";
 
    var options = gOptions[divId];
+   var itemGroupFound = false;
+
+   for (let col of gOptions[divId].header) 
+      if (col.hasOwnProperty('ItemGroup') && gDisplayColumn[options.chainType][col.Item])
+      {
+         itemGroupFound = true;
+      }
 
    // Build header row by row
    var maxrows = 3;
    for (var row=0; row<maxrows; row++) 
+   if ((row != 1) || (itemGroupFound))
    {
       
       html += "<tr>";
@@ -3707,9 +3744,9 @@ function printTableHeader(divId, selectable)
 
       // Build selectAll checkbox cell and ID header cell
       var bgcol = (options.chainType == 'combined') ? 'heavy-col' : options.chainType+'-col';
-      html += JSAV_buildSelectAllHTML(divId, selectable, (row==1), 'lrborderheader '+bgcol);
+      html += JSAV_buildSelectAllHTML(divId, selectable, (row==2), 'lrborderheader '+bgcol);
       html += "<th class='idCell " +bgcol+ "'>";
-      if (row==1) html += "ID";
+      if (row==2) html += "ID";
       html += "</th>";
 
       var colspan = 3;
@@ -4095,7 +4132,7 @@ function JSON2XML(divId, format)
    var chainId = Array();
    for (var s in sequence[0]) 
    {
-      if (s.substring(6) == 'General_Dna')
+      if (s.substring(1,4) == 'Dna')
       {
          dnaColumn = 1;
       }
@@ -4109,7 +4146,7 @@ function JSON2XML(divId, format)
             columns[ctype].push('id');
          }
 	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*4)+'"/>\r\n';
-	 columns[s.substring(0,5)].push(s);
+	 columns[ctype].push(s);
       }
    }
 
@@ -4296,10 +4333,10 @@ function JSON2XML(divId, format)
             if (dnaColumn)
             {
                var dna = '';
-               if (sequence[dispOrder[i]].hasOwnProperty('heavy_General_Dna'))
-                  dna += sequence[dispOrder[i]]['heavy_General_Dna'];
-               if (sequence[dispOrder[i]].hasOwnProperty('light_General_Dna'))
-                  dna += sequence[dispOrder[i]]['light_General_Dna'];
+               if (sequence[dispOrder[i]].hasOwnProperty('hDna'))
+                  dna += sequence[dispOrder[i]]['hDna'];
+               if (sequence[dispOrder[i]].hasOwnProperty('lDna'))
+                  dna += sequence[dispOrder[i]]['lDna'];
                row += '  <Cell ss:StyleID="courier"><Data ss:Type="String">' + dna + '</Data></Cell>\r\n';
             }
             row += '</Row>';
