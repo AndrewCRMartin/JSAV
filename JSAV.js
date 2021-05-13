@@ -427,7 +427,6 @@ function printJSAV(divId, sequences, options)
       {
  	 printDataTable(divId, sequences);
       }
-
       if (options.sortColumn != undefined)
       {
          DT_sortColumn(divId, options.sortDirection, options.sortColumn);
@@ -1985,7 +1984,6 @@ Builds the label for the sequence row
 
 function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidth, humanOrg) 
 {
-
    var options = gOptions[divId];
    var html = "";
 
@@ -2030,7 +2028,6 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidt
             seperator = '&';
          }
       }
-
       if (humanOrg) 
       {
          url += '&humanorganism='+humanOrg;
@@ -2184,14 +2181,13 @@ function JSAV_buildSequencesHTML(divId, sequences)
    html += "<table border='0'>\n";
 
    var prevSequence = undefined;
-   for(var i=0; i<sequences.length; i++) 
+   for (var i=0; i<sequences.length; i++) 
    {
-      if(sequences[dispOrder[i]].displayrow != undefined)
+      if (sequences[dispOrder[i]].displayrow != undefined)
       {
 	 if ((sequences[dispOrder[i]].displayrow) && numberedSequence(options.chainType, sequences[dispOrder[i]]))
   	 {
 	    html += "<tr class='seqrow' id='" + sequences[dispOrder[i]].id + "'>";
-
             var attrArray = options.idSubmitAttribute.split(':');
             var idSubmitAttr = '';
             for (var a=0; a<attrArray.length; a++)
@@ -3315,7 +3311,7 @@ function initDisplayColumn(divId, sequences, displayColumns)
    {
       for (var key in sequences[s]) 
       {
-         if ((key != 'sequence') && (key != 'displayrow') && (key != 'id') && (key != 'Chain id')) 
+         if ((key != 'sequence') && (key != 'displayrow') && (key != 'frequencies') && (key != 'id') && (key != 'Chain id')) 
          {
             var col = getColHeader(divId, gOptions[divId].header, key);
             if (!col.hasOwnProperty('Item'))
@@ -3365,7 +3361,11 @@ function initDisplayColumn(divId, sequences, displayColumns)
    }
    for (var i=0; i<headerItems.length; i++)
    {
-      gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Data',Item:headerItems[i],Display:headerItems[i],Default:'0'});
+      var key = headerItems[i];
+      if ((key != 'sequence') && (key != 'displayrow') && (key != 'frequencies') && (key != 'id') && (key != 'Chain id')) 
+      {
+         gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Data',Item:key,Display:key,Default:'0'});
+      }
    }
    return(dispColumn);
 }
@@ -3970,44 +3970,38 @@ function JSON2CSV(divId)
 {
    var sequence = gSequences[divId];
    var dispOrder = gDisplayOrder[divId];
+   var options = gOptions[divId];
    var CSV = '';
    var row = '';
    var columns = [];
-   columns['heavy'] = new Array();
-   columns['light'] = new Array();
-   for (var s in sequence[0]) 
-   {
-      if (gDisplayColumn[gOptions[divId].chainType][s]) 
-      {
-          if ((columns[s.substring(0,5)].indexOf('id')) == -1)
-          { 
-             columns[s.substring(0,5)].push('id');
-          }
-	  columns[s.substring(0,5)].push(s);
-      }
-   }
-   for (var t in columns)
-   { 
-      if (columns[t].length > 0) 
-      {
-         row += '"' + t.toUpperCase() + '",';
-         for (var d=1; d<columns[t].length; d++)
-            row += ",";
-      }
-   }
+   row = '';
+   row += options.chainType.toUpperCase() +',';
    CSV += row.slice(0,-1) + '\r\n';
    row = '';
-   for (var t in columns) 
+
+   if (sequence[0].id)
    {
-      for (var c=0; c<columns[t].length; c++)
+      row += 'ID,';
+   }
+
+   // Datatable column headers
+   for (let col of options.header) 
+   {
+      if (gDisplayColumn[options.chainType][col.Item]) 
       {
-	 row += columns[t][c].substring(6) + ',';
+         var disp = col.Display;
+         if (col.ItemGroup) disp = disp + ' ' + col.ItemGroup;
+	 row += disp + ',';
       }
    }
-   
-   for (var s=0; s<gOptions[divId].labels.length; s++) 
+
+   // Residue labels header
+   if(options.labels != undefined)
    {
-      row += gOptions[divId].labels[s] + ',';
+      for (var s=0; s<options.labels.length; s++) 
+      {
+         row += options.labels[s] + ',';
+      }
    }
 
    CSV += row.slice(0,-1) + '\r\n';
@@ -4017,25 +4011,29 @@ function JSON2CSV(divId)
       if (sequence[dispOrder[i]].displayrow) 
       {
          row = '';
-	 for (var t in columns) 
+         if (sequence[dispOrder[i]].id)
          {
-            for (var c=0; c<columns[t].length; c++) 
+            row += sequence[dispOrder[i]].id + ',';
+         }
+         for (let col of options.header) 
+         {
+            if (gDisplayColumn[options.chainType][col.Item]) 
             {
-               if (sequence[dispOrder[i]][columns[t][c]] == undefined) 
+               if (sequence[dispOrder[i]][col.Item] == undefined) 
                {
 	          row += ',';
                } 
                else 
                {
-	           var seqtext = sequence[dispOrder[i]][columns[t][c]];
-		   // HTML-wrapped data should have pure data in a preceeding comment
-		   if(seqtext.match(/<!--.+-->/))
-                   {
-		       // Remove the comment tags to expose the data
-		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
-		       // Remove any HTML from first to last tag
-		       seqtext = seqtext.replace(/<.+>/,'');
-		   }
+	          var seqtext = sequence[dispOrder[i]][col.Item];
+	          // HTML-wrapped data should have pure data in a preceeding comment
+		  if(seqtext.match(/<!--.+-->/))
+                  {
+		     // Remove the comment tags to expose the data
+		     seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
+		     // Remove any HTML from first to last tag
+		     seqtext = seqtext.replace(/<.+>/,'');
+		  }
                   row += '"' + seqtext + '",';
 	       }
             }
@@ -4129,24 +4127,20 @@ function JSON2XML(divId, format)
 
    // Column definitions
    // Set datatable column widths
-   var chainId = Array();
-   for (var s in sequence[0]) 
+   if (sequence[0].id)
    {
-      if (s.substring(1,4) == 'Dna')
+      XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
+   }
+   var dispNoCols = 1;
+   for (let col of options.header) 
+   {
+      if (col.Display == 'DNA') dnaColumn = 1;
+      if (gDisplayColumn[options.chainType][col.Item]) 
       {
-         dnaColumn = 1;
-      }
-      var ctype = gOptions[divId].chainType;
-      if (gDisplayColumn[ctype][s]) 
-      {
-         if (chainId.indexOf(ctype) == -1)
-         {
-            chainId.push(ctype);
-            XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
-            columns[ctype].push('id');
-         }
-	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(s.length*4)+'"/>\r\n';
-	 columns[ctype].push(s);
+         var colWidth = col.Display.length;
+         if (col.ItemGroup) colWidth += col.ItemGroup.length + 1;
+	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(colWidth*6)+'"/>\r\n';
+         dispNoCols++;
       }
    }
 
@@ -4156,32 +4150,28 @@ function JSON2XML(divId, format)
       XML += '  <Column ss:AutoFitWidth="0" ss:Width="15.0"/>\r\n';
    }
 
-
-   XML += '<Row ss:StyleID="columnHeader">\r\n';
-
    // Column Headers
    // Datatable chain type header row
-   for (var t in columns) 
-   {
-      var cellStyle = '';
-      if ((t == 'heavy') || (t =='light')) cellStyle = ' ss:StyleID="' + t + '" ss:MergeAcross="' + (columns[t].length-1) + '"';
-      if (columns[t].length > 0) 
-      {
-        XML += '  <Cell ' + cellStyle  + '><Data ss:Type="String">' + t.toUpperCase();
-        XML += '</Data></Cell>\r\n';
-      }
-   }
+
+   XML += '<Row ss:StyleID="columnHeader">\r\n';
+   XML += '  <Cell ss:StyleID="' + options.chainType  + '" ss:MergeAcross="' + (dispNoCols-1) + '"><Data ss:Type="String">';
+   XML += options.chainType.toUpperCase() +'</Data></Cell>\r\n';
    XML += '</Row>\r\n';
    XML += '<Row ss:StyleID="columnHeader">\r\n';
 
-   // Datatable column headers
-   for (var t in columns) 
+   if (sequence[0].id)
    {
-      var cellStyle = '';
-      if ((t == 'heavy') || (t =='light')) cellStyle = ' ss:StyleID="' + t + '"';
-      for (var c=0; c<columns[t].length; c++)
+      XML += '  <Cell ss.StyleID="' + options.chainType  + '"><Data ss:Type="String">ID</Data></Cell>\r\n';
+   }
+
+   // Datatable column headers
+   for (let col of options.header) 
+   {
+      if (gDisplayColumn[options.chainType][col.Item]) 
       {
-	 XML += '  <Cell ' + cellStyle + '><Data ss:Type="String">' + columns[t][c].substring(6) + '</Data></Cell>\r\n';
+         var disp = col.Display;
+         if (col.ItemGroup) disp = disp + ' ' + col.ItemGroup;
+	 XML += '  <Cell ss:StyleId="' + options.chainType + '"><Data ss:Type="String">' + disp + '</Data></Cell>\r\n';
       }
    }
 
@@ -4196,28 +4186,25 @@ function JSON2XML(divId, format)
    XML += '</Row>\r\n';
 
    // Table cells
-   if((gOptions[divId].blastaaquery != undefined) && (gOptions[divId].blastaaquery != ''))
+   if ((gOptions[divId].blastaaquery != undefined) && (gOptions[divId].blastaaquery != ''))
    {
       row = '<Row>\r\n';
       row += '  <Cell><Data ss:Type="String">Blast Query</Data></Cell>\r\n';
-      for (var t in columns) 
+      for (var c=1; c<dispNoCols; c++) 
       {
-         for (var c=1; c<columns[t].length; c++) 
-         {
-	    row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
-         }
+         row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
       }
       var blastArray = gOptions[divId].blastaaquery.split("");
       for (var s=0; s<blastArray.length; s++) 
+      {
+         row += '  <Cell';
+         var r = blastArray[s];
+	 if ((typeof(aaColours) !== 'undefined') && (aaColours[gOptions[divId].colourScheme].hasOwnProperty(r)))
          {
-            row += '  <Cell';
-            var r = blastArray[s];
-	    if ((typeof(aaColours) !== 'undefined') && (aaColours[gOptions[divId].colourScheme].hasOwnProperty(r)))
-            {
-               row += ' ss:StyleID="' + r + '"';
-            }
-	    row += '><Data ss:Type="String">' + r + '</Data></Cell>\r\n';          
+            row += ' ss:StyleID="' + r + '"';
          }
+	 row += '><Data ss:Type="String">' + r + '</Data></Cell>\r\n';          
+      }
       row += '</Row>\r\n';
       XML += row;
    }
@@ -4227,31 +4214,34 @@ function JSON2XML(divId, format)
       if (sequence[dispOrder[i]].displayrow) 
       {
          row = '<Row>\r\n';
-	 for (var t in columns) 
+         if (sequence[dispOrder[i]].id)
          {
-            for (var c=0; c<columns[t].length; c++) 
+            row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]].id + '</Data></Cell>\r\n';
+         }
+         for (let col of options.header) 
+         {
+            if (gDisplayColumn[options.chainType][col.Item]) 
             {
-               if (sequence[dispOrder[i]][columns[t][c]] == undefined) 
+               if (sequence[dispOrder[i]][col.Item] == undefined) 
                {
 	          row += '  <Cell><Data ss:Type="String"> </Data></Cell>\r\n';
                } 
                else 
                {
-	       	   var seqtext = sequence[dispOrder[i]][columns[t][c]];
+	          var seqtext = sequence[dispOrder[i]][col.Item];
 		   
-		   // HTML-wrapped data should have pure data in a preceeding comment
-		   if(seqtext.match(/<!--.+-->/))
-                   {
-		       // Remove the comment tags to expose the data
-		       seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
-		       // Remove any HTML from first to last tag
-		       seqtext = seqtext.replace(/<.+>/,'');
-		   }
-
+ 	          // HTML-wrapped data should have pure data in a preceeding comment
+	          if (seqtext.match(/<!--.+-->/))
+                  {
+		     // Remove the comment tags to expose the data
+		     seqtext = seqtext.replace(/<!--\s*|\s*-->/g,'');
+		     // Remove any HTML from first to last tag
+		     seqtext = seqtext.replace(/<.+>/,'');
+	          }
                   row += '  <Cell><Data ss:Type="String">' + seqtext + '</Data></Cell>\r\n';
-	       }
-            }
-	 }
+               }
+	    }
+         }
 
          for (var s=0; s<sequence[dispOrder[i]].sequence.length; s++) 
          {
