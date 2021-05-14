@@ -403,13 +403,9 @@ function printJSAV(divId, sequences, options)
          {
             JSAV_ControlButton(divId, divId + '_controls', 'Export sequences to CSV', 
                                options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
-            JSAV_ControlButton(divId, divId + '_controls', 'Export sequences to XML', 
-                               options.exportLabel, 'Excel (xml)', 'Export Excel XML', 'JSON2XML("'+divId+'","XML")');
-            if (options.xml2xlsx_url)
-            {
-               JSAV_ControlButton(divId, divId + '_controls', 'Export sequences to Excel xlsx', 
-                               options.exportLabel, 'Excel (xlsx)', 'Export Excel xlsx', 'JSON2XML("'+divId+'","XLSX")');
-            }
+            var excelLabel = (options.xml2xlsx_url) ? 'XLSX' : 'XML';
+            JSAV_ControlButton(divId, divId + '_controls', 'Export sequences to Excel', 
+                               options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'","'+excelLabel+'")');
          }
 
          if (options.frequencies) 
@@ -3341,19 +3337,22 @@ function initDisplayColumn(divId, sequences, displayColumns)
             {
                dispColumn[key] = 0;
             }
-            lcColTitle = colTitle.toLowerCase();
-            for (var term in gOptions[divId].searchTerms) 
+            if (gOptions[divId].displaySearchColumns)
             {
-               if ( lcColTitle == term.toLowerCase() ) 
-	       { 
-      	           if (displayColumns && displayColumns.hasOwnProperty(colTitle))
-                   {
-                       dispColumn[key] = displayColumns[key];
-                   }
-                   else
-                   {
-                       dispColumn[key] = 1; 
-                   }
+               lcColTitle = colTitle.toLowerCase();
+               for (var term in gOptions[divId].searchTerms) 
+               {
+                  if ( lcColTitle == term.toLowerCase() ) 
+	          { 
+                      if (displayColumns && displayColumns.hasOwnProperty(colTitle))
+                      {
+                          dispColumn[key] = displayColumns[key];
+                      }
+                      else
+                      {
+                          dispColumn[key] = 1; 
+                      }
+                  }
                }
             }
          }
@@ -3425,13 +3424,9 @@ function printDataTable(divId, sequences)
    {
       JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export sequences to CSV', 
                          options.exportLabel, 'CSV', 'Export CSV', 'JSON2CSV("'+divId+'")');
-      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export sequences to XML', 
-                         options.exportLabel, 'Excel (xml)', 'Export Excel XML', 'JSON2XML("'+divId+'","XML")');
-      if (options.xml2xlsx_url)
-      {
-         JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export sequences to Excel xlsx', 
-                         options.exportLabel, 'Excel (xlsx)', 'Export Excel xlsx', 'JSON2XML("'+divId+'","XLSX")');
-      }
+      var excelLabel = (options.xml2xlsx_url) ? 'XLSX' : 'XML';
+      JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export sequences to Excel', 
+                         options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'","'+excelLabel+'")');
    }
    $('#' + divId + "_tablebody").css('width',gTableWidth[divId]+6); 
    $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+24); 
