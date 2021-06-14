@@ -2736,7 +2736,7 @@ Refreshes the content of the divId_sortable div with the new sequence table
 */
 function JSAV_redraw(divId, colourScheme, cdrRegion)
 {
-   if (document.getElementById(divId))
+   if (document.getElementById(divId) && gSequences[divId])
    { 
       if (gSequences[divId].length > 0)
       {
@@ -3363,7 +3363,7 @@ function initDisplayColumn(divId, sequences, displayColumns)
       var key = headerItems[i];
       if ((key != 'sequence') && (key != 'displayrow') && (key != 'frequencies') && (key != 'id') && (key != 'Chain id')) 
       {
-         gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Data',Item:key,Display:key,Default:'0'});
+         gOptions[divId].header.push({Type:gOptions[divId].chainType,Group:'Data',Item:key,Display:key,Label:key,Default:'0'});
       }
    }
    return(dispColumn);
