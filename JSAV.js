@@ -263,7 +263,7 @@ function printJSAV(divId, sequences, options)
    if(options.idSubmitKey         == undefined) { options.idSubmitKey         = "";                        }
    if(options.autoLabels)                       { options.labels              = JSAV_autoLabels(sequences);} 
    if(options.chainType           == undefined) { options.chainType           = "heavy";                   }
-   if(options.header		  == undefined) { options.header	      = {};			   }
+   if(options.header		  == undefined) { options.header	      = [];			   }
    if(options.iconButtons) 
    {
       if(options.submitLabel         == undefined) { options.submitLabel 	 = 'far fa-check-square';  }
@@ -3302,6 +3302,7 @@ function initDisplayColumn(divId, sequences, displayColumns)
 {
    var dispColumn = {};
    var header = gOptions[divId].header;
+
    var headerItems = [];
    for (var s=0; s<=sequences.length; s++) 
    {
@@ -3628,8 +3629,9 @@ function printToggleList(divId)
    var hiddenGroups = 0;
    for (var stype in stypes)
    {
-      for (let col of gOptions[divId].header) 
+      for (var c=0; c<gOptions[divId].header.length; c++) 
       {
+         var col = gOptions[divId].header[c];
          if (gDisplayColumn[gOptions[divId].chainType][col.Item] == false) 
          {
             hiddenGroups = 1;
@@ -3651,8 +3653,9 @@ function printToggleList(divId)
       html += "<select class='toggle-col-list " + grpType[0] + "button' onchange='DT_toggleColumn(\"" + divId + "\",this.value);'>";
       var gTitle = (grpType[1] == '') ? 'Select' : grpType[1];
       html += "<option style='display:none;' disabled='disabled' selected='selected'>" + gTitle + "</option> ";
-      for (let col of gOptions[divId].header) 
+      for (var c=0; c<gOptions[divId].header.length; c++) 
       {
+         var col = gOptions[divId].header[c];
          if (gDisplayColumn[gOptions[divId].chainType][col.Item] == false) 
          {
             var colListName = col.Type + '_' + col.Group;
@@ -3691,11 +3694,14 @@ Returns the header object where the key matches the object Item, or empty object
 
 function getColHeader(divId, header, key)
 {
-   for (let col of gOptions[divId].header) 
+   for (var c=0; c<gOptions[divId].header.length; c++) 
+   {
+      var col = gOptions[divId].header[c];
       if (col.Item == key)
       {
          return(col);
       }
+   }
    return {};
 }
 
@@ -3722,11 +3728,14 @@ function printTableHeader(divId, selectable)
    var options = gOptions[divId];
    var itemGroupFound = false;
 
-   for (let col of gOptions[divId].header) 
+   for (var c=0; c<gOptions[divId].header.length; c++) 
+   {
+      var col = gOptions[divId].header[c];
       if (col.hasOwnProperty('ItemGroup') && gDisplayColumn[options.chainType][col.Item])
       {
          itemGroupFound = true;
       }
+   }
 
    // Build header row by row
    var maxrows = 3;
@@ -3750,8 +3759,9 @@ function printTableHeader(divId, selectable)
       var lastHtml = "";
 
       // Build each row cell for the column 
-      for (let col of options.header) 
+      for (var c=0; c<gOptions[divId].header.length; c++) 
       {
+         var col = gOptions[divId].header[c];
          if (gDisplayColumn[options.chainType][col.Item]) 
          {
             var sColItem = col.Item.substring(1);
@@ -3889,8 +3899,9 @@ function printDataRow(divId, sequence)
       html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 18, options.humanOrganism) + "\n";
 
       // Build the data cells
-      for (let col of gOptions[divId].header) 
+      for (var c=0; c<gOptions[divId].header.length; c++) 
       {
+         var col = gOptions[divId].header[c];
          var sColItem = col.Item.substring(1);
          var colItem = col.Item;
          if (gDisplayColumn[options.chainType][colItem]) 
@@ -3980,8 +3991,9 @@ function JSON2CSV(divId)
    }
 
    // Datatable column headers
-   for (let col of options.header) 
+   for (var c=0; c<gOptions[divId].header.length; c++) 
    {
+      var col = gOptions[divId].header[c];
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
          var disp = col.Display;
@@ -4010,8 +4022,9 @@ function JSON2CSV(divId)
          {
             row += sequence[dispOrder[i]].id + ',';
          }
-         for (let col of options.header) 
+         for (var c=0; c<gOptions[divId].header.length; c++) 
          {
+         var col = gOptions[divId].header[c];
             if (gDisplayColumn[options.chainType][col.Item]) 
             {
                if (sequence[dispOrder[i]][col.Item] == undefined) 
@@ -4127,8 +4140,9 @@ function JSON2XML(divId, format)
       XML += '  <Column ss:AutoFitWidth="0" ss:Width="100"/>\r\n';
    }
    var dispNoCols = 1;
-   for (let col of options.header) 
+   for (var c=0; c<gOptions[divId].header.length; c++) 
    {
+      var col = gOptions[divId].header[c];
       if (col.Display == 'DNA') dnaColumn = 1;
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
@@ -4160,8 +4174,9 @@ function JSON2XML(divId, format)
    }
 
    // Datatable column headers
-   for (let col of options.header) 
+   for (var c=0; c<gOptions[divId].header.length; c++) 
    {
+      var col = gOptions[divId].header[c];
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
          var disp = col.Display;
@@ -4213,8 +4228,9 @@ function JSON2XML(divId, format)
          {
             row += '  <Cell><Data ss:Type="String">' + sequence[dispOrder[i]].id + '</Data></Cell>\r\n';
          }
-         for (let col of options.header) 
+         for (var c=0; c<gOptions[divId].header.length; c++) 
          {
+            var col = gOptions[divId].header[c];
             if (gDisplayColumn[options.chainType][col.Item]) 
             {
                if (sequence[dispOrder[i]][col.Item] == undefined) 

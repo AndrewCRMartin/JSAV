@@ -33,8 +33,7 @@ the divId and array of sequence objects
 - `consensus`      - Display consensus sequence
 - `colourScheme` or `colorScheme`   - Default colour scheme - valid options 
                                     depend on the css, but are currently
-                                    taylor, clustal, zappo, hphob, helix, 
-                                    strand, turn, buried
+                                    taylor, clustal, zappo, hphob
 - `selectColour` or `selectColor`  - Display a pull-down to choose the colour 
                                     scheme.
 - `colourChoices` or `colorChoices`  - Array of colour scheme names - only used
@@ -78,9 +77,9 @@ The sequence object must contain two fields:
 - `sequence` which is the 1-letter code sequence (with dashes as
   necessary for the alignment)
 
-In addition it may contain any other required fields that will be
-passed around but are not used by JSAV itself. For example some sort
-of accession code that might be required by an 'action' run from JSAV.
+In addition it may contain any other required fields that will be displayed in the data table below the sequences.
+Any number of data items can be included, and missing data is allowed. Data labels containing spaces must be enclosed in quotation marks.
+Data items must be emclosed in quotation marks.
 
 CSS Control
 -----------
@@ -115,41 +114,6 @@ alternatively, you could access the JQuery code from Google APIs:
 
     <link href="JSAV.css" rel="stylesheet" />
     <script type='text/javascript' src='JSAV.js'></script>
-
-
-Optional styling
-----------------
-
-By default, JQuery tooltips are enabled. As above, these can be
-disabled using the `plainTooltips` option.
-
-The tooltips are fully compatible with the tooltipster package which
-gives more attractive tooltips. If you wish to use this, simply
-download the package from
-https://github.com/iamceege/tooltipster/archive/master.zip and add the
-following lines to your HTML:
-
-    <link href="external/tooltipster-master/css/tooltipster.css" rel="stylesheet" />
-    <script type='text/javascript' src='external/tooltipster-master/js/jquery.tooltipster.min.js'></script>
-    <script>
-    function enableTooltipster()
-    {
-        $(document).ready(function() {
-            $('.tooltip').tooltipster();
-        });
-    enableTooltipster();
-    </script>
-
-**Note** that this must appear *after* including the JSAV.js code and
-CSS (unless you also remember to set the `options.plainTooltips`
-option).
-
-The `enableTooltipster()` function must be called whenever the display is refreshed. This is achieved by
-adding the option:
-
-```javascript
-    options.callback = "enableTooltipster";
-```
 
 Note
 ----
