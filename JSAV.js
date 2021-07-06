@@ -2951,7 +2951,7 @@ function JSAV_buildConsensus(sequences)
     var validAAs = "ACDEFGHIKLMNPQRSTVWY-".split('');
     for(var pos=0; pos<seqLen; pos++)
     {
-        var mostCommon = undefined;
+        var mostCommon = ' ';
         var maxAA      = 0;
         for(var aaCount=0; aaCount<validAAs.length; aaCount++)
         {
