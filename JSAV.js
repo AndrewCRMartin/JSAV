@@ -2028,41 +2028,13 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidt
       {
          url += '&humanorganism='+humanOrg;
       }
-      html += "<td class='idCell'><div class='tooltip2' oncontextmenu='event.preventDefault();' onmousedown='linkClick(\"" + url + "\");'>";
+      html += "<td class='idCell'><a href=\"" + url + "\" class='tooltip2'>";
       html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...');
-      html += "<span class='tooltiptext2'>"+id+"</span></div></td>";
+      html += "<span class='tooltiptext2'>"+id+"</span></a></td>";
    }
 
    return(html);
 }
-
-// ----------------------------------------------------------------
-/**
-Opens new window based on mouse button
-
-@param 		{string}	url		URL of window to be opened
-
-@author
-- 11.05.21 Original By: JH
-*/
-function linkClick(url)
-{
-   if ((event.button == 2) || (event.shiftKey)) 
-   { 
-      var newWindow = window.open(url, '_blank');
-      newWindow.focus();
-   }
-   else if ((event.ctrlKey) || (event.metaKey))
-   {
-      var newWindow = window.open(url, '_blank');
-      newWindow.focus();
-   } 
-   else 
-   {
-      window.open(url, '_top');
-   }
-}
-
 
 // ---------------------------------------------------------------------
 /**
