@@ -1,0 +1,111 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+<title>JSAV</title>
+
+<!-- JQuery and JQuery-UI -->
+<link href="../external/jquery.css" rel="stylesheet" />
+<script type='text/javascript' src='../external/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='../external/jquery-ui-1.10.4.custom.min.js'></script>
+
+<!-- JSAV -->
+<link href="../JSAV.css" rel="stylesheet" />
+<script type='text/javascript' src='../JSAV.min.js'></script>
+
+<style>
+p, label {font: 12pt Arial,Helvetica,sans-serif;
+   color: #3333AA;
+}
+</style>
+
+</head>
+
+<body>
+<script type='text/javascript'>
+var MySeqs = [];
+
+MySeqs.push({ id:"id1b1.L",  sequence:"SASSSVNYMYACREFGHIKLMNPTRSTVWY", "Data 1":"0.625", Chemist:"PeterS"});
+MySeqs.push({ id:"id1a.L",   sequence:"SASSSTNYMYACDEFGHIKLMNPQRSTVWY", "Data 1":"0.291", Chemist:"JeffC"});
+MySeqs.push({ id:"id2b1.L",  sequence:"SASSTCNYMTACDEEGHIKLMNP-RSTCWY", "Data 1":"0.550", Chemist:"JeffC"});
+MySeqs.push({ id:"id2a.L",   sequence:"SASSSCNYMTLCDEHGHIKLMNP-RSTCWY", "Data 1":"0.223", Chemist:"PeterS"});
+MySeqs.push({ id:"id2a1.L",  sequence:"SASSSCNYMTLCDEHGHIKLMNPQRSTCWY", "Data 1":"0.383", Chemist:"RogerW"});
+MySeqs.push({ id:"id1.L",    sequence:"SASSSVNYMYACDEFGHIKLMNPQRSTVWY", "Data 1":"0.217", Chemist:"JeffC"});
+MySeqs.push({ id:"id1b.L",   sequence:"SASSSVNYMYACREFGHIKLMNPQRSTVWY", "Data 1":"0.124", Chemist:"PeterS"});
+MySeqs.push({ id:"id1a1.L",  sequence:"SASSSTNYMYLCDEFGHIKLMNPQRSTVWY", "Data 1":"0.269", Chemist:"RogerW"});
+MySeqs.push({ id:"id2.L",    sequence:"SASSSCNYMTACDEHGHIKLMNP-RSTCWY", "Data 1":"0.323", Chemist:"TerryC"});
+MySeqs.push({ id:"id2b.L",   sequence:"SASSTCNYMTACDEHGHIKLMNP-RSTCWY", "Data 1":"0.546", Chemist:"TerryC"});
+</script>
+
+<h1>JavaScript Sequence Alignment Viewer (JSAV)</h1>
+<p>JSAV is a JavaScript program to display and sort a sequence
+  alignment. The sorting method chooses a representative sequence (one
+  which is most similar to all the other sequences) placing that first
+  in the list. To add to the sorted list, it iteratively chooses the
+  sequences that are most similar to the last one in the list and, of
+  those chooses the sequence most similar to the representative
+  sequence.</p>
+
+<p>Sequences are:</p>
+<div id='sequenceDisplay'>
+</div>
+
+<p>Data Table:</p>
+<div id='sequenceDisplay_Table'>
+</div>
+
+<script type='text/javascript'>
+function myAction(divId, sequences)
+{
+   var seqString = "";
+   for(var i=0; i<sequences.length; i++)
+   {
+       seqString += ">" + sequences[i].id + "\n";
+       seqString += sequences[i].sequence + "\n\n";
+   }
+   alert(seqString);
+}
+
+var MyOptions = Array();
+MyOptions.displaydatatable = true;
+MyOptions.defaultVisibleColumns = ['Data 1'];
+MyOptions.sortable = true;
+MyOptions.selectable = true;
+MyOptions.deletable = true;
+MyOptions.exportable = true;
+MyOptions.border = false;
+MyOptions.highlight = [3,5,10,14];
+MyOptions.submit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.action = "myAction";
+MyOptions.toggleDotify = true;
+MyOptions.toggleNocolour = true;
+MyOptions.fasta = true;
+MyOptions.consensus = true;
+MyOptions.colourScheme = "taylor";
+MyOptions.selectColour = true;
+MyOptions.idSubmit = "http://www.bioinf.org.uk/cgi-bin/echo.pl";
+MyOptions.idSubmitKey = "id:seq";
+MyOptions.idSubmitAttribute = "id:sequence";
+MyOptions.idSubmitClean = true;
+MyOptions.autoLabels = true;
+
+printJSAV('sequenceDisplay', MySeqs, MyOptions);
+</script>
+<div style='padding-top:20px'>
+<p>Input to the JavaScript is simply an array of sequences and data items in
+  the form:</p>
+<pre>
+sequences[0] = { id :"id1b1.L",  sequence :"SASSSVNYMYACREFGHIKLMNPTRSTVWY", "Data 1":"0.635", Chemist:"PeterS"};
+</pre>
+<p>in which the data labels (e.g. 'Data 1') are user-defined. Any number of data items can be included, 
+ and missing data is allowed. Data labels containing spaces must be enclosed in quotation marks.
+ The display and sorter is created with</p>
+<pre>
+printJSAV('sequenceDisplay', sequences, options);
+sequenceDisplay - div in which to display the viewer
+sequences       - array of sequence objects
+options         - an object describing options
+</pre>
+</div>
+
+</body>
+</html>
