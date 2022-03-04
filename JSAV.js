@@ -1978,10 +1978,14 @@ Builds the label for the sequence row
 - 18.03.21 Removed bgcol and colspan and added textwidth, tooltip2 and call to nameTruncate
 */
 
-function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidth, humanOrg) 
+function JSAV_buildId(divId, attributeValue, id, textWidth) 
 {
    var options = gOptions[divId];
    var html = "";
+
+   var idSubmit = options.idSubmit;
+   var idSubmitKey = options.idSubmitKey;
+   var idSubmitExt = options.idSubmitExtension;
 
    if ((idSubmit == null) || (attributeValue == 'undefined'))
    {
@@ -2024,9 +2028,9 @@ function JSAV_buildId(divId, attributeValue, id, idSubmit, idSubmitKey, textWidt
             seperator = '&';
          }
       }
-      if (humanOrg) 
+      if (idSubmitExt) 
       {
-         url += '&humanorganism='+humanOrg;
+         url += idSubmitExt;
       }
       html += "<td class='idCell'><a href=\"" + url + "\" class='tooltip2'>";
       html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...');
@@ -2161,7 +2165,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
             for (var a=0; a<attrArray.length; a++)
                idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
             idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-     	    html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, options.idSubmit, options.idSubmitKey, 12, options.humanOrganism) + "\n";
+     	    html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, 12) + "\n";
   	    var name = "select_" + sequences[dispOrder[i]].id;
 	    var cname = name.replace(/\./g, "_").replace(/\//g, "_");
             html += "<th class='selectCell'>";
@@ -3699,6 +3703,7 @@ function printTableHeader(divId, selectable)
 
    var options = gOptions[divId];
    var itemGroupFound = false;
+   var groupFound = false;
 
    for (var c=0; c<gOptions[divId].header.length; c++) 
    {
@@ -3707,14 +3712,17 @@ function printTableHeader(divId, selectable)
       {
          itemGroupFound = true;
       }
+      if (col.hasOwnProperty('Group') && (col.Group != 'Data'))
+      {
+         groupFound = true;
+      }
    }
 
    // Build header row by row
    var maxrows = 3;
    for (var row=0; row<maxrows; row++) 
-   if ((row != 1) || (itemGroupFound))
-   {
-      
+   if ((row == 2) || (groupFound) || (itemGroupFound))
+   { 
       html += "<tr>";
       gTableWidth[divId] = 120;
 
@@ -3854,7 +3862,7 @@ function printDataRow(divId, sequence)
       if (options.selectable)
       {
          var name = "select_" + sequence.id;
-         var cname = name.replace(/\./g, "_").replace(/\//g, "_");
+         var cname = name.replace(/\./g, "_").replace(/\:/g, "_");
          var checked = ($('.' + cname).prop('checked')) ? 'checked' : '';
          var onclick = "onclick='JSAV_resetAllNone(\""+divId+"\",\""+cname+"\",this.checked);'";
          html += "<td><input class='"+cname+" selectBox' type='checkbox' name='" + name + "' " + checked + " " + onclick + "/></td>";
@@ -3868,7 +3876,7 @@ function printDataRow(divId, sequence)
          idSubmitAttr += sequence[attrArray[a]] + ':';
       }
       idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, options.idSubmit, options.idSubmitKey, 18, options.humanOrganism) + "\n";
+      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, 15) + "\n";
 
       // Build the data cells
       for (var c=0; c<gOptions[divId].header.length; c++) 
@@ -3910,9 +3918,9 @@ function printDataRow(divId, sequence)
                      {
                         var cellArr = sequence[colItem].replace(/\>/g,'> ').split(' ');
                         cellText = '';
-                        for (var c=0; c<cellArr.length; c++) 
+                        for (var d=0; d<cellArr.length; d++) 
                         {
-                           var cellWord = cellArr[c] + ' ';
+                           var cellWord = cellArr[d] + ' ';
                            if (cellWord.search(re) != -1) 
                               {
                                  cellWord = "<span class='highlightmatch'>"+cellWord.toUpperCase()+"</span>"
