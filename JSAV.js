@@ -1926,7 +1926,7 @@ function JSAV_transposeSequencesHTML(divId, sequences)
          {
             var label = options.labels[s];
             var freq = undefined;
-            if (frequencies != undefined)
+            if (sequences[dispOrder[s]].frequencies != undefined)
             {
                freq = sequences[dispOrder[s]].frequencies[options.labels[i]];
             }
@@ -2165,7 +2165,7 @@ function JSAV_buildSequencesHTML(divId, sequences)
             for (var a=0; a<attrArray.length; a++)
                idSubmitAttr += sequences[dispOrder[i]][attrArray[a]] + ':';
             idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-     	    html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, 12) + "\n";
+     	    html += JSAV_buildId(divId, idSubmitAttr, sequences[dispOrder[i]].id, 20) + "\n";
   	    var name = "select_" + sequences[dispOrder[i]].id;
 	    var cname = name.replace(/\./g, "_").replace(/\//g, "_");
             html += "<th class='selectCell'>";
@@ -2733,12 +2733,15 @@ function JSAV_redraw(divId, colourScheme, cdrRegion)
          var seqtabWidth = ((gSequenceLengths[divId] * 9) + 165) + 'px';
 
          var element = document.getElementById(divId + "_sortable");
-         element.innerHTML = html;
-         $('#' + divId + ' .seqtable').css('width', seqtabWidth);
-         $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
-         $('#' + divId + ' .header').css('width', seqtabWidth);
-         $('#' + divId + ' .footer').css('width', seqtabWidth);
-         $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
+         if (element)
+         {
+             element.innerHTML = html;
+             $('#' + divId + ' .seqtable').css('width', seqtabWidth);
+             $('#' + divId + ' .outerseqtable').css('width', seqtabWidth);
+             $('#' + divId + ' .header').css('width', seqtabWidth);
+             $('#' + divId + ' .footer').css('width', seqtabWidth);
+             $('#' + divId + ' .footer').css('maxwidth', seqtabWidth);
+         }
       }
    }
 }
@@ -3405,9 +3408,9 @@ function printDataTable(divId, sequences)
       JSAV_ControlButton(divId, tableDiv + '_Controls', 'Export sequences to Excel', 
                          options.exportLabel, 'Excel', 'Export Excel', 'JSON2XML("'+divId+'","'+excelLabel+'")');
    }
-   $('#' + divId + "_tablebody").css('width',gTableWidth[divId]+6); 
-   $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+24); 
-   $('#' + tableDiv + "_Inner").css('width',gTableWidth[divId]+8); 
+   $('#' + divId + "_tablebody").css('width',gTableWidth[divId]-2); 
+   $('#' + tableDiv + "_Outer").css('width',gTableWidth[divId]+16); 
+   $('#' + tableDiv + "_Inner").css('width',gTableWidth[divId]); 
    $("#" + outerTableDiv).css("width","98vw");
    $("#" + outerTableDiv).css("margin-left","0.5em");
    $("#" + outerTableDiv).css("overflow-x","auto");
@@ -3724,7 +3727,7 @@ function printTableHeader(divId, selectable)
    if ((row == 2) || (groupFound) || (itemGroupFound))
    { 
       html += "<tr>";
-      gTableWidth[divId] = 120;
+      gTableWidth[divId] = 130;
 
       // Build selectAll checkbox cell and ID header cell
       var bgcol = (options.chainType == 'combined') ? 'heavy-col' : options.chainType+'-col';
@@ -3752,9 +3755,9 @@ function printTableHeader(divId, selectable)
 
             if (options.formattedCols)
             {
-               colWidth = (sColItem in options.formattedCols) ? options.formattedCols[sColItem] : 50;
+               colWidth = (sColItem in options.formattedCols) ? options.formattedCols[sColItem] : 20;
             }
-            gTableWidth[divId] += (colWidth + 40);
+            gTableWidth[divId] += (colWidth + 40) + 1;
 
             // Build the cell
             // The last row of the column - includes the hide and sort icons
@@ -3812,9 +3815,9 @@ function printTableHeader(divId, selectable)
                   colspan = 3;
                }
                var htmlcell = "<th class='lrborderheader "+colClass+"' colspan="+colspan+" style='width:"+colWidth+"px;'>";
-               htmlcell += "<div class='truncated'>";
+               htmlcell += "<div class='tooltip2'>";
                htmlcell += displayName; 
-               htmlcell += "</div></th>";
+               htmlcell += "<span class='tooltiptext'>"+col.Label+"</span></div></th>";
                if (rowstart)
                {
                   rowstart = false;
@@ -3876,7 +3879,7 @@ function printDataRow(divId, sequence)
          idSubmitAttr += sequence[attrArray[a]] + ':';
       }
       idSubmitAttr = idSubmitAttr.replace(/:$/,'');
-      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, 15) + "\n";
+      html += JSAV_buildId(divId, idSubmitAttr, sequence.id, 20) + "\n";
 
       // Build the data cells
       for (var c=0; c<gOptions[divId].header.length; c++) 
@@ -3892,7 +3895,7 @@ function printDataRow(divId, sequence)
             if (options.formattedCols) 
             {
                lcColname = (sColItem in options.formattedCols) ? sColItem.toLowerCase() : 'other';
-               colWidth = (sColItem in options.formattedCols) ? (options.formattedCols[sColItem] + 40) : 90;
+               colWidth = (sColItem in options.formattedCols) ? (options.formattedCols[sColItem] + 40) : 60;
             }
 
             // Add feint class if sequence not matched.
