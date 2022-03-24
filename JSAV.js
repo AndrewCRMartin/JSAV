@@ -3979,7 +3979,8 @@ function JSON2CSV(divId)
       var col = gOptions[divId].header[c];
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
-         var disp = col.Display;
+         var disp = "";
+         if (col.Display !== "&nbsp;") disp = disp + col.Display;
          if (col.ItemGroup) disp = disp + ' ' + col.ItemGroup;
 	 row += disp + ',';
       }
@@ -4129,7 +4130,8 @@ function JSON2XML(divId, format)
       if (col.Display == 'DNA') dnaColumn = 1;
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
-         var colWidth = col.Display.length;
+         var colWidth = 0;
+         if (col.Display !== "&nbsp;") colWidth += col.Display.length;
          if (col.ItemGroup) colWidth += col.ItemGroup.length + 1;
 	 XML += '  <Column ss:AutoFitWidth="0" ss:Width="'+(colWidth*6)+'"/>\r\n';
          dispNoCols++;
@@ -4162,7 +4164,8 @@ function JSON2XML(divId, format)
       var col = gOptions[divId].header[c];
       if (gDisplayColumn[options.chainType][col.Item]) 
       {
-         var disp = col.Display;
+         var disp = "";
+         if (col.Display !== "&nbsp;") disp = disp + col.Display;
          if (col.ItemGroup) disp = disp + ' ' + col.ItemGroup;
 	 XML += '  <Cell ss:StyleId="' + options.chainType + '"><Data ss:Type="String">' + disp + '</Data></Cell>\r\n';
       }
