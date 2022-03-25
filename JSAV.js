@@ -1990,8 +1990,8 @@ function JSAV_buildId(divId, attributeValue, id, textWidth)
    if ((idSubmit == null) || (attributeValue == 'undefined'))
    {
       html += "<td class='idCell' title='" + id + "'><div class='tooltip2'>";
-      html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...');
-      html += "<span class='tooltiptext2'>"+id+"</span></div></td>";
+      html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...')+"<span class='tooltiptext2'>"+id+"</span>";
+      html += "</div></td>";
    }
    else
    {
@@ -2033,8 +2033,8 @@ function JSAV_buildId(divId, attributeValue, id, textWidth)
          url += idSubmitExt;
       }
       html += "<td class='idCell'><a href=\"" + url + "\" class='tooltip2'>";
-      html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...');
-      html += "<span class='tooltiptext2'>"+id+"</span></a></td>";
+      html += (id.length < textWidth) ? id : (id.substring(0, (textWidth-3)) + '...')+"<span class='tooltiptext2'>"+id+"</span>";
+      html += "</div></td>";
    }
 
    return(html);
